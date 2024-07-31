@@ -1,0 +1,46 @@
+# MochiSoft OS project
+
+Obiettivi del progetto:
+
+1. Sviluppare da zero il kernel  [source](https://www.quora.com/What-are-some-interesting-operating-system-projects-at-the-college-level)
+    1. Il kernel deve essere di tipo _monolythic_ per semplicità
+    2. Il kernel deve gestire la memoria
+    3. Il kernel deve interfacciarsi con i dispositivi hardware (emulati?)
+    4. Il kernel deve gestire thread e processi per il multitasking
+    5. Il kernel deve fornire un'interfaccia testuale per l'utente
+    6. Il kernel deve fornire degli API ai programmi che esegue
+    7. Il kernel deve essere eseguito in un ambiente virtuale (qemu), ed eseguire il boot
+
+2. Configurare il bootloader 
+    1. Deve inizializzare l'hardware
+    2. deve eseguire l'entry point del sistema operativo (kernel). [Lista funzioni BIOS](https://wiki.osdev.org/BIOS#Common_functions)
+    3. Usare bootloader GRUB per caricare entry point del kernel oppure sviluppare bootloader [bare bone](https://wiki.osdev.org/Bare_Bones)
+
+
+## Ambiente
+L'ambiete di esecuzione del kernel è la simulazione di un sistema X86_64 con qemu. Essendo sviluppato in codespaces voglio solamente interagire tramite linea di comando quindi devo usare la modalità senza grafica. Qemu crea una porta seriale che fa passare sulla console di VScode. 
+
+Per eseguire qemu:
+```bash
+sudo apt install qemu-system
+qemu-system-x86_64 -nographic
+```
+
+Per uscire da qemu 
+```
+Ctrl-A x
+``` 
+
+<!-- 1. Sistema operativo che supporti l'esecuzione di task in multithreading
+    1. Come obiettivo poter eseguire semplici ELF
+2. Interazione con l'utente attraverso linea di comando, stile bash
+3. Nella prima fase deve essere un processo all'interno di linux. Possibile evoluzione per essere eseguito su qemu o simili
+
+Moduli del progetto da costruire per l'OS:
+
+- **Kernel**
+    - **Scheduler**
+    - **Memory manager**
+    - **File system** (da mettere nel kernel o come modulo separato?)
+    - **Resource manager**
+- **CLI user interface** -->
