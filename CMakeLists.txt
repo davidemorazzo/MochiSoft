@@ -4,11 +4,15 @@ cmake_minimum_required(VERSION 3.10)
 project(MochiOS)
 
 # Imposta lo standard C++
-set(CMAKE_CXX_STANDARD 17)
+# set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_C_COMPILER /home/codespace/opt/cross/bin/i686-elf-gcc)
+set(CMAKE_CXX_COMPILER /home/codespace/opt/cross/bin/i686-elf-g++)
+# add_link_options("-T src/kernel/linker.ld")
 
 # Aggiungi i file sorgente
 set(SOURCES
-    src/main.cpp
+    src/kernel/kernel.cpp
+    src/UART-driver/uart-driver.cpp
 )
 
 # Aggiungi i file header
@@ -16,6 +20,9 @@ set(HEADERS
 )
 
 # Crea l'eseguibile
+set(CMAKE_CXX_FLAGS "-ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti")
+# add_library(kernel OBJECT ${SOURCES})
+
 add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
 
 # Includi le directory
