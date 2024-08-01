@@ -6,10 +6,15 @@ Obiettivi del progetto:
     1. Il kernel deve essere di tipo _monolythic_ per semplicità
     2. Il kernel deve gestire la memoria
     3. Il kernel deve interfacciarsi con i dispositivi hardware (emulati?)
+       1. Sviluppo driver per UART 16550 - **In corso** 
     4. Il kernel deve gestire thread e processi per il multitasking
     5. Il kernel deve fornire un'interfaccia testuale per l'utente
+       1. Sviluppo di un terminale seguendo lo standard [per un'implementazione base](https://wiki.osdev.org/Terminals)
     6. Il kernel deve fornire degli API ai programmi che esegue
     7. Il kernel deve essere eseguito in un ambiente virtuale (qemu), ed eseguire il boot
+       1. Esecuzione usando qemu, che richiama la funzione di entry point del kernel `kernel_main`
+    8. Sviluppare utility di base nel modulo `src/utils` da usare in tutti i moduli, oppure capire come includere le librerie standard di CPP
+    9. Il kernel deve avere un modulo che fa logging
 
 2. Configurare il bootloader 
     1. Deve inizializzare l'hardware
@@ -23,7 +28,7 @@ L'ambiete di esecuzione del kernel è la simulazione di un sistema X86_64 con qe
 Per eseguire qemu:
 ```bash
 sudo apt install qemu-system
-qemu-system-x86_64 -nographic
+qemu-system-x86_64 -nographic -kernel build-kernel/MochiOS.bin
 ```
 
 Per uscire da qemu 

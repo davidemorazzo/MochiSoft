@@ -17,14 +17,16 @@ nel bootloader (src/bootloader/boot.s)*/
 extern "C"{
 
 void kernel_main (void){
-    // terminal_initialize();
-    // const char * s = "\nHello World from MochiSoft kernel!\n";
-    // terminal_write(s, strlen(s));
-
     uart_driver terminal = uart_driver(0x3f8);
-    terminal.write_byte('\n');
-    terminal.writeline("Hello World!");
-    terminal.writeline("\nMochiSoft Inc. - 2024");
+    terminal.clear_screen();
+    terminal.writeline("MochiSoft Inc. - 2024\n\n");
+    while(1){
+        terminal.writeline("> Insert username:");
+        char s[50] = {0};
+        terminal.readline(s);
+        terminal.writeline("> Line received => ", 0);
+        terminal.writeline(s);
+    }
 
     // Kernel function is exiting here
 }

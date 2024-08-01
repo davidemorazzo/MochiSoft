@@ -14,12 +14,6 @@ public:
         outb(device_address + 2, 0xC7);    // Enable FIFO, clear them, with 14-byte threshold
         outb(device_address + 4, 0x0B);    // IRQs enabled, RTS/DSR set
         outb(device_address + 4, 0x1E);    // Set in loopback mode, test the serial chip
-        outb(device_address + 0, 0xAE);    // Test serial chip (send byte 0xAE and check if serial returns same byte)
-
-        // Check if serial is faulty (i.e: not same byte as sent)
-        // if(inb(device_address + 0) != 0xAE) {
-        //     return nullptr;
-        // }
 
         // If serial is not faulty set it in normal operation mode
         // (not-loopback with IRQs enabled and OUT#1 and OUT#2 bits enabled)
@@ -57,11 +51,38 @@ public:
         return ret;
     }
 
-    void writeline(const char *s){
+    void writeline(const char *s, char end='\n'){
         for(size_t i =0; i<strlen(s); i++){
             write_byte(s[i]);
         }
-        write_byte('\n');
+        if (end!=0) write_byte(end);
+    }
+
+    void clear_screen(){
+        write_byte(27);
+        write_byte('[');
+        write_byte('2');
+        write_byte('J');
+        write_byte(27);
+        write_byte('[');
+        write_byte('H');
+    }
+
+    void readline(char * buf){
+        char c;
+        // char buf[50];
+        size_t len = 0;
+        do{
+            c = read_byte();
+            buf[len] = c;
+            len++;
+            // writeline("\n> Line received => ", 0);
+            // writeline(&c);
+        }while(c != '0' && len < 50-1);
+
+        buf[len-1] = '\0';
+        // writeline("Returning Buffer!");
+        // return buf;
     }
 
 private:

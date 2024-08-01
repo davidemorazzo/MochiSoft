@@ -1,3 +1,8 @@
+# Serial communication via UART
+
+[Serial ports - OS dev](https://wiki.osdev.org/Serial_Ports)
+
+
 Su un sistema x86 l'indirizzo della porta seriale UART è 
 |COM Port |	IO Port|
 | ---       | --- |
