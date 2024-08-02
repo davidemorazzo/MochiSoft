@@ -28,7 +28,7 @@ L'ambiete di esecuzione del kernel è la simulazione di un sistema X86_64 con qe
 Per eseguire qemu:
 ```bash
 sudo apt install qemu-system
-qemu-system-x86_64 -nographic -kernel build-kernel/MochiOS.bin
+qemu-system-x86_64 -nographic -kernel build/MochiOS
 ```
 
 Per uscire da qemu 

@@ -1,32 +1,24 @@
 cmake_minimum_required(VERSION 3.10)
 
 # Nome del progetto
+
+set(CMAKE_C_COMPILER "/home/codespace/opt/cross/bin/i686-elf-gcc")
+set(CMAKE_CXX_COMPILER "/home/codespace/opt/cross/bin/i686-elf-g++")
+set(CMAKE_C_COMPILER_WORKS 1)
+set(CMAKE_CXX_COMPILER_WORKS 1)
+set(CMAKE_ASM-ATT_COMPILER "/home/codespace/opt/cross/bin/i686-elf-as")
+
 project(MochiOS)
 
-# Imposta lo standard C++
-# set(CMAKE_CXX_STANDARD 17)
-set(CMAKE_C_COMPILER /home/codespace/opt/cross/bin/i686-elf-gcc)
-set(CMAKE_CXX_COMPILER /home/codespace/opt/cross/bin/i686-elf-g++)
-# add_link_options("-T src/kernel/linker.ld")
+set(PLATFORM_LAYOUT "/workspaces/MochiSoft/src/kernel/arch/i386/linker.ld")
 
-# Aggiungi i file sorgente
-set(SOURCES
-    src/kernel/kernel.cpp
-    src/UART-driver/uart-driver.cpp
-)
 
-# Aggiungi i file header
-set(HEADERS
-)
+add_subdirectory(src/libc)
+add_subdirectory(src/kernel)
 
 # Crea l'eseguibile
-set(CMAKE_CXX_FLAGS "-ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti")
-# add_library(kernel OBJECT ${SOURCES})
+set(CMAKE_CXX_FLAGS "-ffreestanding -O2 -nostdlib -lgcc -T ${PLATFORM_LAYOUT}")
+# set(CMAKE_CXX_FLAGS "-ffreestanding -O2 -nostdlib -T ${PLATFORM_LAYOUT}")
 
-add_executable(${PROJECT_NAME} ${SOURCES} ${HEADERS})
-
-# Includi le directory
-target_include_directories(${PROJECT_NAME} PUBLIC include)
-
-# Aggiungi eventuali librerie necessarie
-# target_link_libraries(${PROJECT_NAME} some_library)
+add_executable(${PROJECT_NAME})
+target_link_libraries(${PROJECT_NAME} kernel libc)

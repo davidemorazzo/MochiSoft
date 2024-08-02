@@ -2,7 +2,7 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#include <kernel/tty.h>
+#include <tty.h>
 
 #if defined (__linux__)
 #error "Your are not using a cross compiler. This will cause problems"
