@@ -18,8 +18,8 @@ extern "C"{
 
 void kernel_main (void){
     terminal term;
-    // term.writestring("Welcome in MochiOS! - 2024\n\n");
-    // term.writestring("> Ready\n");
+    term.writestring("Welcome in MochiOS! - 2024\n\n");
+    term.writestring("> Ready\n");
     
     // Kernel function is exiting here
 }

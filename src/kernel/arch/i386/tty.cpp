@@ -1,5 +1,5 @@
 #include "tty.h"
-// #include "string.h"
+#include "string.h"
 
 terminal::terminal(){
     /* Initialization of the temrminal */
@@ -29,5 +29,5 @@ void terminal::clear_screen(){
 }
 
 void terminal::writestring(const char * data){
-    // this->write(data, strlen(data));
+    this->write(data, strlen(data));
 }

@@ -21,4 +21,4 @@ set(CMAKE_CXX_FLAGS "-ffreestanding -O2 -nostdlib -lgcc -T ${PLATFORM_LAYOUT}")
 # set(CMAKE_CXX_FLAGS "-ffreestanding -O2 -nostdlib -T ${PLATFORM_LAYOUT}")
 
 add_executable(${PROJECT_NAME})
-target_link_libraries(${PROJECT_NAME} kernel libc)
+target_link_libraries(${PROJECT_NAME} kernel libc boot) 

@@ -11,6 +11,8 @@ project(libc)
 MESSAGE(STATUS "Building libc")
 
 include_directories(include)
+SET(CMAKE_CXX_FLAGS "-ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti")
+SET(CMAKE_C_FLAGS "-ffreestanding -O2 -Wall -Wextra -fno-exceptions")
 
 set (libc_src
         ${PROJECT_SOURCE_DIR}/string/strlen.c)
@@ -19,4 +21,3 @@ add_library(libc SHARED OBJECT ${libc_src})
 
 ####### COMPILE FLAGS ##############
 
-SET(CMAKE_CXX_FLAGS "-ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti")

@@ -11,6 +11,7 @@ project(kernel)
 MESSAGE(STATUS "Building Kernel")
 
 include_directories(include/kernel)
+include_directories(${PROJECT_SOURCE_DIR}/../libc/include )
 
 set (arch_i386_src 
         ${PROJECT_SOURCE_DIR}/arch/i386/inb.cpp
@@ -27,18 +28,17 @@ set (bootloader_src
 enable_language(ASM-ATT)
 
 ######### BOOTLOADER ##############
-add_library(boot OBJECT ${PROJECT_SOURCE_DIR}/arch/i386/boot.s)
+add_library(boot SHARED OBJECT ${PROJECT_SOURCE_DIR}/arch/i386/boot.s)
 
+
+########### KERNEL ################
+SET(CMAKE_CXX_FLAGS "-ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti")
+#target_compile_options(-ffreestanding -O2 -Wall -Wextra -fno-exceptions -fnortti)
 
 add_library(kernel SHARED OBJECT ${arch_i386_src} ${kernel_src})
-target_link_libraries(kernel libc)
+# target_link_libraries(kernel libc) 
 
 ####### COMPILE FLAGS ##############
 
-#SET(CMAKE_ASM-ATT_COMPILE_OBJECT 
-#  "<CMAKE_ASM-ATT_COMPILER> -o <OBJECT> <SOURCE>")
 
-SET(CMAKE_CXX_FLAGS "-ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti")
-
-SET_TARGET_PROPERTIES(kernel PROPERTIES LINK_FLAGS 
-  "-T ${PLATFORM_LAYOUT}")
+# SET_TARGET_PROPERTIES(kernel PROPERTIES LINK_FLAGS "-T ${PLATFORM_LAYOUT}")
