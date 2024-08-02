@@ -1,4 +1,3 @@
-
 #include <stdint.h>
 #include "/workspaces/MochiSoft/src/utils/string.cpp"
 
