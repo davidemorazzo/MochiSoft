@@ -31,3 +31,10 @@ void terminal::clear_screen(){
 void terminal::writestring(const char * data){
     this->write(data, strlen(data));
 }
+
+char terminal::echo()
+{
+    char c = this->driver.read_byte();
+    this->driver.write_byte(c);
+    return c;
+}

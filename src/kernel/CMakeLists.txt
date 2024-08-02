@@ -11,7 +11,7 @@ project(kernel)
 MESSAGE(STATUS "Building Kernel")
 
 include_directories(include/kernel)
-include_directories(${PROJECT_SOURCE_DIR}/../libc/include )
+include_directories(${libc_SOURCE_DIR}/include )
 
 set (arch_i386_src 
         ${PROJECT_SOURCE_DIR}/arch/i386/inb.cpp

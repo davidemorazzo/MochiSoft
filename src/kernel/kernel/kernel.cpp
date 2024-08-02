@@ -17,9 +17,23 @@ nel bootloader (src/bootloader/boot.s)*/
 extern "C"{
 
 void kernel_main (void){
+    char buffer[100];
+    int i= 0 ;
+
     terminal term;
-    term.writestring("Welcome in MochiOS! - 2024\n\n");
+    term.writestring("MochiSoft Inc. (R) 2024\n\nWelcome in MochiSoft OS!\n\n");
     term.writestring("> Ready\n");
+
+    while(1){
+        buffer[i] = term.echo();
+        if (buffer[i] == '\r'){
+            buffer[i+1]= '\0';
+            term.writestring(buffer);
+            term.writestring("\n>");
+            i = -1;
+        }
+        i++;
+    }
     
     // Kernel function is exiting here
 }
