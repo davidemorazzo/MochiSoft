@@ -1,6 +1,5 @@
 #include "uart.h"
-#include "inb.cpp"
-#include "outb.cpp"
+#include "i386_io.cpp"
 
 
 uart_driver::uart_driver(unsigned short dev_address){

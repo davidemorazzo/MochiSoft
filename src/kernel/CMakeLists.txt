@@ -14,10 +14,11 @@ include_directories(include/kernel)
 include_directories(${libc_SOURCE_DIR}/include )
 
 set (arch_i386_src 
-        ${PROJECT_SOURCE_DIR}/arch/i386/inb.cpp
-        ${PROJECT_SOURCE_DIR}/arch/i386/outb.cpp
+        ${PROJECT_SOURCE_DIR}/arch/i386/i386_io.cpp
         ${PROJECT_SOURCE_DIR}/arch/i386/tty.cpp
-        ${PROJECT_SOURCE_DIR}/arch/i386/uart.cpp)
+        ${PROJECT_SOURCE_DIR}/arch/i386/uart.cpp
+        # ${PROJECT_SOURCE_DIR}/arch/i386/PIC-8259.c
+)
 
 set (kernel_src
         ${PROJECT_SOURCE_DIR}/kernel/kernel.cpp)

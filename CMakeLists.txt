@@ -2,15 +2,16 @@ cmake_minimum_required(VERSION 3.10)
 
 # Nome del progetto
 
-set(CMAKE_C_COMPILER "/home/codespace/opt/cross/bin/i686-elf-gcc")
-set(CMAKE_CXX_COMPILER "/home/codespace/opt/cross/bin/i686-elf-g++")
+set(CMAKE_C_COMPILER "i686-elf-gcc")
+set(CMAKE_CXX_COMPILER "i686-elf-g++")
 set(CMAKE_C_COMPILER_WORKS 1)
 set(CMAKE_CXX_COMPILER_WORKS 1)
-set(CMAKE_ASM-ATT_COMPILER "/home/codespace/opt/cross/bin/i686-elf-as")
+set(CMAKE_ASM-ATT_COMPILER "i686-elf-as")
 
 project(MochiOS)
 
-set(PLATFORM_LAYOUT "/workspaces/MochiSoft/src/kernel/arch/i386/linker.ld")
+# set(PLATFORM_LAYOUT "/workspaces/MochiSoft/src/kernel/arch/i386/linker.ld")
+set(PLATFORM_LAYOUT ${PROJECT_SOURCE_DIR}/src/kernel/arch/i386/linker.ld)
 
 
 add_subdirectory(src/libc)
