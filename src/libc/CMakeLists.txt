@@ -15,7 +15,10 @@ SET(CMAKE_CXX_FLAGS "-ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti"
 SET(CMAKE_C_FLAGS "-ffreestanding -O2 -Wall -Wextra -fno-exceptions")
 
 set (libc_src
-        ${PROJECT_SOURCE_DIR}/string/strlen.c)
+        ${PROJECT_SOURCE_DIR}/string/strlen.c
+        ${PROJECT_SOURCE_DIR}/string/i32tohex.c
+        ${PROJECT_SOURCE_DIR}/string/i32tobin.c
+)
 
 add_library(libc SHARED OBJECT ${libc_src})
 

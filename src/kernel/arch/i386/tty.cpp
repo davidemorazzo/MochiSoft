@@ -1,4 +1,4 @@
-#include "tty.h"
+#include "kernel/tty.h"
 #include "string.h"
 
 terminal::terminal(){
@@ -37,4 +37,14 @@ char terminal::echo()
     char c = this->driver.read_byte();
     this->driver.write_byte(c);
     return c;
+}
+
+void terminal::printhex(uint64_t i){
+    char high[9], low[9];
+    i32tohex(i >> 32, high);
+    i32tohex(i & 0xFFFFFFFF, low);
+
+    this->writestring("0x");
+    this->writestring(high);
+    this->writestring(low);
 }

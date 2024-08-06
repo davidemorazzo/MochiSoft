@@ -10,14 +10,17 @@ project(kernel)
 # set(PLATFORM_LAYOUT "arch/i386/linker.ld")
 MESSAGE(STATUS "Building Kernel")
 
-include_directories(include/kernel)
+# include_directories(include/kernel)
+include_directories(include)
 include_directories(${libc_SOURCE_DIR}/include )
 
 set (arch_i386_src 
         ${PROJECT_SOURCE_DIR}/arch/i386/i386_io.cpp
         ${PROJECT_SOURCE_DIR}/arch/i386/tty.cpp
         ${PROJECT_SOURCE_DIR}/arch/i386/uart.cpp
+        ${PROJECT_SOURCE_DIR}/arch/i386/gdt.cpp
         # ${PROJECT_SOURCE_DIR}/arch/i386/PIC-8259.c
+
 )
 
 set (kernel_src

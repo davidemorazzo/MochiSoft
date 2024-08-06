@@ -2,12 +2,15 @@
 #define INCLUDE_STRING_H 1
 
 #include <stddef.h>
+#include <stdint.h>
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
 size_t strlen(const char *);
+void i32tohex(uint32_t i, char s[9]);
+void i32tobin(uint32_t i, char s[33]);
 
 #ifdef __cplusplus
 }
