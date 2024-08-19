@@ -13,6 +13,7 @@ public:
     void writestring(const char * data);
     char echo();
     void printhex(uint64_t i);
+    void printhex(void * mem, size_t bytes);
 private:
     void clear_screen();
     uart_driver driver;

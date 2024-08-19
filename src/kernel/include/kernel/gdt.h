@@ -1,4 +1,5 @@
-
+#ifndef INCLUDE_KERNEL_GDT_H
+#define INCLUDE_KERNEL_GDT_H 1
 
 #include <stdint.h>
 
@@ -22,11 +23,34 @@ struct GDT_descriptor {
 	uint8_t granularity_limit_high = 0x0;	// 4-bit più alti del campo limit
 };
 
-uint64_t encode_gdt_descriptor(GDT_descriptor desc);
-void load_gdt_table();
+struct GDTR{
+	uint16_t length;
+	void* base; 		/*32-bit address. Pointer aritmetic needed to extract the correct address*/
+}__attribute__((packed));
 
 struct GDT_table {
-	uint16_t  pad; //?
 	uint16_t  size = 0;
 	uint64_t  base[50]; //TODO: temporary 50 entries
 };
+
+uint64_t encode_gdt_descriptor(GDT_descriptor desc);
+void lgdt(void* base, uint16_t size);
+GDTR sgdt();
+
+//TODO: rewrite della logica GDT in una sola classe
+
+class GDT {
+
+public:
+	void load_gdt();
+	char check_gdt();
+	char add_entry(GDT_descriptor descriptor);
+private:
+	void lgdt();
+	GDTR sgdt();
+	uint64_t base[50]; //TODO: temporary 50 entries
+	uint16_t size;
+};
+
+
+#endif

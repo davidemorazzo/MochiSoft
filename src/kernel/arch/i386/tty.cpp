@@ -48,3 +48,15 @@ void terminal::printhex(uint64_t i){
     this->writestring(high);
     this->writestring(low);
 }
+
+void terminal::printhex(void * mem, size_t bytes){
+    /* From a given 32bit memory address bytes will 
+    be printed. No checks on validity of address
+    are done*/
+
+    for (int i = bytes-1; i >= 0; i--){
+        char s[3];
+        bytetohex(((char *) mem )[i], s); //TODO: da fixare
+        this->writestring(s);
+    }
+}

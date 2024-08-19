@@ -18,6 +18,7 @@ set (libc_src
         ${PROJECT_SOURCE_DIR}/string/strlen.c
         ${PROJECT_SOURCE_DIR}/string/i32tohex.c
         ${PROJECT_SOURCE_DIR}/string/i32tobin.c
+        ${PROJECT_SOURCE_DIR}/string/bytetohex.c
 )
 
 add_library(libc SHARED OBJECT ${libc_src})

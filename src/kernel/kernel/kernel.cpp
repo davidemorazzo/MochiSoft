@@ -8,11 +8,11 @@
 
 
 #if defined (__linux__)
-#error "Your are not using a cross compiler. This will cause problems"
+//#error "Your are not using a cross compiler. This will cause problems"
 #endif
 
 #if !defined(__i386__)
-#error "ix86-elf compiler is needed"
+//#error "ix86-elf compiler is needed"
 #endif
 
 /* Funzione di entry point del kernel, richiamata con lo stesso nome
@@ -21,8 +21,8 @@ extern "C"{
 
 void kernel_main (void){
     
-
-    /* GDT setup - flat layout
+    /* ======= GLOBAL DESCRIPTOR TABLE ====== */
+    /* setup - flat layout
     all the segments are overlapped in the 0 to 4GB memory space
     */
 
@@ -45,6 +45,7 @@ void kernel_main (void){
     /*------------------------*/
     //TODO: Task state segment
 
+
     GDT_table main_GDT_table;
     main_GDT_table.base[0] = encode_gdt_descriptor(null_seg);
     main_GDT_table.base[1] = encode_gdt_descriptor(kernel_code_seg);
@@ -53,6 +54,11 @@ void kernel_main (void){
     main_GDT_table.base[4] = encode_gdt_descriptor(user_data_seg);
     //TODO: Task state segment
     main_GDT_table.size = 5;
+    main_GDT_table.size = main_GDT_table.size*8-1;
+
+    /* Carica il registro con l'istruzione apposita */
+    lgdt(main_GDT_table.base, main_GDT_table.size);
+    volatile GDTR gdtr_check = sgdt();
 
     char buffer[100];
     int i= 0 ;
@@ -64,11 +70,8 @@ void kernel_main (void){
     term.writestring("GDT table base address: ");
     term.printhex((uint64_t)&main_GDT_table.base);
     term.putchar('\n');
-    for(int i=0; i<main_GDT_table.size; i++){
-        term.writestring("GDT entry # "); term.putchar(i+'0'); term.writestring(" => ");
-        term.printhex(main_GDT_table.base[i]);
-        term.putchar('\n');
-    }
+    term.writestring("GDTR content: 0x");
+    term.printhex((void*)&gdtr_check, 6);
 
 
 

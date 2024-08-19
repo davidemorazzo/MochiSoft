@@ -10,6 +10,7 @@ extern "C" {
 
 size_t strlen(const char *);
 void i32tohex(uint32_t i, char s[9]);
+void bytetohex(uint8_t i, char s[3]);
 void i32tobin(uint32_t i, char s[33]);
 
 #ifdef __cplusplus

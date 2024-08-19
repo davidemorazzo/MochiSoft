@@ -28,6 +28,7 @@ Offset		Use					Content
 */
 
 #include "kernel/gdt.h"
+// #include "gdt.h"
 
 
 // uint64_t encode_gdt_descriptor (GDT_descriptor desc){
@@ -75,3 +76,43 @@ uint64_t encode_gdt_descriptor (GDT_descriptor desc){
 	return *((uint64_t*)gdt_entry);
 }
 
+// void load_gdt_table(uint8_t * table){
+// 	/*L'istruzione LGDT è usata per indicare al
+// 	processore dove inizia la tabella GDT in memoria*/
+
+// 	__asm__ volatile ("lgdt %0" : : )
+
+// 	// __asm__ volatile (
+// 	// 	"cli"
+// 	// 	"mov ax, [esp+4]"
+// 	// 	"mov [gdtr], ax"
+// 	// 	"mov eax, [esp+8]"
+// 	// 	"mov [gdtr+2], eax"
+// 	// 	"lgdt [gdtr]"
+// 	// 	);
+// }
+
+
+void lgdt(void* base, uint16_t size)
+{
+    // This function works in 32 and 64bit mode
+    struct {
+        uint16_t length;
+        void*    base;
+    } __attribute__((packed)) GDTR = { size, base };
+
+    asm ( "lgdt %0" : : "m"(GDTR) );  // let the compiler choose an addressing mode
+}
+
+
+GDTR sgdt()
+{
+	GDTR this_gdtr;
+	// struct {
+    //     uint16_t length;
+    //     void*    base;
+    // } __attribute__((packed)) GDTR = { size, base };
+	
+	asm ("sgdt %0" : "=m"(this_gdtr) : );
+	return this_gdtr;
+}

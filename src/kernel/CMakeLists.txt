@@ -36,7 +36,7 @@ add_library(boot SHARED OBJECT ${PROJECT_SOURCE_DIR}/arch/i386/boot.s)
 
 
 ########### KERNEL ################
-SET(CMAKE_CXX_FLAGS "-ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti")
+SET(CMAKE_CXX_FLAGS "-ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti -g")
 #target_compile_options(-ffreestanding -O2 -Wall -Wextra -fno-exceptions -fnortti)
 
 add_library(kernel SHARED OBJECT ${arch_i386_src} ${kernel_src})
