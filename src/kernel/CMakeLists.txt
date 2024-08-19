@@ -15,7 +15,7 @@ include_directories(include)
 include_directories(${libc_SOURCE_DIR}/include )
 
 set (arch_i386_src 
-        ${PROJECT_SOURCE_DIR}/arch/i386/i386_io.cpp
+        ${PROJECT_SOURCE_DIR}/arch/i386/microcode.cpp
         ${PROJECT_SOURCE_DIR}/arch/i386/tty.cpp
         ${PROJECT_SOURCE_DIR}/arch/i386/uart.cpp
         ${PROJECT_SOURCE_DIR}/arch/i386/gdt.cpp

@@ -28,29 +28,84 @@ Offset		Use					Content
 */
 
 #include "kernel/gdt.h"
-// #include "gdt.h"
+#include "kernel/microcode.h"
 
+GDT::GDT()
+{
+	GDT_descriptor null_seg, kernel_code_seg, kernel_data_seg, user_code_seg, user_data_seg, task_state_seg;
+    kernel_code_seg.limit = 0xFFFFF;
+    kernel_code_seg.access = 0x9A;
+    kernel_code_seg.flags = 0xC;
+    /*------------------------*/
+    kernel_data_seg.limit = 0xFFFFF;
+    kernel_data_seg.access = 0x92;
+    kernel_data_seg.flags = 0xC;
+    /*------------------------*/
+    user_code_seg.limit = 0xFFFFF;
+    user_code_seg.access = 0xFA;
+    user_code_seg.flags = 0xC;
+    /*------------------------*/
+    user_data_seg.limit = 0xFFFFF;
+    user_data_seg.access = 0xF2;
+    user_data_seg.flags = 0xC;
+    //TODO: Task state segment
 
-// uint64_t encode_gdt_descriptor (GDT_descriptor desc){
-// 	uint32_t desc_high=0x0, desc_low=0x0;
+	this->size=0;
+	this->add_entry(null_seg);
+	this->add_entry(kernel_code_seg);
+	this->add_entry(kernel_data_seg);
+	this->add_entry(user_code_seg);
+	this->add_entry(user_data_seg);
 
-// 	desc_low = desc_low | (desc.limit & 0xFFFF);
-// 	desc_low = desc_low | ((desc.base & 0xFFFF) << 16);
-// 	desc_high = desc_high | (desc.base >> 16);
-// 	desc_high = desc_high | (desc.limit & 0xF0000);
-// 	desc_high = desc_high | (desc.base & 0xF000000);
-// 	desc_high = desc_high | (desc.access_DPL & 0x3) << 13;
-// 	desc_high = desc_high | (desc.access_type & 0x7) << 9;
-// 	desc_high = desc_high | 0x9000; // Present flag 
-// 	desc_high = desc_high | (desc.granularity_granularity & 0x1) << 23;
-// 	desc_high = desc_high | (desc.granularity_op_size & 0x1) << 21;
+	this->load_gdt();
+}
 
-// 	return (uint64_t(desc_high) << 32) | desc_low;
+void GDT::load_gdt()
+{
+	disable_it();
+	this->lgdt();
+	enable_it();
+}
 
-// }
+char GDT::check_gdt()
+{
+	GDTR gdtr = sgdt();
+	return (gdtr.base == &this->base);
+}
 
+char GDT::add_entry(GDT_descriptor descriptor)
+{
+	/*Return if table is full*/
+	if (size == 0xFFFF-1) {
+		return 0;
+	}
 
-uint64_t encode_gdt_descriptor (GDT_descriptor desc){
+	uint16_t idx = (this->size+1) / 8;
+	this->base[idx] = this->encode_gdt_descriptor(descriptor);
+	this->size += 8;
+
+	return 1;
+}
+
+void GDT::lgdt()
+{
+	struct {
+        uint16_t length;
+        void*    base;
+    } __attribute__((packed)) GDTR = { this->size, this->base };
+
+    asm ( "lgdt %0" : : "m"(GDTR) );  // let the compiler choose an addressing mode
+}
+
+GDTR GDT::sgdt()
+{
+	GDTR this_gdtr;	
+	asm ("sgdt %0" : "=m"(this_gdtr) : );
+	return this_gdtr;
+}
+
+uint64_t GDT::encode_gdt_descriptor(GDT_descriptor desc)
+{
 	uint8_t gdt_entry[8] = {0};
 	/*Encode limit*/
 	gdt_entry[0] = desc.limit & 0xFF;
@@ -74,45 +129,4 @@ uint64_t encode_gdt_descriptor (GDT_descriptor desc){
 
 
 	return *((uint64_t*)gdt_entry);
-}
-
-// void load_gdt_table(uint8_t * table){
-// 	/*L'istruzione LGDT è usata per indicare al
-// 	processore dove inizia la tabella GDT in memoria*/
-
-// 	__asm__ volatile ("lgdt %0" : : )
-
-// 	// __asm__ volatile (
-// 	// 	"cli"
-// 	// 	"mov ax, [esp+4]"
-// 	// 	"mov [gdtr], ax"
-// 	// 	"mov eax, [esp+8]"
-// 	// 	"mov [gdtr+2], eax"
-// 	// 	"lgdt [gdtr]"
-// 	// 	);
-// }
-
-
-void lgdt(void* base, uint16_t size)
-{
-    // This function works in 32 and 64bit mode
-    struct {
-        uint16_t length;
-        void*    base;
-    } __attribute__((packed)) GDTR = { size, base };
-
-    asm ( "lgdt %0" : : "m"(GDTR) );  // let the compiler choose an addressing mode
-}
-
-
-GDTR sgdt()
-{
-	GDTR this_gdtr;
-	// struct {
-    //     uint16_t length;
-    //     void*    base;
-    // } __attribute__((packed)) GDTR = { size, base };
-	
-	asm ("sgdt %0" : "=m"(this_gdtr) : );
-	return this_gdtr;
 }
