@@ -71,6 +71,18 @@ Ho compilato una toolchain per il cross-compiling nella cartella `$HOME/opt/cros
     └── i686-elf-strip
 ```
 
+# Roadmap
+
+1. ✅ Bootloader
+2. ✅ Global Descriptor Table
+3. ✅ Interrupt Descriptor Table
+4. 🛠️ **Programmable Interrupt Controller 8259 setup**
+5. Interrupt Service Routine for COM1 
+6. TTY terminal
+7. Timers setup
+8. Time features
+9. Tasks
+
 <!-- 1. Sistema operativo che supporti l'esecuzione di task in multithreading
     1. Come obiettivo poter eseguire semplici ELF
 2. Interazione con l'utente attraverso linea di comando, stile bash

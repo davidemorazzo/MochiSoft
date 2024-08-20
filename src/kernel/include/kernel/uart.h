@@ -1,6 +1,11 @@
 #ifndef INCLUDE_KERNEL_UART_H
 #define INCLUDE_KERNEL_UART_H 1
 
+/*
+August 2024 - Davide Morazzo
+Informazioni principali prese da https://wiki.osdev.org/Serial_Ports
+*/
+
 class uart_driver
 {
 public:

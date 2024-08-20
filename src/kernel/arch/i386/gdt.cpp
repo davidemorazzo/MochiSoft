@@ -62,14 +62,14 @@ GDT::GDT()
 
 void GDT::load_gdt()
 {
-	disable_it();
-	this->lgdt();
-	enable_it();
+	// disable_it();
+	lgdt(this->base, this->size-1);
+	// enable_it();
 }
 
 char GDT::check_gdt()
 {
-	GDTR gdtr = sgdt();
+	xDTR gdtr = sgdt();
 	return (gdtr.base == &this->base);
 }
 
@@ -85,23 +85,6 @@ char GDT::add_entry(GDT_descriptor descriptor)
 	this->size += 8;
 
 	return 1;
-}
-
-void GDT::lgdt()
-{
-	struct {
-        uint16_t length;
-        void*    base;
-    } __attribute__((packed)) GDTR = { this->size, this->base };
-
-    asm ( "lgdt %0" : : "m"(GDTR) );  // let the compiler choose an addressing mode
-}
-
-GDTR GDT::sgdt()
-{
-	GDTR this_gdtr;	
-	asm ("sgdt %0" : "=m"(this_gdtr) : );
-	return this_gdtr;
 }
 
 uint64_t GDT::encode_gdt_descriptor(GDT_descriptor desc)

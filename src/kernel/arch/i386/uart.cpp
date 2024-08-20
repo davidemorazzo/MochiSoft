@@ -1,15 +1,23 @@
 #include "kernel/uart.h"
 #include "kernel/microcode.h"
 
+/*
+August 2024 - Davide Morazzo
+Informazioni principali prese da https://wiki.osdev.org/Serial_Ports
+*/
+
 
 uart_driver::uart_driver(unsigned short dev_address){
     device_address = dev_address;
-    outb(device_address + 1, 0x00);    // Disable all interrupts
+    outb(device_address + 3, 0x00);    // Disable DLAB (set baud rate divisor)
+    outb(device_address + 1, 0x01);    // Enable interrupt "received data available"
+
     outb(device_address + 3, 0x80);    // Enable DLAB (set baud rate divisor)
     outb(device_address + 0, 0x03);    // Set divisor to 3 (lo byte) 38400 baud
     outb(device_address + 1, 0x00);    //                  (hi byte)
     outb(device_address + 3, 0x03);    // 8 bits, no parity, one stop bit
-    outb(device_address + 2, 0xC7);    // Enable FIFO, clear them, with 14-byte threshold
+    // outb(device_address + 2, 0xC7);    // Enable FIFO, clear them, with 14-byte threshold
+    outb(device_address + 2, 0x07);    // Enable FIFO, clear them, with 1-byte treshold
     outb(device_address + 4, 0x0B);    // IRQs enabled, RTS/DSR set
     outb(device_address + 4, 0x1E);    // Set in loopback mode, test the serial chip
 

@@ -1,9 +1,10 @@
-/* Funzioni per l'utilizzo e l'inizializzazione del dispositivo PIC 
-(Programmable Interrupt Controller) 8259 presente nell'architettura x86.
+/* August 2024 - Davide Morazzo 
 
+Funzioni per l'utilizzo e l'inizializzazione del dispositivo PIC 
+(Programmable Interrupt Controller) 8259 presente nell'architettura x86.
 Source: https://wiki.osdev.org/8259_PIC */
 
-#include "i386_io.cpp"
+#include "kernel/microcode.h"
 
 
 #define PIC1		0x20		/* IO base address for master PIC */

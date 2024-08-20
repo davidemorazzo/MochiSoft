@@ -2,6 +2,7 @@
 #define INCLUDE_KERNEL_GDT_H 1
 
 #include <stdint.h>
+#include <kernel/microcode.h>
 
 
 struct GDT_descriptor {
@@ -23,10 +24,6 @@ struct GDT_descriptor {
 	uint8_t granularity_limit_high = 0x0;	// 4-bit più alti del campo limit
 };
 
-struct GDTR{
-	uint16_t length;
-	void* base; 		/*32-bit address. Pointer aritmetic needed to extract the correct address*/
-}__attribute__((packed));
 
 
 class GDT {
@@ -37,8 +34,6 @@ public:
 	char check_gdt();
 	char add_entry(GDT_descriptor descriptor);
 private:
-	void lgdt();
-	GDTR sgdt();
 	uint64_t encode_gdt_descriptor(GDT_descriptor desc);
 	uint64_t base[50]; //TODO: temporary 50 entries
 	uint16_t size;		/*Number of bytes in GDT table*/

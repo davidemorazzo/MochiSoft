@@ -23,3 +23,33 @@ void disable_it(){
 void enable_it(){
     asm("sti;");
 }
+
+void lgdt(void* base, uint16_t size){
+	struct {
+        uint16_t length;
+        void*    base;
+    } __attribute__((packed)) GDTR = { size, base };
+
+    asm ( "lgdt %0" : : "m"(GDTR) );  // let the compiler choose an addressing mode
+}
+
+xDTR sgdt(){
+    xDTR this_gdtr;	
+	asm ("sgdt %0" : "=m"(this_gdtr) : );
+	return this_gdtr;
+}
+
+void lidt(void* base, uint16_t size){
+	struct {
+        uint16_t length;
+        void*    base;
+    } __attribute__((packed)) IDTR = { size, base };
+
+    asm ( "lidt %0" : : "m"(IDTR) );  // let the compiler choose an addressing mode
+}
+
+xDTR sidt(){
+    xDTR this_idtr;	
+	asm ("sidt %0" : "=m"(this_idtr) : );
+	return this_idtr;
+}
