@@ -26,7 +26,7 @@ char IDT::add_entry(InterruptDescriptor32 descriptor, uint8_t index)
 	encoded[7] = (descriptor.offset_2 >> 8) & 0xFF;
 
 	//FIXME: da controllare se funziona
-	this->base[index] = ((uint64_t*) &encoded); 
+	this->base[index] = (*(uint64_t*) &encoded); 
 	
 	return 0;
 }

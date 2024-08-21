@@ -7,6 +7,8 @@
 #include "kernel/tty.h"
 #include "kernel/gdt.h"
 #include "kernel/idt.h"
+#include "kernel/PIC-8259.h"
+#include "kernel/microcode.h"
 
 #if defined (__linux__)
 //#error "Your are not using a cross compiler. This will cause problems"
@@ -21,9 +23,11 @@ nel bootloader (src/bootloader/boot.s)*/
 extern "C"{
 
 void my_func(){
+// void my_func(void *esp){
     volatile int x;
     x += 10;
     x += 10;
+    PIC_sendEOI(4);
 }
 
 void kernel_main (void){
@@ -34,23 +38,24 @@ void kernel_main (void){
     /* ===== INTERRUPT DESCRIPTOR TABLE ====== */
     IDT IDTR;
 
-    void (* func)(void);
-    func = my_func;
-
     InterruptDescriptor32 test;
 	test.type_attributes = INTERRUPT_GATE32 | GD_PRESENT | (DPL0<<5);
-	test.offset_1 = ((uint32_t) func) & 0xFFFF;
-	test.offset_2 = (((uint32_t) func) >> 16) & 0xFFFF;
+	test.offset_1 = ((uint32_t) my_func) & 0xFFFF;
+	test.offset_2 = (((uint32_t) my_func) >> 16) & 0xFFFF;
 	test.selector = DPL0;  		// RPL=0 => RING 0
 	test.selector |= 0x0;  		// TI=0 => GDT table selected 
 	test.selector |= 1 << 3;	// Index=1 =>Kernel code segment
 
-    // for (int i=0; i <= 0xFF; i++){
-    //     IDTR.add_entry(test, i);
-    // }
+    for (int i=0; i <= 0xFF; i++){
+        IDTR.add_entry(test, i);
+    }
 
-    IDTR.add_entry(test, 0xC); //IRQ#4 mapped by default in 0xC for COM1
 	IDTR.load_idt(); /*Load IDTR*/
+    IDTR.add_entry(test, 0x20+4); //IRQ#4 mapped by default in 0xC for COM1
+
+    initialize_pic();
+    enable_it();    /*Interrupt Enable Flag = 1. (EFLAGS register)*/
+    interrupt(0x20+4);
 
     /* ======= TERMINAL ====== */
     char buffer[100];

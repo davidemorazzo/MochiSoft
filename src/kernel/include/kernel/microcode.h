@@ -27,4 +27,6 @@ void lidt(void* base, uint16_t size);
 
 xDTR sidt();
 
+void interrupt(uint8_t irq);
+
 #endif

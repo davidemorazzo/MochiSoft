@@ -33,7 +33,7 @@ public:
 	char add_entry(InterruptDescriptor32 descriptor, uint8_t index);
 	char check_idt();
 private:
-	uint64_t *base[256];
+	uint64_t base[256];
 	uint16_t size=256; /*one less than the size of base in bytes*/
 };
 

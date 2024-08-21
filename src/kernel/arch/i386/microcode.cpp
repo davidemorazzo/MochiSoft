@@ -53,3 +53,8 @@ xDTR sidt(){
 	asm ("sidt %0" : "=m"(this_idtr) : );
 	return this_idtr;
 }
+
+void interrupt(uint8_t irq){
+    // __asm__ volatile ("int %0" : : "m"(irq) :);
+    asm volatile ("int $36;");
+}
