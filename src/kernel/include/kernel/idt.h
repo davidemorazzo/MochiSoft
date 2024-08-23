@@ -24,7 +24,7 @@ struct InterruptDescriptor32 {
    uint8_t  zero = 0;            // unused, set to 0
    uint8_t  type_attributes = 0; // gate type, dpl, and p fields
    uint16_t offset_2 = 0;        // offset bits 16..31
-};
+}__attribute__((packed));
 
 class IDT {
 public:
@@ -34,7 +34,7 @@ public:
 	char check_idt();
 private:
 	uint64_t base[256];
-	uint16_t size=256; /*one less than the size of base in bytes*/
+	uint16_t size=256*8-1; /*one less than the size of base in bytes*/
 };
 
 #endif

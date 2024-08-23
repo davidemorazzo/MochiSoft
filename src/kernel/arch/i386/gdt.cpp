@@ -54,17 +54,17 @@ GDT::GDT()
 	this->add_entry(null_seg);
 	this->add_entry(kernel_code_seg);
 	this->add_entry(kernel_data_seg);
-	this->add_entry(user_code_seg);
-	this->add_entry(user_data_seg);
+	// this->add_entry(user_code_seg);
+	// this->add_entry(user_data_seg);
 
 	this->load_gdt();
 }
 
 void GDT::load_gdt()
 {
-	// disable_it();
+	disable_it();
 	lgdt(this->base, this->size-1);
-	// enable_it();
+	enable_it();
 }
 
 char GDT::check_gdt()

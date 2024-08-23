@@ -13,27 +13,29 @@ MESSAGE(STATUS "Building Kernel")
 # include_directories(include/kernel)
 include_directories(include)
 include_directories(${libc_SOURCE_DIR}/include )
+enable_language(ASM-ATT)
 
 set (arch_i386_src 
-        ${PROJECT_SOURCE_DIR}/arch/i386/microcode.cpp
-        ${PROJECT_SOURCE_DIR}/arch/i386/tty.cpp
-        ${PROJECT_SOURCE_DIR}/arch/i386/uart.cpp
-        ${PROJECT_SOURCE_DIR}/arch/i386/gdt.cpp
-        ${PROJECT_SOURCE_DIR}/arch/i386/idt.cpp
-        # ${PROJECT_SOURCE_DIR}/arch/i386/PIC-8259.c
-
+${PROJECT_SOURCE_DIR}/arch/i386/microcode.cpp
+${PROJECT_SOURCE_DIR}/arch/i386/tty.cpp
+${PROJECT_SOURCE_DIR}/arch/i386/uart.cpp
+${PROJECT_SOURCE_DIR}/arch/i386/gdt.cpp
+${PROJECT_SOURCE_DIR}/arch/i386/idt.cpp
+# ${PROJECT_SOURCE_DIR}/arch/i386/PIC-8259.c
 )
 
 set (kernel_src
-        ${PROJECT_SOURCE_DIR}/kernel/kernel.cpp)
+        ${PROJECT_SOURCE_DIR}/kernel/kernel.cpp
+        ${PROJECT_SOURCE_DIR}/kernel/ISR/isr_wrapper.s
+)
 
 set (bootloader_src
-        ${PROJECT_SOURCE_DIR}/arch/i386/boot.s)
+        ${PROJECT_SOURCE_DIR}/arch/i386/boot.s
+)
 
-enable_language(ASM-ATT)
 
 ######### BOOTLOADER ##############
-add_library(boot SHARED OBJECT ${PROJECT_SOURCE_DIR}/arch/i386/boot.s)
+add_library(boot SHARED OBJECT ${bootloader_src})
 
 
 ########### KERNEL ################

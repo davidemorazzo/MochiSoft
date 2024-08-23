@@ -24,42 +24,47 @@ extern "C"{
 
 void my_func(){
 // void my_func(void *esp){
-    volatile int x;
-    x += 10;
+    volatile int x=0;
     x += 10;
     PIC_sendEOI(4);
 }
+
+extern "C" void isr_0x24_wrapper(void);
 
 void kernel_main (void){
     
     /* ======= GLOBAL DESCRIPTOR TABLE ====== */
     GDT GDTR;
-
     /* ===== INTERRUPT DESCRIPTOR TABLE ====== */
     IDT IDTR;
 
     InterruptDescriptor32 test;
-	test.type_attributes = INTERRUPT_GATE32 | GD_PRESENT | (DPL0<<5);
-	test.offset_1 = ((uint32_t) my_func) & 0xFFFF;
-	test.offset_2 = (((uint32_t) my_func) >> 16) & 0xFFFF;
-	test.selector = DPL0;  		// RPL=0 => RING 0
-	test.selector |= 0x0;  		// TI=0 => GDT table selected 
-	test.selector |= 1 << 3;	// Index=1 =>Kernel code segment
+    test.type_attributes = 0x8E;
+    test.offset_1 = ((uint32_t) isr_0x24_wrapper) & 0xFFFF;
+	test.offset_2 = (((uint32_t) isr_0x24_wrapper) >> 16) & 0xFFFF;
+    test.selector = 0x8; /*RPL=0;TI=0;segment_index=1*/
 
-    for (int i=0; i <= 0xFF; i++){
-        IDTR.add_entry(test, i);
-    }
+	// test.selector = DPL0;  		// RPL=0 => RING 0
+	// test.selector |= 0x0;  		// TI=0 => GDT table selected 
+    // test.selector |= ((1*8) << 3); // Byte numero 8 della GDT => secondo elemento da 64-bit
+
+
+    // for (int i=0x1; i <= 0xFF; i++){
+    //     IDTR.add_entry(test, i);
+    // }
 
 	IDTR.load_idt(); /*Load IDTR*/
-    IDTR.add_entry(test, 0x20+4); //IRQ#4 mapped by default in 0xC for COM1
+    IDTR.add_entry(test, 67); //IRQ#4 mapped by default in 0xC for COM1
+    // IDTR.add_entry(test, 0x8); // Double fault exception
 
-    initialize_pic();
+    // initialize_pic();
     enable_it();    /*Interrupt Enable Flag = 1. (EFLAGS register)*/
-    interrupt(0x20+4);
+    __asm__ volatile ("int $67");
+    // interrupt(0x49);
 
     /* ======= TERMINAL ====== */
-    char buffer[100];
-    int i= 0 ;
+    // char buffer[100];
+    // int i= 0 ;
 
     terminal term;
     term.writestring("MochiSoft Inc. (R) 2024\n\nWelcome in MochiSoft OS!\n\n");
