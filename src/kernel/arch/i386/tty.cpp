@@ -62,11 +62,13 @@ void terminal::printhex(void * mem, size_t bytes){
 }
 
 void terminal::uart_ISR(void){
-    char iir = this->driver.read_reg(2);    // Read Interrupt Identification Register
+    uint8_t iir = this->driver.read_reg(2);    // Read Interrupt Identification Register
     uint8_t it_pending = iir & 0x1;         // Interrupt pending
     uint8_t it_state = iir >> 1 & 0x3;      // Interrupt state
     uint8_t it_timeout = iir >> 3 & 0x1;    // Timeout Interrupt Pending (UART 16550) or Reserved
     uint8_t fifo_state = iir >> 6 & 0x3;    // Fifo buffer state
+
+    if (it_timeout) return;
 
     if (it_pending){
         switch(it_state){

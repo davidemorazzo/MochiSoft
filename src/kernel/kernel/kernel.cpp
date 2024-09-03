@@ -25,8 +25,18 @@ nel bootloader (src/bootloader/boot.s)*/
 extern "C"{
 
 void uart_isr(){
+    uart_term_glbl->writestring("UART Interrupt!\n");
     uart_term_glbl->uart_ISR();
     PIC_sendEOI(4);
+}
+
+void generic_isr(){
+    __asm__("pushal");
+    // uart_term_glbl->writestring("Generic Interrupt!\n");
+    for (int j=0; j<255; j++){
+        if (j!=4) PIC_sendEOI(j);
+    }
+    __asm__("popal; leave; iret"); /* BLACK MAGIC! */
 }
 
 extern "C" void isr_0x24_wrapper(void);
@@ -39,28 +49,30 @@ void kernel_main (void){
     IDT IDTR;
 
     disable_it();
-    InterruptDescriptor32 test;
-    test.type_attributes = 0x8E;
-    test.offset_1 = ((uint32_t) isr_0x24_wrapper) & 0xFFFF;
-	test.offset_2 = (((uint32_t) isr_0x24_wrapper) >> 16) & 0xFFFF;
-    test.selector = 0x8; /*RPL=0;TI=0;segment_index=1*/
+    InterruptDescriptor32 uartIsrDesc;
+    uartIsrDesc.type_attributes = 0x8E;
+    uartIsrDesc.offset_1 = ((uint32_t) isr_0x24_wrapper) & 0xFFFF;
+	uartIsrDesc.offset_2 = (((uint32_t) isr_0x24_wrapper) >> 16) & 0xFFFF;
+    uartIsrDesc.selector = 0x8; /*RPL=0;TI=0;segment_index=1*/
 
-    // InterruptDescriptor32 uart_it_routine;
-    // test.type_attributes = 0x8E;
-    // test.offset_1 = ((uint32_t) uart_isr) & 0xFFFF;
-	// test.offset_2 = (((uint32_t) uart_isr) >> 16) & 0xFFFF;
-    // test.selector = 0x8; /*RPL=0;TI=0;segment_index=1*/
+    InterruptDescriptor32 genericIsrDesc;
+    genericIsrDesc.type_attributes = 0x8E;
+    genericIsrDesc.offset_1 = ((uint32_t) generic_isr) & 0xFFFF;
+	genericIsrDesc.offset_2 = (((uint32_t) generic_isr) >> 16) & 0xFFFF;
+    genericIsrDesc.selector = 0x8; /*RPL=0;TI=0;segment_index=1*/
 
-	IDTR.load_idt(); /*Load IDTR*/
     // IDTR.add_entry(test, 0x8); // Double fault exception
     // IDTR.add_entry(test, 0xC); //IRQ#4 mapped by default in 0xC for COM1
-    // IDTR.add_entry(test, 0x24); // UART
     for (int k=0; k<256; k++){
-        IDTR.add_entry(test, k);
+        IDTR.add_entry(genericIsrDesc, k);
     }
+    IDTR.add_entry(uartIsrDesc, 33+4); // UART
+    // IDTR.add_entry(uartIsrDesc, 33+3); // UART
+	IDTR.load_idt(); /*Load IDTR*/
 
-    initialize_pic();
-    enable_it();    /*Interrupt Enable Flag = 1. (EFLAGS register)*/
+    PIC_remap(33, 33+8);
+    IRQ_clear_mask(4);
+    // IRQ_clear_mask(3);
 
     /* ======= TERMINAL ====== */
     terminal uart_term;
@@ -80,14 +92,15 @@ void kernel_main (void){
         uart_term.writestring("<WARNING> IDTR content NOT CONSISTENT!\n");
     }
 
+    enable_it();    /*Interrupt Enable Flag = 1. (EFLAGS register)*/
 
 
     while(1){
-        char itReg = uart_term_glbl->driver.read_reg(2);
-        uart_term_glbl->putchar((itReg&0x01)+'0');
-        uart_term_glbl->putchar((itReg>>1 &0x03)+'0');
-        uart_term_glbl->putchar((uart_term_glbl->driver.is_byte_received())+'0');
-        uart_term_glbl->putchar('\n');
+        // char itReg = uart_term_glbl->driver.read_reg(2);
+        // uart_term_glbl->putchar((itReg&0x01)+'0');
+        // uart_term_glbl->putchar((itReg>>1 &0x03)+'0');
+        // uart_term_glbl->putchar((uart_term_glbl->driver.is_byte_received())+'0');
+        // uart_term_glbl->putchar('\n');
         // buffer[i] = term.echo();
         // if (buffer[i] == '\r'){
         //     buffer[i+1]= '\0';
