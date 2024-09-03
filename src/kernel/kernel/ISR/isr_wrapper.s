@@ -11,6 +11,6 @@
 isr_0x24_wrapper:
 	pushal
 	cld 					// ?
-	call my_func 	// C function dove viene eseguito il codice
+	call uart_isr 	// C function dove viene eseguito il codice
 	popal
 	iret					// Return from an interrupt call					

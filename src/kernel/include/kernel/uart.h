@@ -5,6 +5,8 @@
 August 2024 - Davide Morazzo
 Informazioni principali prese da https://wiki.osdev.org/Serial_Ports
 */
+#include <stddef.h>
+#include <stdint.h> 
 
 class uart_driver
 {
@@ -14,9 +16,10 @@ public:
 
     char read_byte();
     void write_byte(char c);
+    uint8_t read_reg(size_t offset);
+    int is_byte_received();
     
 private:
-    int is_byte_received();
     int is_tx_empty();
     unsigned short device_address;
 };

@@ -14,9 +14,10 @@ public:
     char echo();
     void printhex(uint64_t i);
     void printhex(void * mem, size_t bytes);
+    void uart_ISR(void);
+    uart_driver driver;
 private:
     void clear_screen();
-    uart_driver driver;
 };
 
 #endif
