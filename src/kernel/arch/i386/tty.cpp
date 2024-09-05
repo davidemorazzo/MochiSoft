@@ -68,18 +68,19 @@ void terminal::uart_ISR(void){
     uint8_t it_timeout = iir >> 3 & 0x1;    // Timeout Interrupt Pending (UART 16550) or Reserved
     uint8_t fifo_state = iir >> 6 & 0x3;    // Fifo buffer state
 
-    if (it_timeout) return;
+    // if (it_timeout) return;
 
-    if (it_pending){
+    // if (it_pending){
         switch(it_state){
             case 0:     // MODEM STATUS
                 break;  
             case 1:     // TRANSMITTER HOLDING REGISTER EMPTY
                 break;
             case 2:     // RECEIVED DATA AVAILABLE
+                this->putchar(driver.read_byte());
                 break;
             case 3:     // RECEIVER LINE STATUS
                 break;
         }
-    }    
+    // }    
 }

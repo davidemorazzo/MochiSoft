@@ -25,15 +25,16 @@ nel bootloader (src/bootloader/boot.s)*/
 extern "C"{
 
 void uart_isr(){
-    uart_term_glbl->writestring("UART Interrupt!\n");
+    __asm__("pushal");
     uart_term_glbl->uart_ISR();
     PIC_sendEOI(4);
+    __asm__("popal; leave; iret");
 }
 
 void generic_isr(){
     __asm__("pushal");
     // uart_term_glbl->writestring("Generic Interrupt!\n");
-    for (int j=0; j<255; j++){
+    for (int j=0; j<7; j++){
         if (j!=4) PIC_sendEOI(j);
     }
     __asm__("popal; leave; iret"); /* BLACK MAGIC! */
@@ -51,8 +52,8 @@ void kernel_main (void){
     disable_it();
     InterruptDescriptor32 uartIsrDesc;
     uartIsrDesc.type_attributes = 0x8E;
-    uartIsrDesc.offset_1 = ((uint32_t) isr_0x24_wrapper) & 0xFFFF;
-	uartIsrDesc.offset_2 = (((uint32_t) isr_0x24_wrapper) >> 16) & 0xFFFF;
+    uartIsrDesc.offset_1 = ((uint32_t) uart_isr) & 0xFFFF;
+	uartIsrDesc.offset_2 = (((uint32_t) uart_isr) >> 16) & 0xFFFF;
     uartIsrDesc.selector = 0x8; /*RPL=0;TI=0;segment_index=1*/
 
     InterruptDescriptor32 genericIsrDesc;
@@ -66,14 +67,13 @@ void kernel_main (void){
     for (int k=0; k<256; k++){
         IDTR.add_entry(genericIsrDesc, k);
     }
-    IDTR.add_entry(uartIsrDesc, 33+4); // UART
-    // IDTR.add_entry(uartIsrDesc, 33+3); // UART
+    IDTR.add_entry(uartIsrDesc, 33+3); // UART
 	IDTR.load_idt(); /*Load IDTR*/
 
     PIC_remap(33, 33+8);
+    IRQ_set_mask(3);
     IRQ_clear_mask(4);
-    // IRQ_clear_mask(3);
-
+    
     /* ======= TERMINAL ====== */
     terminal uart_term;
     uart_term_glbl = &uart_term;
