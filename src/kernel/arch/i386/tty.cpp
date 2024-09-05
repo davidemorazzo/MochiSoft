@@ -9,6 +9,7 @@ terminal::terminal(){
 
 void terminal::putchar(char c){
     this->driver.write_byte(c);
+    if (c == '\r') this->driver.write_byte('\n'); /*Handle CRLF*/
 }
 
 void terminal::write(const char * data, size_t size){
@@ -77,7 +78,9 @@ void terminal::uart_ISR(void){
             case 1:     // TRANSMITTER HOLDING REGISTER EMPTY
                 break;
             case 2:     // RECEIVED DATA AVAILABLE
-                this->putchar(driver.read_byte());
+                while(this->driver.is_byte_received()){
+                    this->putchar(driver.read_byte());
+                }
                 break;
             case 3:     // RECEIVER LINE STATUS
                 break;

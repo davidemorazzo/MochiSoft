@@ -25,6 +25,7 @@ uart_driver::uart_driver(unsigned short dev_address){
     outb(device_address + 4, 0x0F);
 }
 
+/*Check if there is data to read in the FIFO*/
 int uart_driver::is_byte_received(){
     return inb(device_address + 5) & 1;
 }
