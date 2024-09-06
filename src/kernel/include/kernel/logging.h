@@ -3,6 +3,6 @@
 
 #include "kernel/tty.h"
 
-terminal *global_logger = nullptr;
+extern terminal *global_logger;
 
 #endif

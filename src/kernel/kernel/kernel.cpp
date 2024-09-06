@@ -9,6 +9,7 @@
 #include "kernel/PIC-8259.h"
 #include "kernel/microcode.h"
 #include "kernel/logging.h"
+#include "kernel/exceptions.h"
 
 #if defined (__linux__)
 //#error "Your are not using a cross compiler. This will cause problems"
@@ -18,9 +19,13 @@
 //#error "ix86-elf compiler is needed"
 #endif
 
+terminal *global_logger;
+IDT *global_IDT;
+
 /* Funzione di entry point del kernel, richiamata con lo stesso nome
 nel bootloader (src/bootloader/boot.s)*/
 extern "C"{
+
 
 void uart_isr(){
     __asm__("pushal");
@@ -46,6 +51,7 @@ void kernel_main (void){
     GDT GDTR;
     /* ===== INTERRUPT DESCRIPTOR TABLE ====== */
     IDT IDTR;
+    global_IDT = &IDTR;
 
     disable_it();    
 
@@ -89,8 +95,10 @@ void kernel_main (void){
         uart_term.writestring("<WARNING> IDTR content NOT CONSISTENT!\n");
     }
 
+    setup_exc_it();
     enable_it();    /*Interrupt Enable Flag = 1. (EFLAGS register)*/
-
+    asm("div %edx");
+    asm("int $1");
 
     while(1){}
     // Kernel function is exiting here

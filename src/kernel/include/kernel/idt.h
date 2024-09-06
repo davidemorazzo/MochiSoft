@@ -17,7 +17,6 @@
 #define DPL3				0x3
 				
 
-
 struct InterruptDescriptor32 {
    uint16_t offset_1 = 0;        // offset bits 0..15
    uint16_t selector = 0;        // a code segment selector in GDT or LDT
@@ -36,5 +35,14 @@ private:
 	uint64_t base[256];
 	uint16_t size=256*8-1; /*one less than the size of base in bytes*/
 };
+
+extern IDT *global_IDT;
+
+#define SET_IT_VEC(desc, func, idx)                               \
+    desc.type_attributes = 0x8E;                            \
+    desc.offset_1 = ((uint32_t) func) & 0xFFFF;             \
+	desc.offset_2 = (((uint32_t) func) >> 16) & 0xFFFF;     \
+    desc.selector = 0x8; /*RPL=0;TI=0;segment_index=1*/     \
+    global_IDT->add_entry(desc, idx)           
 
 #endif
