@@ -10,6 +10,7 @@
 #include "kernel/microcode.h"
 #include "kernel/logging.h"
 #include "kernel/exceptions.h"
+#include "kernel/kstdio.h"
 
 #if defined (__linux__)
 //#error "Your are not using a cross compiler. This will cause problems"
@@ -95,6 +96,8 @@ void kernel_main (void){
         uart_term.writestring("<WARNING> IDTR content NOT CONSISTENT!\n");
     }
 
+    uint32_t x = 0xC1A0;
+    kprint("Prova di kprint: %X", &x);
     setup_exc_it();
     enable_it();    /*Interrupt Enable Flag = 1. (EFLAGS register)*/
     asm("div %edx");

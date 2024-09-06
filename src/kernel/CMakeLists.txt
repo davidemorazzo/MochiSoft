@@ -27,6 +27,7 @@ ${PROJECT_SOURCE_DIR}/arch/i386/idt.cpp
 set (kernel_src
         ${PROJECT_SOURCE_DIR}/kernel/kernel.cpp
         ${PROJECT_SOURCE_DIR}/kernel/exceptions.cpp
+        ${PROJECT_SOURCE_DIR}/kernel/kstdio.cpp
         ${PROJECT_SOURCE_DIR}/kernel/ISR/exc_isr_wrapper.s
 )
 
@@ -41,6 +42,7 @@ add_library(boot SHARED OBJECT ${bootloader_src})
 
 ########### KERNEL ################
 SET(CMAKE_CXX_FLAGS "-ffreestanding -O0 -Wall -Wextra -fno-exceptions -fno-rtti -g")
+SET(CMAKE_C_FLAGS "-ffreestanding -O0 -Wall -Wextra -g")
 #target_compile_options(-ffreestanding -O2 -Wall -Wextra -fno-exceptions -fnortti)
 
 add_library(kernel SHARED OBJECT ${arch_i386_src} ${kernel_src})
