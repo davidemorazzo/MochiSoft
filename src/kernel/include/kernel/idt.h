@@ -25,21 +25,14 @@ typedef struct {
    uint16_t offset_2;        // offset bits 16..31
 }__attribute__((packed)) InterruptDescriptor32;
 
-InterruptDescriptor32 InterruptDescriptor32Init = {
-    .offset_1=0,
-    .selector=0,
-    .zero=0,
-    .type_attributes=0,
-    .offset_2=0
-} ;
 
-#define SET_IT_VEC(desc, func, idx)                               \
-    desc = InterruptDescriptor32Init;                       \
+#define SET_IT_VEC(desc, func, idx)                         \
+    desc.zero=0;                                            \
     desc.type_attributes = 0x8E;                            \
     desc.offset_1 = ((uint32_t) func) & 0xFFFF;             \
 	desc.offset_2 = (((uint32_t) func) >> 16) & 0xFFFF;     \
     desc.selector = 0x8; /*RPL=0;TI=0;segment_index=1*/     \
-    global_IDT[idx] = (*(uint64_t*) &desc); //TODO: fix
+    global_IDT[idx] = (*(uint64_t*) &desc)
 
 void load_idt(xDTR idt);
 char check_idt(xDTR idt);

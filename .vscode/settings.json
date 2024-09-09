@@ -38,6 +38,9 @@
 		"tuple": "cpp",
 		"variant": "cpp",
 		"*.txx": "cpp",
-		"exceptions.h": "c"
+		"exceptions.h": "c",
+		"microcode.h": "c",
+		"pic-8259.h": "c",
+		"kstdio.h": "c"
 	}
 }

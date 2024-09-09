@@ -37,6 +37,7 @@ void kprint(const char * format, ...){
         }
     }
     
+    serial_writestring(STDIO_PORT, out_buffer);
     va_end(argptr);             // Clean-up
     return;
 }
