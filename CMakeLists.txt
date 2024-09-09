@@ -19,6 +19,7 @@ add_subdirectory(src/kernel)
 
 # Crea l'eseguibile
 set(CMAKE_CXX_FLAGS "-ffreestanding -O0 -nostdlib -lgcc -T ${PLATFORM_LAYOUT} -g")
+set(CMAKE_C_FLAGS "-ffreestanding -O0 -Wall -Wextra -g -nostdlib -lgcc -T ${PLATFORM_LAYOUT}")
 # set(CMAKE_CXX_FLAGS "-ffreestanding -O2 -nostdlib -T ${PLATFORM_LAYOUT}")
 
 add_executable(${PROJECT_NAME})

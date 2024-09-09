@@ -16,7 +16,7 @@ void enable_it();
 
 typedef struct{
 	uint16_t length;	/*Length of table in bytes*/
-	uint32_t* base; 		/*32-bit address*/
+	uint64_t* base; 		/*32-bit address*/
 }__attribute__((packed)) xDTR;
 
 void lgdt(void* base, uint16_t size);

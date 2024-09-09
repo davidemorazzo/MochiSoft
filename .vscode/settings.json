@@ -37,6 +37,7 @@
 		"type_traits": "cpp",
 		"tuple": "cpp",
 		"variant": "cpp",
-		"*.txx": "cpp"
+		"*.txx": "cpp",
+		"exceptions.h": "c"
 	}
 }

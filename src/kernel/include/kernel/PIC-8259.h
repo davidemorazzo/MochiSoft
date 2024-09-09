@@ -4,6 +4,9 @@ Funzioni per l'utilizzo e l'inizializzazione del dispositivo PIC
 (Programmable Interrupt Controller) 8259 presente nell'architettura x86.
 Source: https://wiki.osdev.org/8259_PIC */
 
+#ifndef INCLUDE_KERNEL_PIC_8259_H
+#define INCLUDE_KERNEL_PIC_8259_H 1
+
 #include "kernel/microcode.h"
 
 #define PIC1		0x20		/* IO base address for master PIC */
@@ -101,3 +104,5 @@ void IRQ_clear_mask(uint8_t IRQline) {
     value = inb(port) & ~(1 << IRQline);
     outb(port, value);        
 }
+
+#endif

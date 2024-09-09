@@ -16,13 +16,6 @@
 #define DPL2				0x2
 #define DPL3				0x3
 
-#define SET_IT_VEC(desc, func, idx)                               \
-    desc.type_attributes = 0x8E;                            \
-    desc.offset_1 = ((uint32_t) func) & 0xFFFF;             \
-	desc.offset_2 = (((uint32_t) func) >> 16) & 0xFFFF;     \
-    desc.selector = 0x8 /*RPL=0;TI=0;segment_index=1*/     
-    // global_IDT->add_entry(desc, idx)          			
-    // *(uint64_t*)&global_IDT->base[k] = (*(uint64_t*) &genericIsrDesc); //TODO: fix
 
 typedef struct {
    uint16_t offset_1;        // offset bits 0..15
@@ -32,7 +25,7 @@ typedef struct {
    uint16_t offset_2;        // offset bits 16..31
 }__attribute__((packed)) InterruptDescriptor32;
 
-const InterruptDescriptor32 InterruptDescriptor32Init = {
+InterruptDescriptor32 InterruptDescriptor32Init = {
     .offset_1=0,
     .selector=0,
     .zero=0,
@@ -40,21 +33,17 @@ const InterruptDescriptor32 InterruptDescriptor32Init = {
     .offset_2=0
 } ;
 
-
-// class IDT {
-// public:
-// 	IDT();
-// 	void load_idt();
-// 	char add_entry(InterruptDescriptor32 descriptor, uint8_t index);
-// 	char check_idt();
-// private:
-// 	uint64_t base[256];
-// 	uint16_t size=256*8-1; /*one less than the size of base in bytes*/
-// };
+#define SET_IT_VEC(desc, func, idx)                               \
+    desc = InterruptDescriptor32Init;                       \
+    desc.type_attributes = 0x8E;                            \
+    desc.offset_1 = ((uint32_t) func) & 0xFFFF;             \
+	desc.offset_2 = (((uint32_t) func) >> 16) & 0xFFFF;     \
+    desc.selector = 0x8; /*RPL=0;TI=0;segment_index=1*/     \
+    global_IDT[idx] = (*(uint64_t*) &desc); //TODO: fix
 
 void load_idt(xDTR idt);
 char check_idt(xDTR idt);
-extern xDTR *global_IDT;
+extern uint64_t global_IDT[255];
 
 
 #endif

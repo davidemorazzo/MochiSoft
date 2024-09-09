@@ -19,15 +19,15 @@ set (arch_i386_src
 ${PROJECT_SOURCE_DIR}/arch/i386/microcode.c
 ${PROJECT_SOURCE_DIR}/arch/i386/tty.c
 ${PROJECT_SOURCE_DIR}/arch/i386/uart.c
-${PROJECT_SOURCE_DIR}/arch/i386/gdt.cpp
+${PROJECT_SOURCE_DIR}/arch/i386/gdt.c
 ${PROJECT_SOURCE_DIR}/arch/i386/idt.c
 # ${PROJECT_SOURCE_DIR}/arch/i386/PIC-8259.c
 )
 
 set (kernel_src
-        ${PROJECT_SOURCE_DIR}/kernel/kernel.cpp
-        ${PROJECT_SOURCE_DIR}/kernel/exceptions.cpp
-        ${PROJECT_SOURCE_DIR}/kernel/kstdio.cpp
+        ${PROJECT_SOURCE_DIR}/kernel/kernel.c
+        ${PROJECT_SOURCE_DIR}/kernel/exceptions.c
+        ${PROJECT_SOURCE_DIR}/kernel/kstdio.c
         ${PROJECT_SOURCE_DIR}/kernel/ISR/exc_isr_wrapper.s
 )
 
