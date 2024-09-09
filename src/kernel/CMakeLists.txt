@@ -26,7 +26,9 @@ ${PROJECT_SOURCE_DIR}/arch/i386/idt.cpp
 
 set (kernel_src
         ${PROJECT_SOURCE_DIR}/kernel/kernel.cpp
+        ${PROJECT_SOURCE_DIR}/kernel/core.cpp
         ${PROJECT_SOURCE_DIR}/kernel/ISR/isr_wrapper.s
+
 )
 
 set (bootloader_src

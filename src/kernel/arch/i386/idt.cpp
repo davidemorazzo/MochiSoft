@@ -1,38 +1,37 @@
 #include "kernel/idt.h"
 #include "kernel/microcode.h"
+#include <PIC-8259.h>
 
 IDT::IDT()
 {
-	
+	initialize_pic();
+	this->load_idt();
 }
 
 void IDT::load_idt()
 {
-	//FIXME: capire come disattivare gli interrupt senza generare problemi
-	lidt(this->base, this->size);
+	lidt(this->base, this->size-1);
 }
 
 char IDT::add_entry(InterruptDescriptor32 descriptor, uint8_t index)
 {
-	/*Encode descriptor*/
-	// uint8_t encoded[8];
-	// encoded[0] = descriptor.offset_1 & 0xFF;
-	// encoded[1] = (descriptor.offset_1 >> 8) & 0xFF;
-	// encoded[2] = descriptor.selector & 0xFF;
-	// encoded[3] = (descriptor.selector >> 8) & 0xFF;
-	// encoded[4] = descriptor.zero;
-	// encoded[5] = descriptor.type_attributes;
-	// encoded[6] = descriptor.offset_2 & 0xFF;
-	// encoded[7] = (descriptor.offset_2 >> 8) & 0xFF;
-
-	//FIXME: da controllare se funziona
 	this->base[index] = (*(uint64_t*) &descriptor); 
 	
 	return 0;
 }
 
-char IDT::check_idt(){
-	xDTR reg = sidt();
-	return (reg.base == (void *)this->base) && (this->size == reg.length);
+InterruptDescriptor32 IDT::generate_descriptor(void func(), uint8_t type, uint16_t segment_sel)
+{
+	InterruptDescriptor32 d;
+	d.offset_1 = (uint32_t)func >> 0 & 0xFFFF;
+	d.offset_2 = (uint32_t)func >> 16 & 0xFFFF;
+	d.type_attributes = type;
+	d.selector = segment_sel;
+	return d;
 }
 
+char IDT::check_idt()
+{
+	xDTR reg = sidt();
+	return (reg.base == (void *)this->base) && (this->size-1 == reg.length);
+}

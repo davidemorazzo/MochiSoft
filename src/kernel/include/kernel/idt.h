@@ -31,10 +31,11 @@ public:
 	IDT();
 	void load_idt();
 	char add_entry(InterruptDescriptor32 descriptor, uint8_t index);
+	InterruptDescriptor32 generate_descriptor (void func(), uint8_t type, uint16_t segment_sel);
 	char check_idt();
 private:
 	uint64_t base[256];
-	uint16_t size=256*8-1; /*one less than the size of base in bytes*/
+	uint16_t size=256*8; /*one less than the size of base in bytes*/
 };
 
 #endif

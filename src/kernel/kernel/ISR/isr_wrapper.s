@@ -5,12 +5,12 @@
 // 
 // #include "kernel/ISR/isr_wrapper.h"
 
-.globl isr_0x24_wrapper
-.align 4
-
-isr_0x24_wrapper:
-	pushal
-	cld 					// ?
-	call my_func 	// C function dove viene eseguito il codice
-	popal
-	iret					// Return from an interrupt call					
+// .globl isr_0x24_wrapper
+// .align 4
+// 
+// isr_0x24_wrapper:
+// 	pushal
+// 	cld 					// ?
+// 	call my_func 	// C function dove viene eseguito il codice
+// 	popal
+// 	iret					// Return from an interrupt call					
