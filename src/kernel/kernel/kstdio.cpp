@@ -1,6 +1,7 @@
 #include "kernel/kstdio.h"
-#include <stdarg.h>
+#include "kernel/tty.h"
 #include "string.h"
+#include <stdarg.h>
 
 
 /* Kernel print function, v0.1 only supports 

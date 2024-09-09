@@ -28,7 +28,9 @@ Offset		Use					Content
 */
 
 #include "kernel/gdt.h"
+extern "C"{
 #include "kernel/microcode.h"
+}
 
 GDT::GDT()
 {

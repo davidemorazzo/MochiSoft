@@ -2,7 +2,6 @@
 #define INCLUDE_KERNEL_GDT_H 1
 
 #include <stdint.h>
-#include <kernel/microcode.h>
 
 
 struct GDT_descriptor {

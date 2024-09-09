@@ -3,7 +3,6 @@
 #define INCLUDE_KERNEL_IDT_H 1
 
 #include <stdint.h>
-#include <kernel/microcode.h>
 
 #define TASK_GATE 			0x5
 #define INTERRUPT_GATE16 	0x6

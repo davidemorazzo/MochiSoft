@@ -8,20 +8,12 @@ Informazioni principali prese da https://wiki.osdev.org/Serial_Ports
 #include <stddef.h>
 #include <stdint.h> 
 
-class uart_driver
-{
-public:
-    uart_driver(){uart_driver(0x3f8);};
-    uart_driver(unsigned short dev_address);
+#define UART0 0x3f8
 
-    char read_byte();
-    void write_byte(char c);
-    uint8_t read_reg(size_t offset);
-    int is_byte_received();
-    
-private:
-    int is_tx_empty();
-    unsigned short device_address;
-};
+
+void uart_setup(unsigned short port);
+char uart_read(unsigned short port);
+void uart_write(unsigned short port, char c);
+uint8_t uart_read_reg(unsigned short port, size_t offset);
 
 #endif

@@ -2,15 +2,17 @@
 #include <stdint.h>
 #include <stddef.h>
 
-#include "string.h"
 
 #include "kernel/gdt.h"
 #include "kernel/idt.h"
-#include "kernel/PIC-8259.h"
-#include "kernel/microcode.h"
-#include "kernel/logging.h"
-#include "kernel/exceptions.h"
+extern "C"{
+    #include "kernel/microcode.h"
+    #include "string.h"
+    #include "kernel/PIC-8259.h"
+    #include "kernel/tty.h"
+}
 #include "kernel/kstdio.h"
+#include "kernel/exceptions.h"
 
 #if defined (__linux__)
 //#error "Your are not using a cross compiler. This will cause problems"
@@ -20,7 +22,7 @@
 //#error "ix86-elf compiler is needed"
 #endif
 
-terminal *global_logger;
+unsigned short stdout_port = UART0;
 IDT *global_IDT;
 
 /* Funzione di entry point del kernel, richiamata con lo stesso nome
@@ -30,7 +32,7 @@ extern "C"{
 
 void uart_isr(){
     __asm__("pushal");
-    global_logger->uart_ISR();
+    serial_ISR(stdout_port);
     PIC_sendEOI(4);
     __asm__("popal; leave; iret");
 }
@@ -70,8 +72,7 @@ void kernel_main (void){
     PIC_remap(33, 33+8);
     
     /*Setup logger del kernel*/
-    terminal uart_term;
-    global_logger = &uart_term;
+    serial_init(stdout_port);
     /*Set UART interrupt routine*/
     InterruptDescriptor32 uartIsrDesc;
     uartIsrDesc.type_attributes = 0x8E;
@@ -82,18 +83,18 @@ void kernel_main (void){
     IRQ_clear_mask(4);
 
     /*Boot Welcome text*/
-    uart_term.writestring("MochiSoft Inc. (R) 2024\n\nWelcome in MochiSoft OS!\n\n");
+    serial_writestring(stdout_port,"MochiSoft Inc. (R) 2024\n\nWelcome in MochiSoft OS!\n\n");
 
     if (GDTR.check_gdt()){
-        uart_term.writestring("<INFO> GDTR content consistent\n");
+        serial_writestring(stdout_port,"<INFO> GDTR content consistent\n");
     }else{
-        uart_term.writestring("<WARNING> GDTR content NOT CONSISTENT!\n");
+        serial_writestring(stdout_port,"<WARNING> GDTR content NOT CONSISTENT!\n");
     }
 
     if (IDTR.check_idt()){
-        uart_term.writestring("<INFO> IDTR content consistent\n");
+        serial_writestring(stdout_port,"<INFO> IDTR content consistent\n");
     }else{
-        uart_term.writestring("<WARNING> IDTR content NOT CONSISTENT!\n");
+        serial_writestring(stdout_port,"<WARNING> IDTR content NOT CONSISTENT!\n");
     }
 
     uint32_t x = 0xC1A0;

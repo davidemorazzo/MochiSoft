@@ -21,11 +21,11 @@ struct xDTR{
 
 void lgdt(void* base, uint16_t size);
 
-xDTR sgdt();
+struct xDTR sgdt();
 
 void lidt(void* base, uint16_t size);
 
-xDTR sidt();
+struct xDTR sidt();
 
 void interrupt(uint8_t irq);
 

@@ -1,5 +1,7 @@
 #include "kernel/idt.h"
+extern "C"{
 #include "kernel/microcode.h"
+}
 
 IDT::IDT()
 {

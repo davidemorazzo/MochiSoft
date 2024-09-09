@@ -16,9 +16,9 @@ include_directories(${libc_SOURCE_DIR}/include )
 enable_language(ASM-ATT)
 
 set (arch_i386_src 
-${PROJECT_SOURCE_DIR}/arch/i386/microcode.cpp
-${PROJECT_SOURCE_DIR}/arch/i386/tty.cpp
-${PROJECT_SOURCE_DIR}/arch/i386/uart.cpp
+${PROJECT_SOURCE_DIR}/arch/i386/microcode.c
+${PROJECT_SOURCE_DIR}/arch/i386/tty.c
+${PROJECT_SOURCE_DIR}/arch/i386/uart.c
 ${PROJECT_SOURCE_DIR}/arch/i386/gdt.cpp
 ${PROJECT_SOURCE_DIR}/arch/i386/idt.cpp
 # ${PROJECT_SOURCE_DIR}/arch/i386/PIC-8259.c

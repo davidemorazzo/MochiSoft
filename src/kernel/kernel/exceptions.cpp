@@ -2,11 +2,11 @@
 #include "kernel/logging.h" 
 
 void isr00 (){
-    global_logger->writestring("<Exception 0x00> Division by zero\n");
+    // global_logger->writestring("<Exception 0x00> Division by zero\n");
 }
 
 void isr01 (){
-    global_logger->writestring("<Exception 0x01> Debug\n");
+    // global_logger->writestring("<Exception 0x01> Debug\n");
 }
 
 void setup_exc_it(){
