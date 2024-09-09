@@ -33,8 +33,8 @@ void lgdt(void* base, uint16_t size){
     asm ( "lgdt %0" : : "m"(GDTR) );  // let the compiler choose an addressing mode
 }
 
-struct xDTR sgdt(){
-    struct xDTR this_gdtr;	
+xDTR sgdt(){
+    xDTR this_gdtr;	
 	asm ("sgdt %0" : "=m"(this_gdtr) : );
 	return this_gdtr;
 }
@@ -48,8 +48,8 @@ void lidt(void* base, uint16_t size){
     asm ( "lidt %0" : : "m"(IDTR) );  // let the compiler choose an addressing mode
 }
 
-struct xDTR sidt(){
-    struct xDTR this_idtr;	
+xDTR sidt(){
+    xDTR this_idtr;	
 	asm ("sidt %0" : "=m"(this_idtr) : );
 	return this_idtr;
 }

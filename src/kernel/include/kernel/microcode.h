@@ -14,18 +14,18 @@ void disable_it();
 
 void enable_it();
 
-struct xDTR{
+typedef struct{
 	uint16_t length;	/*Length of table in bytes*/
-	void* base; 		/*32-bit address*/
-}__attribute__((packed));
+	uint32_t* base; 		/*32-bit address*/
+}__attribute__((packed)) xDTR;
 
 void lgdt(void* base, uint16_t size);
 
-struct xDTR sgdt();
+xDTR sgdt();
 
 void lidt(void* base, uint16_t size);
 
-struct xDTR sidt();
+xDTR sidt();
 
 void interrupt(uint8_t irq);
 

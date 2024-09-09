@@ -69,11 +69,11 @@ void GDT::load_gdt()
 	enable_it();
 }
 
-char GDT::check_gdt()
-{
-	xDTR gdtr = sgdt();
-	return (gdtr.base == &this->base);
-}
+// char GDT::check_gdt()
+// {
+// 	xDTR gdtr = sgdt();
+// 	return (gdtr.base == this->base);
+// }
 
 char GDT::add_entry(GDT_descriptor descriptor)
 {
