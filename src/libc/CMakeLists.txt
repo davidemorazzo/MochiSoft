@@ -11,8 +11,8 @@ project(libc)
 MESSAGE(STATUS "Building libc")
 
 include_directories(include)
-SET(CMAKE_CXX_FLAGS "-ffreestanding -O2 -Wall -Wextra -fno-exceptions -fno-rtti -g")
-SET(CMAKE_C_FLAGS "-ffreestanding -O2 -Wall -Wextra -fno-exceptions -g")
+SET(CMAKE_CXX_FLAGS "-ffreestanding -O0 -Wall -Wextra -fno-exceptions -fno-rtti -g")
+SET(CMAKE_C_FLAGS "-ffreestanding -O0 -Wall -Wextra -fno-exceptions -g")
 
 set (libc_src
         ${PROJECT_SOURCE_DIR}/string/strlen.c
@@ -20,6 +20,7 @@ set (libc_src
         ${PROJECT_SOURCE_DIR}/string/i32tobin.c
         ${PROJECT_SOURCE_DIR}/string/bytetohex.c
         ${PROJECT_SOURCE_DIR}/string/strcpy.c
+        ${PROJECT_SOURCE_DIR}/string/itoa.c
 )
 
 add_library(libc SHARED OBJECT ${libc_src})

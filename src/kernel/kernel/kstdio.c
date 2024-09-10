@@ -21,15 +21,21 @@ void kprint(const char * format, ...){
             // Placeholder found and not last iteration
             switch (format[i+1])
             {
-            case 'X':
+            case 'X': /*Print hex*/
                 i32tohex(*va_arg(argptr, uint32_t*), placeholder);
+                break;
+            case 'd': /*Print integer*/
+                itoa(*va_arg(argptr,int*), placeholder);
+                break;
+            case 's': /*Print string*/
+                strcpy(va_arg(argptr, char*), placeholder);
                 break;
             default:
                 i--;
                 break;
             }
             // get_placeholder(placeholder, format[i+1], argptr);
-            strcpy(placeholder, &out_buffer[strlen(out_buffer)], strlen(placeholder));
+            strcpy(placeholder, &out_buffer[strlen(out_buffer)]);
             i++;
         }else{
             // No placeholder. Append char to output buffer
