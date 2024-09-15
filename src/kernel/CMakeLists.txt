@@ -29,6 +29,7 @@ set (kernel_src
         ${PROJECT_SOURCE_DIR}/kernel/exceptions.c
         ${PROJECT_SOURCE_DIR}/kernel/kstdio.c
         ${PROJECT_SOURCE_DIR}/kernel/ISR/exc_isr_wrapper.s
+        ${PROJECT_SOURCE_DIR}/kernel/memory/waterMarkAllocator.c
 )
 
 set (bootloader_src

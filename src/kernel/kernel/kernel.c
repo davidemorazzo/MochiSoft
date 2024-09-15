@@ -11,10 +11,13 @@
 #include "kernel/tty.h"
 #include "kernel/kstdio.h"
 #include "kernel/exceptions.h"
+#include "kernel/kheap.h"
 
 
 uint64_t global_IDT[255] = {0};
 uint64_t global_GDT[50] = {0};
+#define KHEAP_SIZE 1048576
+void *kheap[KHEAP_SIZE];
 
 /* Funzione di entry point del kernel, richiamata con lo stesso nome
 nel bootloader (src/bootloader/boot.s)*/
