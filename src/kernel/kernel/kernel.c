@@ -16,8 +16,12 @@
 
 uint64_t global_IDT[255] = {0};
 uint64_t global_GDT[50] = {0};
-#define KHEAP_SIZE 1048576
+/*Heap stuff*/
+// #define KHEAP_SIZE 524288000
+#define KHEAP_SIZE 1024*1024*10
+
 void *kheap[KHEAP_SIZE];
+// _kAllocStatus kHeapStatus;
 
 /* Funzione di entry point del kernel, richiamata con lo stesso nome
 nel bootloader (src/bootloader/boot.s)*/
@@ -48,6 +52,22 @@ void kernel_main (void){
     GDTR.base=global_GDT;
     GDTR.length=3*8-1;
     gdt_load(GDTR);
+
+    /* ===== SETUP HEAP ====== */
+    _kAllocStatus* kHeapStatus = _setupHeap(kheap, KHEAP_SIZE);
+    char * array0, *array1;
+    array0 = kmalloc(5*sizeof(char));
+    array1 = kmalloc(5*sizeof(char));
+    array0[0] = 0xFF;
+    array1[0] = 0xFF;
+    array0[1] = 0xFF;
+    array1[1] = 0xFF;
+    array0[4] = 0xFF;
+    array1[4] = 0xFF;
+    kfree(array0, 5*sizeof(char));
+    kfree(array1, 5*sizeof(char));
+    
+
     /* ===== INTERRUPT DESCRIPTOR TABLE ====== */
     xDTR IDTR;
     IDTR.base = global_IDT;
