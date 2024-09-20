@@ -9,7 +9,8 @@ Implementazione per allocazione dinamica di memoria nel kernel
 #include <stddef.h>
 
 void *kmalloc(size_t size);
-void kfree (void *ptr, size_t size);
+#define kfree(ptr) _kfree(ptr, sizeof(ptr)); 
+void _kfree (void *ptr, size_t size);
 
 /*Initialize array of num elements of specified size
 and set elements to zero. If succeed return pointer of array.*/
@@ -17,9 +18,10 @@ void calloc(size_t num, size_t size);
 
 typedef struct __kFreeChunk{
 	char status[8];
-	size_t size;
-	struct __kFreeChunk *prevChunk;
-	struct __kFreeChunk *nextChunk;
+	void *start;					// Pointer to freed memory start
+	size_t size;					// Size of freed memory
+	struct __kFreeChunk *prevChunk;	// Double linked list to other chunks
+	struct __kFreeChunk *nextChunk; // Double linked list to other chunks
 } _kFreeChunk;
 
 typedef struct {
@@ -31,5 +33,6 @@ typedef struct {
 /*base is the heap memory region start, size in bytes of the heap
 memory region.*/
 _kAllocStatus* _setupHeap(void *base, size_t size);
+
 
 #endif

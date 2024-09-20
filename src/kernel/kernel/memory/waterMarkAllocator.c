@@ -38,35 +38,59 @@ void *kmalloc(size_t size){
 	}
 }
 
-void kfree (void *ptr, size_t size){
-	if(ptr > _heapStatus->freeTop ){
-		return;
-	}
+void _kfree (void *ptr, size_t size){
+	// if(ptr > _heapStatus->freeTop ){
+	// 	return;
+	// }
 
-	_kFreeChunk *chunk = kmalloc(sizeof(_kFreeChunk));
-	strcpy("F R E E", chunk->status);
-	chunk->size = size;
-	chunk->nextChunk = NULL;
+	// _kFreeChunk *chunk = kmalloc(sizeof(_kFreeChunk));
+	// strcpy("F R E E", chunk->status);
+    // chunk->start = ptr;
+	// chunk->size = size;
+	// chunk->nextChunk = NULL;
 
-	if(_heapStatus->freeChunk == NULL)
-	{
-		/*First free. Setup Chunk list head */
-		chunk->prevChunk = NULL;
-		_heapStatus->freeChunk = chunk;
-	}
-	else
-	{
-		// TODO: inserire nuovo oggetto nella lista in ordine
-		// secondo il puntatore liberato.
-		_kFreeChunk *c = _heapStatus->freeChunk;
-		while (c->nextChunk!=NULL){
-			c = c->nextChunk;
-		}
-		c->nextChunk = chunk;
-		chunk->prevChunk = c;
-	}
+	// if(_heapStatus->freeChunk == NULL)
+	// {
+	// 	/*First free. Setup Chunk list head */
+	// 	chunk->prevChunk = NULL;
+	// 	_heapStatus->freeChunk = chunk;
+	// }
+	// else
+	// {
+	// 	// TODO: inserire nuovo oggetto nella lista in ordine
+	// 	// secondo il puntatore liberato.
+	// 	_kFreeChunk *c = _heapStatus->freeChunk;
+	// 	while (c->nextChunk!=NULL){
+	// 		c = c->nextChunk;
+	// 	}
+	// 	c->nextChunk = chunk;
+	// 	chunk->prevChunk = c;
+	// }
 }
 
 void mergeChunks(_kFreeChunk *head){
+    _kFreeChunk *thisChunk = head;
+    /* Iterate on the linked list */
+    while (thisChunk->nextChunk != NULL){
+        if ((thisChunk->start + thisChunk->size) == (thisChunk->nextChunk->start-1)){
+            // Two consecutives chunks can be merged. Do not iterate next cycle to see if
+            // this chunk can be merged again
+            mergeNextChunk(thisChunk);
+        }else{
+            thisChunk = thisChunk->nextChunk;
+        }
+    }
+}
 
+void mergeNextChunk(_kFreeChunk *thisChunk){
+    _kFreeChunk *next = thisChunk->nextChunk;
+    // Remove next from list and relink the list
+    thisChunk->nextChunk = next->nextChunk;
+    next->nextChunk->prevChunk = thisChunk;
+
+    // Calculate new chunk size
+    thisChunk->size += next->size;
+
+    // Free next chunk heap
+    kfree(next);
 }
