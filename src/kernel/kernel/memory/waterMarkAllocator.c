@@ -68,6 +68,19 @@ void _kfree (void *ptr, size_t size){
 	// }
 }
 
+void mergeNextChunk(_kFreeChunk *thisChunk){
+    _kFreeChunk *next = thisChunk->nextChunk;
+    // Remove next from list and relink the list
+    thisChunk->nextChunk = next->nextChunk;
+    next->nextChunk->prevChunk = thisChunk;
+
+    // Calculate new chunk size
+    thisChunk->size += next->size;
+
+    // Free next chunk heap
+    kfree(next);
+}
+
 void mergeChunks(_kFreeChunk *head){
     _kFreeChunk *thisChunk = head;
     /* Iterate on the linked list */
@@ -80,17 +93,4 @@ void mergeChunks(_kFreeChunk *head){
             thisChunk = thisChunk->nextChunk;
         }
     }
-}
-
-void mergeNextChunk(_kFreeChunk *thisChunk){
-    _kFreeChunk *next = thisChunk->nextChunk;
-    // Remove next from list and relink the list
-    thisChunk->nextChunk = next->nextChunk;
-    next->nextChunk->prevChunk = thisChunk;
-
-    // Calculate new chunk size
-    thisChunk->size += next->size;
-
-    // Free next chunk heap
-    kfree(next);
 }

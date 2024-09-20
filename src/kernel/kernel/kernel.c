@@ -12,6 +12,7 @@
 #include "kernel/kstdio.h"
 #include "kernel/exceptions.h"
 #include "kernel/kheap.h"
+#include "dev/RTC.h"
 
 
 uint64_t global_IDT[255] = {0};
@@ -64,8 +65,8 @@ void kernel_main (void){
     array1[1] = 0xFF;
     array0[4] = 0xFF;
     array1[4] = 0xFF;
-    kfree(array0, 5*sizeof(char));
-    kfree(array1, 5*sizeof(char));
+    _kfree(array0, 5*sizeof(char));
+    _kfree(array1, 5*sizeof(char));
     
 
     /* ===== INTERRUPT DESCRIPTOR TABLE ====== */
@@ -117,11 +118,19 @@ void kernel_main (void){
         kprint("IDTR content NOT CONSISTENT!\n");
     }
 
+    //Setup RTC
+    outb(0x70, 0x8A);
+    while(1){
+        while(rtc_update_in_prog());
+        int s = (int) rtc_second();
+        s = ((s / 16) * 10) + (s & 0xf);
+        int m = (int) rtc_minute();
+        m = ((m / 16) * 10) + (m & 0xf);
+        int h = (int) rtc_hour();
+        h = ((h / 16) * 10) + (h & 0xf);
+        kprint("Time => %d:%d:%d\n", &h, &m, &s);
 
-    // asm("div %edx");
-    asm("int $0");
-    asm("int $1");
-
-    while(1){}
+        for (int f=0;f<300000000;f++){}
+    }
     // Kernel function is exiting here
 }
