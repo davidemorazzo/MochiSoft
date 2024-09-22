@@ -2,6 +2,7 @@
 #define INCLUDE_DEV_RTC_H 1
 
 #include <stdint.h>
+#include "time.h"
 
 #define RTC_DATA 0X71
 #define RTC_ADDRESS 0x70
@@ -19,5 +20,7 @@
 
 uint8_t rtc_update_in_prog();
 uint8_t rtc_get_reg(uint8_t reg);
+
+void rtc_get_time(struct tm * timeptr);
 
 #endif

@@ -21,6 +21,9 @@ set (libc_src
         ${PROJECT_SOURCE_DIR}/string/bytetohex.c
         ${PROJECT_SOURCE_DIR}/string/strcpy.c
         ${PROJECT_SOURCE_DIR}/string/itoa.c
+
+        ${PROJECT_SOURCE_DIR}/time/mktime.c
+        ${PROJECT_SOURCE_DIR}/time/asctime.c
 )
 
 add_library(libc SHARED OBJECT ${libc_src})

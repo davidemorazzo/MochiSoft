@@ -1,8 +1,8 @@
 /* Davide Morazzo - Settembre 2024 
 replica la libreria standard ctime */
 
-#ifndef INCLUDE_KERNEL_KTIME_H
-#define INCLUDE_KERNEL_KTIME_H 1
+#ifndef INCLUDE_TIME_H
+#define INCLUDE_TIME_H 1
 
 struct tm {
     int tm_sec;     // seconds after the minute	    0-60*
@@ -16,10 +16,11 @@ struct tm {
     int tm_isdst;   // Daylight Saving Time flag	
 };
 
-int typedef time_t;
+typedef long int time_t;
 
-time_t ktime (time_t* timer);
+time_t time (time_t* timer);
 time_t mktime(struct tm *timeptr);
+char *asctime(const struct tm *timeptr);
 struct tm * gmtime(const time_t * timer);
 
 #endif
