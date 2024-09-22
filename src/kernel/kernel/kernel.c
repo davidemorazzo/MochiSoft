@@ -122,11 +122,11 @@ void kernel_main (void){
     outb(0x70, 0x8A);
     while(1){
         while(rtc_update_in_prog());
-        int s = (int) rtc_second();
+        int s = (int) rtc_get_reg(RTC_REG_sec);
         s = ((s / 16) * 10) + (s & 0xf);
-        int m = (int) rtc_minute();
+        int m = (int) rtc_get_reg(RTC_REG_min);
         m = ((m / 16) * 10) + (m & 0xf);
-        int h = (int) rtc_hour();
+        int h = (int) rtc_get_reg(RTC_REG_hour);
         h = ((h / 16) * 10) + (h & 0xf);
         kprint("Time => %d:%d:%d\n", &h, &m, &s);
 
