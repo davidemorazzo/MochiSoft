@@ -12,4 +12,5 @@ void strcpy(char * source, char * dest){
     for(size_t i=0; i<size; i++){
         dest[i] = source[i];
     }
+    dest[size] = '\0';
 }

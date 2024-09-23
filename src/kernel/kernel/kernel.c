@@ -125,9 +125,10 @@ void kernel_main (void){
     outb(0x70, 0x8A);
     while(1){
         rtc_get_time(&now);
-        time_t t = mktime(&now);
+        // time_t t = mktime(&now);
+        kprint("%s\n", asctime(&now));
 
-        for (int f=0;f<10000000;f++){}
+        for (int f=0;f<300000000;f++){}
     }
     // Kernel function is exiting here
 }

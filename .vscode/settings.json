@@ -41,6 +41,7 @@
 		"exceptions.h": "c",
 		"microcode.h": "c",
 		"pic-8259.h": "c",
-		"kstdio.h": "c"
+		"kstdio.h": "c",
+		"tty.h": "c"
 	}
 }
