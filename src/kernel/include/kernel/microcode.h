@@ -14,10 +14,10 @@ void disable_it();
 
 void enable_it();
 
-struct xDTR{
+typedef struct{
 	uint16_t length;	/*Length of table in bytes*/
-	void* base; 		/*32-bit address*/
-}__attribute__((packed));
+	uint64_t* base; 		/*32-bit address*/
+}__attribute__((packed)) xDTR;
 
 void lgdt(void* base, uint16_t size);
 

@@ -3,7 +3,7 @@
 #define INCLUDE_KERNEL_IDT_H 1
 
 #include <stdint.h>
-#include <kernel/microcode.h>
+#include "kernel/microcode.h"
 
 #define TASK_GATE 			0x5
 #define INTERRUPT_GATE16 	0x6
@@ -15,27 +15,28 @@
 #define DPL1				0x1
 #define DPL2				0x2
 #define DPL3				0x3
-				
 
 
-struct InterruptDescriptor32 {
-   uint16_t offset_1 = 0;        // offset bits 0..15
-   uint16_t selector = 0;        // a code segment selector in GDT or LDT
-   uint8_t  zero = 0;            // unused, set to 0
-   uint8_t  type_attributes = 0; // gate type, dpl, and p fields
-   uint16_t offset_2 = 0;        // offset bits 16..31
-}__attribute__((packed));
+typedef struct {
+   uint16_t offset_1;        // offset bits 0..15
+   uint16_t selector;        // a code segment selector in GDT or LDT
+   uint8_t  zero;            // unused, set to 0
+   uint8_t  type_attributes; // gate type, dpl, and p fields
+   uint16_t offset_2;        // offset bits 16..31
+}__attribute__((packed)) InterruptDescriptor32;
 
-class IDT {
-public:
-	IDT();
-	void load_idt();
-	char add_entry(InterruptDescriptor32 descriptor, uint8_t index);
-	InterruptDescriptor32 generate_descriptor (void func(), uint8_t type, uint16_t segment_sel);
-	char check_idt();
-private:
-	uint64_t base[256];
-	uint16_t size=256*8; /*one less than the size of base in bytes*/
-};
+
+#define SET_IT_VEC(desc, func, idx)                         \
+    desc.zero=0;                                            \
+    desc.type_attributes = 0x8E;                            \
+    desc.offset_1 = ((uint32_t) func) & 0xFFFF;             \
+	desc.offset_2 = (((uint32_t) func) >> 16) & 0xFFFF;     \
+    desc.selector = 0x8; /*RPL=0;TI=0;segment_index=1*/     \
+    global_IDT[idx] = (*(uint64_t*) &desc)
+
+void load_idt(xDTR idt);
+char check_idt(xDTR idt);
+extern uint64_t global_IDT[255];
+
 
 #endif

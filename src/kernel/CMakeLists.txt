@@ -16,18 +16,21 @@ include_directories(${libc_SOURCE_DIR}/include )
 enable_language(ASM-ATT)
 
 set (arch_i386_src 
-${PROJECT_SOURCE_DIR}/arch/i386/microcode.cpp
-${PROJECT_SOURCE_DIR}/arch/i386/tty.cpp
-${PROJECT_SOURCE_DIR}/arch/i386/uart.cpp
-${PROJECT_SOURCE_DIR}/arch/i386/gdt.cpp
-${PROJECT_SOURCE_DIR}/arch/i386/idt.cpp
+${PROJECT_SOURCE_DIR}/arch/i386/microcode.c
+${PROJECT_SOURCE_DIR}/arch/i386/tty.c
+${PROJECT_SOURCE_DIR}/arch/i386/uart.c
+${PROJECT_SOURCE_DIR}/arch/i386/gdt.c
+${PROJECT_SOURCE_DIR}/arch/i386/idt.c
 # ${PROJECT_SOURCE_DIR}/arch/i386/PIC-8259.c
 )
 
 set (kernel_src
-        ${PROJECT_SOURCE_DIR}/kernel/kernel.cpp
-        ${PROJECT_SOURCE_DIR}/kernel/core.cpp
-        ${PROJECT_SOURCE_DIR}/kernel/ISR/isr_wrapper.s
+        ${PROJECT_SOURCE_DIR}/kernel/kernel.c
+        ${PROJECT_SOURCE_DIR}/kernel/exceptions.c
+        ${PROJECT_SOURCE_DIR}/kernel/kstdio.c
+        ${PROJECT_SOURCE_DIR}/kernel/ISR/exc_isr_wrapper.s
+        ${PROJECT_SOURCE_DIR}/kernel/memory/waterMarkAllocator.c
+        ${PROJECT_SOURCE_DIR}/kernel/dev/RTC.c
 
 )
 
@@ -42,6 +45,7 @@ add_library(boot SHARED OBJECT ${bootloader_src})
 
 ########### KERNEL ################
 SET(CMAKE_CXX_FLAGS "-ffreestanding -O0 -Wall -Wextra -fno-exceptions -fno-rtti -g")
+SET(CMAKE_C_FLAGS "-ffreestanding -O0 -Wall -Wextra -g")
 #target_compile_options(-ffreestanding -O2 -Wall -Wextra -fno-exceptions -fnortti)
 
 add_library(kernel SHARED OBJECT ${arch_i386_src} ${kernel_src})
