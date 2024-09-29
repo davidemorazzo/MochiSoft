@@ -6,21 +6,86 @@
 .set CHECKSUM, -(MAGIC + FLAGS)
 
 /* Multiboot header */
-.section .multiboot
+.section .multiboot.data, "aw"
 .align 4
 .long MAGIC
 .long FLAGS
 .long CHECKSUM
 
+// Initial stack
+// .section .bootstrap_stack, "aw", @nobits
+// stack_bottom:
+// .skip 16384 #16 16KiB
+// stack_top:
+
+/* Allocate tables for paging */
+.section .bss, "aw", @nobits
+    .align 4096
+boot_page_directory:
+    .skip 4096
+boot_page_table1:
+    .skip 4096
+
 /* Entry point of the kernel in _start */
-.section .text
+.section .multiboot.text, "a"
 .global _start
 .type _start, @function
 _start:
-    mov $__stack_top, %esp #initialization of the stack pointer to the top of the stack (grows downward)
-    /* TODO Altre cose fare per cose più avanzate, GDT, paging ... */
-    call kernel_main
+    // mov $__stack_top, %esp #initialization of the stack pointer to the top of the stack (grows downward)
+    // /* TODO Altre cose fare per cose più avanzate, GDT, paging ... */
+    // call kernel_main
+    // Phisical address of boot page 1
+    // %edi -> destination index reg.
+    // %esi -> source index reg.
+    // %ecx -> count register
+    movl $(boot_page_table1 - 0xC0000000), %edi
+    movl $0, %esi
+    movl $1023, %ecx  // Load count reg. to iterate 1023 times
 
+1:
+    cmpl $_kernel_start, %esi
+    jl 2f                   // if _kernel_start < ESI                   then GOTO 2
+    cmpl $(_kernel_end - 0xC0000000), %esi
+    jge 3f                  // if physical_addr(_kernel_end) >= ESI     then GOTO 3
+    // Map physical address as "present, writeable"
+    // TODO: mark .text, .rodata as non writeable.
+    movl %esi, %edx
+    orl $0x003, %edx
+    movl %edx, (%edi)
+2:
+    addl $4096, %esi    // size of page is 4096
+    addl $4, %edi       // Size of entries in page table is 4 bytes
+    loop 1b             // ECX--; GOTO 1b if ECX!=0
+3:
+    // The two page directories used are at index 0 and at index 768
+    // Map page table to both virtual addresses 0x00000000 and 0xC0000000
+    movl $(boot_page_table1 - 0xC0000000 + 0x003), boot_page_directory - 0xC0000000 + 0
+    movl $(boot_page_table1 - 0xC0000000 + 0x003), boot_page_directory - 0xC0000000 + 768 * 4
+    // Set CR3 to the physical address of the boot_page_directory
+    movl $(boot_page_directory - 0xC0000000), %ecx
+    movl %ecx, %cr3
+    // Enable paging and write-protect bits
+    movl %cr0, %ecx
+    orl $0x80010000, %ecx
+    movl %ecx, %cr0
+    // Jump to higher half kernel with absolute jump
+    lea 4f, %ecx
+    jmp *%ecx
+
+.section .text
+4:
+    movl $0, boot_page_directory + 0 // unmap identity mapping of kernel
+    movl %cr3, %ecx
+    movl %ecx, %cr3 // Reload CR3 to force TLB flush 
+    // initialization of the stack pointer to the top of the stack (grows downward)
+    // mov $stack_top, %esp
+    mov $__stack_top, %esp
+    
+    /*  ----------------------------- */
+    /* |  MAIN KERNEL ENTRY-POINT   | */
+    /* ----------------------------- */
+    call kernel_main
+    
     /* Nothing more to do. Setup infinite loop */
     cli #disable interrupts
 1:  hlt
@@ -31,4 +96,4 @@ Set the size of the _start symbol to the current location '.' minus its start.
 This is useful when debugging or when you implement call tracing.
 */
 
-.size _start, . - _start
+// .size _start, . - _start
