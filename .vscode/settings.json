@@ -42,6 +42,7 @@
 		"microcode.h": "c",
 		"pic-8259.h": "c",
 		"kstdio.h": "c",
-		"tty.h": "c"
+		"tty.h": "c",
+		"rtc.h": "c"
 	}
 }

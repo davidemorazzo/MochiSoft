@@ -17,4 +17,5 @@ void setup_exc_it(){
     InterruptDescriptor32 desc;
     SET_IT_VEC(desc, isr_0x00_wrapper, 0x00);
     SET_IT_VEC(desc, isr_0x01_wrapper, 0x01);
+    SET_IT_VEC(desc, isr_0x80_wrapper, 0x80);
 }
