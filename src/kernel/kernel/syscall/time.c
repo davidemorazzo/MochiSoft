@@ -9,7 +9,7 @@ time_t time(time_t *tloc){
 	rtc_get_time(&timeptr);
 	time_t t = mktime(&timeptr);
 	if (tloc != NULL){
-		tloc = t;
+		*tloc = t;
 	}
 	return t;
 }

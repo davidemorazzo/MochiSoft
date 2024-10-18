@@ -123,10 +123,20 @@ void kernel_main (void){
 
     //Setup RTC
     outb(0x70, 0x8A);
+
+    // System call 201 (time)
+
     while(1){
-        rtc_get_time(&now);
-        // time_t t = mktime(&now);
-        kprint("%s\n", asctime(&now));
+        time_t test_time, t_eax;
+        int timeptr = (int)(void *)&test_time; 
+        __asm__("mov $202, %%eax\n\t"
+                // "mov %1, %%ebx\n\t"
+                "int $0x80\n\t"
+                "mov %%eax, %0"
+            : "=m" (t_eax)
+            : "m" (timeptr));
+
+        kprint("Syscall result: %d\n", &test_time);
 
         for (int f=0;f<300000000;f++){}
     }

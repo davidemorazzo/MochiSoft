@@ -2,6 +2,7 @@
 #include "kernel/idt.h"
 // #include "kernel/tty.h"
 #include "kernel/kstdio.h"
+#include "kernel/syscall.h"
 
 void isr00 (){
     // serial_writestring(STDIO_PORT, "<Exception 0x00> Division by zero\n");

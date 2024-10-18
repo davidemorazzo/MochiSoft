@@ -29,9 +29,11 @@ set (kernel_src
         ${PROJECT_SOURCE_DIR}/kernel/exceptions.c
         ${PROJECT_SOURCE_DIR}/kernel/kstdio.c
         ${PROJECT_SOURCE_DIR}/kernel/ISR/exc_isr_wrapper.s
+        ${PROJECT_SOURCE_DIR}/kernel/ISR/syscall_0x80.c
+        ${PROJECT_SOURCE_DIR}/kernel/ISR/system_calls.s
         ${PROJECT_SOURCE_DIR}/kernel/memory/waterMarkAllocator.c
         ${PROJECT_SOURCE_DIR}/kernel/dev/RTC.c
-
+        ${PROJECT_SOURCE_DIR}/kernel/syscall/time.c
 )
 
 set (bootloader_src
