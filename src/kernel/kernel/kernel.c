@@ -13,6 +13,9 @@
 #include "kernel/exceptions.h"
 #include "kernel/kheap.h"
 #include "dev/RTC.h"
+#include "kernel/syscall.h"
+
+#include "time.h"
 
 
 uint64_t global_IDT[255] = {0};
@@ -127,18 +130,11 @@ void kernel_main (void){
     // System call 201 (time)
 
     while(1){
-        time_t test_time, t_eax;
-        int timeptr = (int)(void *)&test_time; 
-        __asm__("mov $202, %%eax\n\t"
-                // "mov %1, %%ebx\n\t"
-                "int $0x80\n\t"
-                "mov %%eax, %0"
-            : "=m" (t_eax)
-            : "m" (timeptr));
-
-        kprint("Syscall result: %d\n", &test_time);
-
-        for (int f=0;f<300000000;f++){}
+        time_t now;
+        time(&now);
+        kprint("Syscall: %d\n", &now);
+        // for (int f=0;f<3000000;f++){}
+        // kprint("End of while\n");
     }
     // Kernel function is exiting here
 }

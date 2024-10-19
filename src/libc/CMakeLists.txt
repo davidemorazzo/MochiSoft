@@ -26,6 +26,7 @@ set (libc_src
         # time.h
         ${PROJECT_SOURCE_DIR}/time/mktime.c
         ${PROJECT_SOURCE_DIR}/time/asctime.c
+        ${PROJECT_SOURCE_DIR}/time/time.c
 
         # stdio.h
         ${PROJECT_SOURCE_DIR}/stdio/snprintf.c

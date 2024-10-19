@@ -5,5 +5,5 @@ Implementazione di chiamate di sistema per lo user space */
 
 void isr_0x80_wrapper();
 
-time_t time(time_t *tloc);
+time_t sys_time(time_t *tloc);
 

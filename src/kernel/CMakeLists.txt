@@ -33,7 +33,7 @@ set (kernel_src
         ${PROJECT_SOURCE_DIR}/kernel/ISR/system_calls.s
         ${PROJECT_SOURCE_DIR}/kernel/memory/waterMarkAllocator.c
         ${PROJECT_SOURCE_DIR}/kernel/dev/RTC.c
-        ${PROJECT_SOURCE_DIR}/kernel/syscall/time.c
+        ${PROJECT_SOURCE_DIR}/kernel/syscall/sys_time.c
 )
 
 set (bootloader_src
