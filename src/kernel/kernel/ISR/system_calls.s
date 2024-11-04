@@ -5,7 +5,7 @@
 .globl isr_0x80_wrapper
 
 retval:
-	.long 
+	.quad 0 
 
 
 isr_0x80_wrapper:
