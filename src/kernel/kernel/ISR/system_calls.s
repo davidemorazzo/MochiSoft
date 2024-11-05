@@ -4,8 +4,10 @@
 
 .globl isr_0x80_wrapper
 
+.section .data
+.align 4
 retval:
-	.quad 0 
+	.long 0  
 
 
 isr_0x80_wrapper:
@@ -21,14 +23,7 @@ isr_0x80_wrapper:
 	push %eax
 	call syscall_handler	// Call system call handler
 	movl %eax, retval			// Syscall return value
-	// add %esp, 7			// Remove arguments from stack
-	pop %ecx
-	pop %ecx
-	pop %ecx
-	pop %ecx
-	pop %ecx
-	pop %ecx
-	pop %ecx
+	add $28, %esp			// Remove arguments from stack
 	popfl
 	popal
 	movl retval, %eax
