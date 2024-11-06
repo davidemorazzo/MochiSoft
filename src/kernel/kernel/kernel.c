@@ -41,6 +41,7 @@ void uart_isr(){
 void generic_isr(){
     __asm__("pushal");
     // uart_term_glbl->writestring("Generic Interrupt!\n");
+    kprint("Generic ISR!");
     for (int j=0; j<7; j++){
         if (j!=4) PIC_sendEOI(j);
     }
