@@ -16,7 +16,7 @@ I/O port     Usage
 #ifndef INCLUDE_DEV_8253_PIT
 #define INCLUDE_DEV_8253_PIT 1
 
-
+#include <stdint.h>
 
 #define PIT_CH0_DATA 0x40
 #define PIT_CH1_DATA 0x41

@@ -21,7 +21,8 @@ ${PROJECT_SOURCE_DIR}/arch/i386/tty.c
 ${PROJECT_SOURCE_DIR}/arch/i386/uart.c
 ${PROJECT_SOURCE_DIR}/arch/i386/gdt.c
 ${PROJECT_SOURCE_DIR}/arch/i386/idt.c
-# ${PROJECT_SOURCE_DIR}/arch/i386/PIC-8259.c
+${PROJECT_SOURCE_DIR}/arch/i386/8259/PIC-8259.c
+${PROJECT_SOURCE_DIR}/arch/i386/8253/PIT.c
 )
 
 set (kernel_src
