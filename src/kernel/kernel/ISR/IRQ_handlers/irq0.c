@@ -16,11 +16,11 @@ void irq0(){
     // kprint("IRQ0!\n ISR: 0x%X \n IRR: 0x%X\n", &isr_reg, &irr_reg);
     count_tmp++;
     struct tm now;
-    rtc_get_time(&now);
-    uint64_t t = (uint64_t)mktime(&now);
+    // rtc_get_time(&now);
+    // uint64_t t = (uint64_t)mktime(&now);
     if (count_tmp >=100){
         count_tmp = 0;
-        kprint("<%s> IRQ#0\n", asctime(&now));
+        // kprint("<%s> IRQ#0\n", asctime(&now));
     }
     PIC_sendEOI(0);
 }

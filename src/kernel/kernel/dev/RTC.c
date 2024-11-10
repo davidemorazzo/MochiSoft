@@ -12,7 +12,8 @@ uint8_t rtc_update_in_prog()
 
 uint8_t rtc_get_reg(uint8_t reg)
 {
-    outb(RTC_ADDRESS, reg);
+    // Disable NMI and select register
+    outb(RTC_ADDRESS, 0x80 | reg);
     return inb(RTC_DATA);
 }
 
