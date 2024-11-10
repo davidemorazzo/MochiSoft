@@ -7,14 +7,12 @@
 #include "kernel/gdt.h"
 #include "kernel/idt.h"
 #include "kernel/microcode.h"
-#include "kernel/PIC-8259.h"
 #include "kernel/tty.h"
 #include "kernel/kstdio.h"
 #include "kernel/exceptions.h"
 #include "kernel/kheap.h"
 #include "dev/RTC.h"
 
-extern void init_devs();
 
 uint64_t global_IDT[255] = {0};
 uint64_t global_GDT[50] = {0};
@@ -31,13 +29,6 @@ nel bootloader (src/bootloader/boot.s)*/
 
 void generic_isr(){
     __asm__("pushal");
-    // uart_term_glbl->writestring("Generic Interrupt!\n");
-    uint32_t isr_reg = pic_get_isr();
-    uint32_t irr_reg = pic_get_irr();
-    // kprint("Generic ISR!\n ISR: 0x%X \n IRR: 0x%X\n", &isr_reg, &irr_reg);
-    // kprint("Servicing IRQ#%d\n", &isr_reg);
-    PIC_sendEOI(0);
-    PIC_sendEOI(8);
     __asm__("popal; leave; iret"); /* BLACK MAGIC! */
 }
 
@@ -83,13 +74,12 @@ void kernel_main (void){
         global_IDT[k] = (*(uint64_t*) &genericIsrDesc);
     }
 
-    PIC_remap(33, 33+8);
-    
     /*Setup logger del kernel*/
     serial_init(UART0);
 
     setup_exc_it();
 
+    extern void init_devs();
     init_devs();
     enable_it();    /*Interrupt Enable Flag = 1. (EFLAGS register)*/
 
