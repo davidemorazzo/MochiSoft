@@ -29,13 +29,6 @@ void *kheap[KHEAP_SIZE];
 nel bootloader (src/bootloader/boot.s)*/
 
 
-void uart_isr(){
-    __asm__("pushal");
-    serial_ISR(STDIO_PORT);
-    PIC_sendEOI(4);
-    __asm__("popal; leave; iret");
-}
-
 void generic_isr(){
     __asm__("pushal");
     // uart_term_glbl->writestring("Generic Interrupt!\n");
@@ -93,16 +86,7 @@ void kernel_main (void){
     PIC_remap(33, 33+8);
     
     /*Setup logger del kernel*/
-    serial_init(STDIO_PORT);
-    /*Set UART interrupt routine*/
-    InterruptDescriptor32 uartIsrDesc;
-    uartIsrDesc.zero=0x0;
-    uartIsrDesc.type_attributes = 0x8E;
-    uartIsrDesc.offset_1 = ((uint32_t) uart_isr) & 0xFFFF;
-	uartIsrDesc.offset_2 = (((uint32_t) uart_isr) >> 16) & 0xFFFF;
-    uartIsrDesc.selector = 0x8; /*RPL=0;TI=0;segment_index=1*/
-    global_IDT[33+3] = (*(uint64_t*) &uartIsrDesc);
-    IRQ_clear_mask(4);
+    serial_init(UART0);
 
     setup_exc_it();
 

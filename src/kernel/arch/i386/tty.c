@@ -3,7 +3,6 @@
 #include "string.h"
 
 void serial_init(unsigned short port){
-    uart_setup(port);
     serial_clear_screen(port);
 }
 

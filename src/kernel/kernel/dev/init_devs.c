@@ -18,12 +18,18 @@ Dispositivi configurati da questa funzione:
 #include "kernel/uart.h"			// Spostare definizione in cartella dev/
 
 /* Variabili di configurazione per l'inizializzazione */
+
+/* ========================================== */
+#define UART_FOR_TTY		UART0
+/* ========================================== */
 #define PIT_INIT_MODE 		PIT_MODE_RATE_GEN
 #define PIT_INIT_FREQ_CH0 	100 //Hz 
 
 extern void irq_0x20_wrapper();
+extern void irq_0x24_wrapper();
 
 void init_devs(){
+	InterruptDescriptor32 d;
 	char it_state = read_eflags()>>9 & 0x1;
     disable_it();
 
@@ -32,11 +38,13 @@ void init_devs(){
 	/*==  Programmable Interrupt Controller  ==*/
 
 	/*================= UART ==================*/
+	uart_setup(UART_FOR_TTY);
+	IRQ_clear_mask(4);
+	SET_IT_VEC(d, irq_0x24_wrapper, 0x24);
 
 	/*====== Programmable Interrupt Timer =====*/
 	pit_init(PIT_INIT_MODE, PIT_INIT_FREQ_CH0);
 	IRQ_clear_mask(0);
-	InterruptDescriptor32 d;
 	SET_IT_VEC(d, irq_0x20_wrapper, 32);
 
 	if(it_state){

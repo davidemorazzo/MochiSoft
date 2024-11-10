@@ -6,7 +6,6 @@
 
 .globl isr_0x00_wrapper
 .globl isr_0x01_wrapper
-.globl isr_0x24_wrapper
 .align 4
 
 isr_0x00_wrapper:
@@ -21,11 +20,5 @@ isr_0x01_wrapper:
 	cld 					// ?
 	call isr01 	// C function dove viene eseguito il codice
 	popal
-	iret					// Return from an interrupt call		
-
-isr_0x24_wrapper:
-	pushal
-	cld 					// ?
-	call uart_isr 	// C function dove viene eseguito il codice
-	popal
-	iret					// Return from an interrupt call					
+	iret					// Return from an interrupt call
+		
