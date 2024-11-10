@@ -27,7 +27,7 @@ uint16_t pit_read_count(uint8_t ch_addr){
 }
 
 
-void pit_init(){
+void pit_init(uint8_t mode, uint16_t freq){
     /* PIT init */
     uint8_t init_cmd = 0x0;
     // CH0, lobyte/hibyte access, mode rate gen
@@ -35,9 +35,6 @@ void pit_init(){
     pit_send_command(init_cmd);
     uint16_t reload_value = PIT_BASE_FREQ / 100; // 100Hz for IRQ0
     pit_set_count(PIT_CH0_DATA, reload_value);
-
-    /* PIC enable IRQ0 */
-    IRQ_clear_mask(0);
 
     return;
 }

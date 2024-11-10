@@ -34,7 +34,7 @@ I/O port     Usage
 
 void pit_set_count(uint8_t ch_addr, uint16_t count);
 uint16_t pit_read_count(uint8_t ch_addr);
-void pit_init();
+void pit_init(uint8_t mode, uint16_t freq);
 void pit_send_command(uint8_t command);
 
 #endif
