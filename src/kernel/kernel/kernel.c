@@ -13,8 +13,8 @@
 #include "kernel/exceptions.h"
 #include "kernel/kheap.h"
 #include "dev/RTC.h"
-#include "dev/8253/PIT.h"
 
+extern void init_devs();
 
 uint64_t global_IDT[255] = {0};
 uint64_t global_GDT[50] = {0};
@@ -27,23 +27,7 @@ void *kheap[KHEAP_SIZE];
 
 /* Funzione di entry point del kernel, richiamata con lo stesso nome
 nel bootloader (src/bootloader/boot.s)*/
-volatile int count_tmp = 0;
-void irq0(){
-    __asm__("pushal");
-    // uint32_t isr_reg = pic_get_isr();
-    // uint32_t irr_reg = pic_get_irr();
-    // kprint("IRQ0!\n ISR: 0x%X \n IRR: 0x%X\n", &isr_reg, &irr_reg);
-    count_tmp++;
-    struct tm now;
-    rtc_get_time(&now);
-    uint64_t t = (uint64_t)mktime(&now);
-    if (count_tmp >=100){
-        count_tmp = 0;
-        kprint("<%s> IRQ#0\n", asctime(&now));
-    }
-    PIC_sendEOI(0);
-    __asm__("popal; leave; iret");
-}
+
 
 void uart_isr(){
     __asm__("pushal");
@@ -122,10 +106,7 @@ void kernel_main (void){
 
     setup_exc_it();
 
-    // Setup PIT
-    pit_init();
-    InterruptDescriptor32 pitIsrDesc;
-    SET_IT_VEC(pitIsrDesc, irq0, 32); //Link IDT to IRQ0
+    init_devs();
     enable_it();    /*Interrupt Enable Flag = 1. (EFLAGS register)*/
 
     /*Boot Welcome text*/
