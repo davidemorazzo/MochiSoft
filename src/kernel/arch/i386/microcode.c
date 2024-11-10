@@ -58,3 +58,9 @@ void interrupt(uint8_t irq){
     // __asm__ volatile ("int %0" : : "m"(irq) :);
     // asm volatile ("int $0x24;");
 }
+
+uint32_t read_eflags(){
+    uint32_t eflags;
+    __asm__("pushf; pop %0" : "=m" (eflags) :);
+    return eflags;
+}

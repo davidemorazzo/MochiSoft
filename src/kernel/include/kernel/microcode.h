@@ -29,4 +29,6 @@ xDTR sidt();
 
 void interrupt(uint8_t irq);
 
+uint32_t read_eflags();
+
 #endif
