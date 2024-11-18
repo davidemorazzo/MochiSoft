@@ -13,7 +13,7 @@ void irq8(){
 	struct tm now;
 	rtc_get_time(&now);
 	SYS_TIME_RTC = mktime(&now);
-	kprint("<%s> IRQ#8\n", asctime(&now));
+	// kprint("<%s> IRQ#8\n", asctime(&now));
 
 	// Clear register C to ack the interrupt to the RTC
 	outb(RTC_ADDRESS, 0x0C);

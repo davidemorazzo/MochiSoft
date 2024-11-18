@@ -1,5 +1,5 @@
 # So CMake can tell whether or not it can process this file
-CMAKE_MINIMUM_REQUIRED(VERSION 2.8.0)
+CMAKE_MINIMUM_REQUIRED(VERSION 2.8.12)
 # set(CMAKE_C_COMPILER "/home/codespace/opt/cross/bin/i686-elf-gcc")
 # set(CMAKE_CXX_COMPILER "/home/codespace/opt/cross/bin/i686-elf-g++")
 # set(CMAKE_C_COMPILER_WORKS 1)
@@ -29,6 +29,7 @@ set (kernel_src
         ${PROJECT_SOURCE_DIR}/kernel/kernel.c
         ${PROJECT_SOURCE_DIR}/kernel/exceptions.c
         ${PROJECT_SOURCE_DIR}/kernel/kstdio.c
+        ${PROJECT_SOURCE_DIR}/kernel/kglobals.c
         ${PROJECT_SOURCE_DIR}/kernel/ISR/exc_isr_wrapper.s
         ${PROJECT_SOURCE_DIR}/kernel/ISR/IRQ_wrapper.s
         ${PROJECT_SOURCE_DIR}/kernel/ISR/IRQ_handlers/irq0.c

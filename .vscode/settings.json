@@ -45,6 +45,7 @@
 		"tty.h": "c",
 		"pit.h": "c",
 		"rtc.h": "c",
-		"ctime": "c"
+		"ctime": "c",
+		"stddef.h": "c"
 	}
 }
