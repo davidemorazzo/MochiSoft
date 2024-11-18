@@ -12,6 +12,9 @@
 #include "kernel/exceptions.h"
 #include "kernel/kheap.h"
 #include "dev/RTC.h"
+#include "kernel/syscall.h"
+
+#include "time.h"
 
 
 uint64_t global_IDT[255] = {0};
