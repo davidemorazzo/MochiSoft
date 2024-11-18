@@ -1,6 +1,8 @@
 #include "kernel/tty.h"
 #include "kernel/uart.h"
 #include "string.h"
+#include "stdio.h"
+#include "kernel/syscall.h"
 
 void serial_init(unsigned short port){
     serial_clear_screen(port);
@@ -18,7 +20,7 @@ void serial_write(unsigned short port, const char * data, size_t size){
 }
 
 void serial_writestring(unsigned short port, const char * data){
-    serial_write(port, data, strlen(data));
+    sys_write(stdout, data, strlen(data));
 }
 
 // void serial_printhex(unsigned short port, uint64_t i){

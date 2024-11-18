@@ -41,6 +41,7 @@ set (kernel_src
         ${PROJECT_SOURCE_DIR}/kernel/ISR/syscall_0x80.c
         ${PROJECT_SOURCE_DIR}/kernel/ISR/system_calls.s
         ${PROJECT_SOURCE_DIR}/kernel/syscall/sys_time.c
+        ${PROJECT_SOURCE_DIR}/kernel/syscall/sys_write.c
 )
 
 set (bootloader_src
