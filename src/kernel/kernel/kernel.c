@@ -7,7 +7,7 @@
 #include "kernel/gdt.h"
 #include "kernel/idt.h"
 #include "kernel/microcode.h"
-#include "kernel/tty.h"
+#include "kernel/modules/tty.h"
 #include "kernel/kstdio.h"
 #include "kernel/exceptions.h"
 #include "kernel/kheap.h"
@@ -93,15 +93,15 @@ void kernel_main (void){
     kprint("%s\n\n", asctime(&now));
 
     if (gdt_check(GDTR)){
-        kprint("GDTR ok, base address: 0x%X\n", &GDTR.base);
+        KLOGINFO("GDTR ok, base address: 0x%X", &GDTR.base);
     }else{
-        kprint("GDTR content NOT CONSISTENT!\n");
+        KLOGERROR("GDTR content not consistent!");
     }
 
     if (check_idt(IDTR)){
-        kprint("IDTR ok, base address: 0x%X\n", &IDTR.base);
+        KLOGINFO("IDTR ok, base address: 0x%X", &IDTR.base);
     }else{
-        kprint("IDTR content NOT CONSISTENT!\n");
+        KLOGERROR("IDTR content not consistent!");
     }
 
     //Setup RTC
@@ -117,6 +117,21 @@ void kernel_main (void){
     //     for (int f=0;f<300000000;f++){}
     // }
     
+
+
+    // uint32_t res = 0;
+    // __asm__(
+    //     "mov $1, %%eax\n\t"
+    //     "mov $1, %%ebx\n\t"
+    //     "mov %1, %%ecx\n\t"
+    //     "mov $20, %%edx\n\t"
+    //     "int $0x80\n\t"
+    //     "mov %%eax, %0"
+    //     : "=m" (res)
+    //     : "m" (buf)
+    // );
+
+    KLOGINFO("Avvio MochiOS completato")
     while(1){}
     // Kernel function is exiting here
 }

@@ -17,7 +17,6 @@ enable_language(ASM-ATT)
 
 set (arch_i386_src 
 ${PROJECT_SOURCE_DIR}/arch/i386/microcode.c
-${PROJECT_SOURCE_DIR}/arch/i386/tty.c
 ${PROJECT_SOURCE_DIR}/arch/i386/uart.c
 ${PROJECT_SOURCE_DIR}/arch/i386/gdt.c
 ${PROJECT_SOURCE_DIR}/arch/i386/idt.c
@@ -42,6 +41,7 @@ set (kernel_src
         ${PROJECT_SOURCE_DIR}/kernel/ISR/system_calls.s
         ${PROJECT_SOURCE_DIR}/kernel/syscall/sys_time.c
         ${PROJECT_SOURCE_DIR}/kernel/syscall/sys_write.c
+        ${PROJECT_SOURCE_DIR}/kernel/modules/tty.c
 )
 
 set (bootloader_src

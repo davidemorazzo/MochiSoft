@@ -5,7 +5,7 @@ Indirizzo 0x24 (36)
 */
 #include "kernel/PIC-8259.h"
 #include "kernel/uart.h"
-#include "kernel/tty.h"
+#include "kernel/modules/tty.h"
 
 void irq4(){
 	serial_ISR(UART0);

@@ -1,7 +1,5 @@
 #include "kernel/kstdio.h"
 #include <stdarg.h>
-#include "stdio.h"
-#include "kernel/syscall.h"
 #include "string.h"
 
 /* Kernel print function, v0.1 only supports 
