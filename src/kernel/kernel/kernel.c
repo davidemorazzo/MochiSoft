@@ -11,7 +11,6 @@
 #include "kernel/kstdio.h"
 #include "kernel/exceptions.h"
 #include "kernel/kheap.h"
-#include "dev/RTC.h"
 #include "kernel/syscall.h"
 
 #include "time.h"
@@ -83,14 +82,10 @@ void kernel_main (void){
     setup_exc_it();
 
     extern void init_devs();
-    init_devs();
+    init_devs(); 
+    KLOGINFO("Devices inizializzati")
     enable_it();    /*Interrupt Enable Flag = 1. (EFLAGS register)*/
 
-    /*Boot Welcome text*/
-    kprint("MochiSoft Inc. (R) 2024\n\nWelcome in MochiSoft OS!\n");
-    struct tm now;
-    rtc_get_time(&now);
-    kprint("%s\n\n", asctime(&now));
 
     if (gdt_check(GDTR)){
         KLOGINFO("GDTR ok, base address: 0x%X", &GDTR.base);
@@ -104,21 +99,6 @@ void kernel_main (void){
         KLOGERROR("IDTR content not consistent!");
     }
 
-    //Setup RTC
-    outb(0x70, 0x8A);
-
-    
-
-    // while(1){
-    //     rtc_get_time(&now);
-    //     // time_t t = mktime(&now);
-    //     kprint("%s\n", asctime(&now));
-
-    //     for (int f=0;f<300000000;f++){}
-    // }
-    
-
-
     // uint32_t res = 0;
     // __asm__(
     //     "mov $1, %%eax\n\t"
@@ -131,7 +111,16 @@ void kernel_main (void){
     //     : "m" (buf)
     // );
 
+ 
+    /*Boot Welcome text*/
+    time_t now;
+    do{
+        sys_time(&now);
+    }while(now == 0);
+    kprint("MochiSoft Inc. (R) 2024\n\nWelcome in MochiSoft OS!\n");
+    kprint("%s\n\n", asctime(gmtime(&now)));
     KLOGINFO("Avvio MochiOS completato")
+
     while(1){}
     // Kernel function is exiting here
 }

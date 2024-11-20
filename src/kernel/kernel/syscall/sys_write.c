@@ -14,18 +14,12 @@ size_t sys_write(int fd, const void *buf, size_t count){
 
 	switch(fd){
 		case stdout:
-			for (size_t i=0; i<count; i++){
-				uart_write(UART0, ((char*)buf)[i]);
-				write_cnt++;
-			}
+			serial_write(UART0, (char*)buf, count);
 			break;
 		
 		case stderr:
 			serial_writestring(UART0, "\x1b[91m");
-			for (size_t i=0; i<count; i++){
-				serial_putchar(UART0, ((char*)buf)[i]);
-				write_cnt++;
-			}
+			serial_write(UART0, (char*)buf, count);
 			serial_writestring(UART0, "\x1b[0m");
 			break;
 			
