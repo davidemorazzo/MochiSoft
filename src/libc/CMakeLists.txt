@@ -32,6 +32,7 @@ set (libc_src
         # stdio.h
         ${PROJECT_SOURCE_DIR}/stdio/snprintf.c
         ${PROJECT_SOURCE_DIR}/stdio/sprintf.c
+        ${PROJECT_SOURCE_DIR}/stdio/printf.c
         ${PROJECT_SOURCE_DIR}/stdio/_va_snprintf.c
 )
 

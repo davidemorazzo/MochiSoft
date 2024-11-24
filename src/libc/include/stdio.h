@@ -12,5 +12,6 @@
 int snprintf ( char * s, size_t n, const char * format, ... );
 int sprintf ( char * str, const char * format, ... );
 int _va_snprintf(char * s, size_t n, const char * format, va_list argptr);
+int printf (const char * format, ... );
 
 #endif

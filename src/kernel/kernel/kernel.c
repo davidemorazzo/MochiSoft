@@ -14,6 +14,7 @@
 #include "kernel/syscall.h"
 
 #include "time.h"
+#include "stdio.h"
 
 
 uint64_t global_IDT[255] = {0};
@@ -99,19 +100,6 @@ void kernel_main (void){
         KLOGERROR("IDTR content not consistent!");
     }
 
-    // uint32_t res = 0;
-    // __asm__(
-    //     "mov $1, %%eax\n\t"
-    //     "mov $1, %%ebx\n\t"
-    //     "mov %1, %%ecx\n\t"
-    //     "mov $20, %%edx\n\t"
-    //     "int $0x80\n\t"
-    //     "mov %%eax, %0"
-    //     : "=m" (res)
-    //     : "m" (buf)
-    // );
-
- 
     /*Boot Welcome text*/
     time_t now;
     do{
@@ -120,6 +108,8 @@ void kernel_main (void){
     kprint("MochiSoft Inc. (R) 2024\n\nWelcome in MochiSoft OS!\n");
     kprint("%s\n\n", asctime(gmtime(&now)));
     KLOGINFO("Avvio MochiOS completato")
+
+    printf("prova di print :3, %d\n", &now);
 
     while(1){}
     // Kernel function is exiting here
