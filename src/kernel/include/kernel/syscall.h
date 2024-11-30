@@ -9,6 +9,7 @@ void isr_0x80_wrapper();
 void *syscall_handler(int syscall_id, void *arg1, void* arg2, 
 		void *arg3, void *arg4, void *arg5, void *arg6);
 
+size_t sys_read(int fd, void *buf, size_t count);
 size_t sys_write(int fd, const void *buf, size_t count);
 time_t sys_time(time_t *tloc);
 

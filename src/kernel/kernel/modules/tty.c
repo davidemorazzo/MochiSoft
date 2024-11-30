@@ -3,9 +3,20 @@
 #include "string.h"
 #include "stdio.h"
 #include "kernel/syscall.h"
+#include "kernel/kglobals.h"
+#include "kernel/kheap.h"
+#include "kernel/kstdio.h"
 
 void serial_init(unsigned short port){
     serial_clear_screen(port);
+    if(TTY_CIRC_BUF_RX.buf == NULL){
+        TTY_CIRC_BUF_RX.buf=(char*) kmalloc(sizeof(char)*TTY_CIRC_BUF_RX.size);
+        if (TTY_CIRC_BUF_RX.buf == NULL){
+            KLOGERROR("TTY_CIRC_BUF_RX = NULL");
+        }
+        TTY_CIRC_BUF_RX.read_ptr = TTY_CIRC_BUF_RX.buf;
+        TTY_CIRC_BUF_RX.write_ptr = TTY_CIRC_BUF_RX.buf;
+    }
 }
 
 void serial_putchar(unsigned short port, char c){
@@ -36,8 +47,17 @@ void serial_ISR(const unsigned short port){
         case 1:     // TRANSMITTER HOLDING REGISTER EMPTY
             break;
         case 2:     // RECEIVED DATA AVAILABLE
+            char data = uart_read(port);
             // Temporary implementation => "echo"
-            uart_write(port, uart_read(port));
+            uart_write(port, data);
+
+            // Inserire dati in buffer circolare TTY
+            if (TTY_CIRC_BUF_RX.write_ptr >= (TTY_CIRC_BUF_RX.buf + TTY_CIRC_BUF_RX.size)){
+                TTY_CIRC_BUF_RX.write_ptr = TTY_CIRC_BUF_RX.buf;
+            }else{
+                TTY_CIRC_BUF_RX.write_ptr++;
+            }
+            *TTY_CIRC_BUF_RX.write_ptr = data; 
             break;
         case 3:     // RECEIVER LINE STATUS
             break;

@@ -41,6 +41,7 @@ set (kernel_src
         ${PROJECT_SOURCE_DIR}/kernel/ISR/system_calls.s
         ${PROJECT_SOURCE_DIR}/kernel/syscall/sys_time.c
         ${PROJECT_SOURCE_DIR}/kernel/syscall/sys_write.c
+        ${PROJECT_SOURCE_DIR}/kernel/syscall/sys_read.c
         ${PROJECT_SOURCE_DIR}/kernel/modules/tty.c
 )
 

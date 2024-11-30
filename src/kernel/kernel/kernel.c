@@ -12,6 +12,7 @@
 #include "kernel/exceptions.h"
 #include "kernel/kheap.h"
 #include "kernel/syscall.h"
+#include "kernel/kglobals.h"
 
 #include "time.h"
 #include "stdio.h"
@@ -109,8 +110,13 @@ void kernel_main (void){
     kprint("%s\n\n", asctime(gmtime(&now)));
     KLOGINFO("Avvio MochiOS completato")
 
-    printf("prova di print :3, %d\n", &now);
+    strcpy("PROVA DI READ", TTY_CIRC_BUF_RX.buf+1);
+    TTY_CIRC_BUF_RX.write_ptr += 13;
+    char buf[30]={0};
+    int c= sys_read(stdin, buf, 20);
 
-    while(1){}
+    while(1){
+
+    }
     // Kernel function is exiting here
 }

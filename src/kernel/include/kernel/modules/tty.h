@@ -30,4 +30,11 @@ void serial_writestring(unsigned short port, const char * data);
 void serial_ISR(const unsigned short port);
 void serial_clear_screen(unsigned short port);
 
+struct circular_buf_rx {
+	char * buf;
+	char * read_ptr;
+	char * write_ptr;
+	int size;
+};
+
 #endif
