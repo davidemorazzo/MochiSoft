@@ -37,28 +37,28 @@ char exc_lookup[32][40] = {
 
 #define decl_isr(n)                     \
 void isr##n (){                         \
-    kprint("<Exception 0x" #n "> %s\n", &exc_lookup[0x##n]);   \
+    KLOGERROR("<Exception 0x" #n "> %s\n", &exc_lookup[0x##n]);   \
 }                                       
 
 
 void isr00 (){
-    kprint("<Exception 0x00> Division by zero\n");
+    KLOGERROR("<Exception 0x00> Division by zero\n");
 }
 void isr01 (){
-    kprint("<Exception 0x01> Debug\n");
+    KLOGERROR("<Exception 0x01> Debug\n");
 }
 void isr02 (){
-    kprint("<Exception 0x02> Non-maskable interrupt\n");
+    KLOGERROR("<Exception 0x02> Non-maskable interrupt\n");
 }
 void isr03 (){
-    kprint("<Exception 0x03> Breakpoint\n");
+    KLOGERROR("<Exception 0x03> Breakpoint\n");
 }
 void isr04 (){
-    kprint("<Exception 0x04> Debug\n");
+    KLOGERROR("<Exception 0x04> Debug\n");
 }
 
 void isr0D(void *error_code){
-    kprint("<Exception 0x0D> %s => Error code: %X\n", &exc_lookup[0x0D], &error_code);
+    KLOGERROR("<Exception 0x0D> %s => Error code: %X\n", &exc_lookup[0x0D], &error_code);
 }
 
 decl_isr(05);

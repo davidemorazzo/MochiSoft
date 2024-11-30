@@ -110,10 +110,7 @@ void kernel_main (void){
     kprint("%s\n\n", asctime(gmtime(&now)));
     KLOGINFO("Avvio MochiOS completato")
 
-    strcpy("PROVA DI READ", TTY_CIRC_BUF_RX.buf+1);
-    TTY_CIRC_BUF_RX.write_ptr += 13;
-    char buf[30]={0};
-    int c= sys_read(stdin, buf, 20);
+    __asm__("int $0");
 
     while(1){
 
