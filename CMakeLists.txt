@@ -18,9 +18,10 @@ add_subdirectory(src/libc)
 add_subdirectory(src/kernel)
 
 # Crea l'eseguibile
+add_compile_options(-g -O0)
 set(CMAKE_CXX_FLAGS "-ffreestanding -O0 -nostdlib -lgcc -T ${PLATFORM_LAYOUT} -g")
 set(CMAKE_C_FLAGS "-ffreestanding -O0 -Wall -Wextra -g -nostdlib -lgcc -T ${PLATFORM_LAYOUT}")
 # set(CMAKE_CXX_FLAGS "-ffreestanding -O2 -nostdlib -T ${PLATFORM_LAYOUT}")
 
 add_executable(${PROJECT_NAME})
-target_link_libraries(${PROJECT_NAME} kernel libc boot) 
+target_link_libraries(${PROJECT_NAME} kernel libc) 

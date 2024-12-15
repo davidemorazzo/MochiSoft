@@ -22,6 +22,8 @@ ${PROJECT_SOURCE_DIR}/arch/i386/gdt.c
 ${PROJECT_SOURCE_DIR}/arch/i386/idt.c
 ${PROJECT_SOURCE_DIR}/arch/i386/8259/PIC-8259.c
 ${PROJECT_SOURCE_DIR}/arch/i386/8253/PIT.c
+# ${PROJECT_SOURCE_DIR}/arch/i386/PIC-8259.c
+${PROJECT_SOURCE_DIR}/arch/i386/pagetable.c
 )
 
 set (kernel_src
@@ -55,15 +57,14 @@ set (bootloader_src
 
 
 ######### BOOTLOADER ##############
-add_library(boot SHARED OBJECT ${bootloader_src})
-
+SET(CMAKE_ASM-ATT_FLAGS "-g -O0")
 
 ########### KERNEL ################
 SET(CMAKE_CXX_FLAGS "-ffreestanding -O0 -Wall -Wextra -fno-exceptions -fno-rtti -g")
 SET(CMAKE_C_FLAGS "-ffreestanding -O0 -Wall -Wextra -g")
 #target_compile_options(-ffreestanding -O2 -Wall -Wextra -fno-exceptions -fnortti)
 
-add_library(kernel SHARED OBJECT ${arch_i386_src} ${kernel_src})
+add_library(kernel SHARED OBJECT ${bootloader_src} ${arch_i386_src} ${kernel_src})
 # target_link_libraries(kernel libc) 
 
 ####### COMPILE FLAGS ##############

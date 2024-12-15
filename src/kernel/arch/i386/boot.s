@@ -19,34 +19,58 @@
 // stack_top:
 
 /* Allocate tables for paging */
-.section .bss, "aw", @nobits
+.section .bss
     .align 4096
 boot_page_directory:
     .skip 4096
-boot_page_table1:
+kernel_page_table:
+    .skip 4096
+identity_page_table:
     .skip 4096
 
 /* Entry point of the kernel in _start */
 .section .multiboot.text, "a"
 .global _start
-.type _start, @function
-_start:
+// .type _start, @function
+// _start:
     // mov $__stack_top, %esp #initialization of the stack pointer to the top of the stack (grows downward)
     // /* TODO Altre cose fare per cose più avanzate, GDT, paging ... */
     // call kernel_main
+// .type _start
+_start: 
+    // Disable paging
+    movl $0, %ecx
+    movl %ecx, %cr0
     // Phisical address of boot page 1
+    mov $(stack_top-0xC0000000), %esp
+    push $0x100000                          // size
+    push $0                                 // from
+    push $(identity_page_table - 0xC0000000)// first_pte
+    call idpaging
+    add $12, %esp
+
+//     mov $(identity_page_table - 0xC0000000), %eax   // page table entry ptr
+//     mov $0x100, %ecx
+//     mov $0, %edx                                    // address ptr
+// 10:
+//     or $0x1, %edx
+//     mov %edx, (%eax)
+//     add $4096, %edx
+//     add $4, %eax
+//     loop 10b
+
     // %edi -> destination index reg.
     // %esi -> source index reg.
     // %ecx -> count register
-    movl $(boot_page_table1 - 0xC0000000), %edi
-    movl $0, %esi
-    movl $1023, %ecx  // Load count reg. to iterate 1023 times
-
+    movl $(kernel_page_table - 0xC0000000), %edi // boot_page_talbe1 phy address -> EDI
+    movl $0, %esi                               // first address to map (0x00)  -> ESI 
+    movl $1023, %ecx                            // Load count reg. to iterate 1023 times
+    
 1:
     cmpl $_kernel_start, %esi
-    jl 2f                   // if _kernel_start < ESI                   then GOTO 2
+    jl 2f                   // if _kernel_start > ESI                   then GOTO 2
     cmpl $(_kernel_end - 0xC0000000), %esi
-    jge 3f                  // if physical_addr(_kernel_end) >= ESI     then GOTO 3
+    jge 3f                  // if physical_addr(_kernel_end) <= ESI     then GOTO 3
     // Map physical address as "present, writeable"
     // TODO: mark .text, .rodata as non writeable.
     movl %esi, %edx
@@ -59,14 +83,14 @@ _start:
 3:
     // The two page directories used are at index 0 and at index 768
     // Map page table to both virtual addresses 0x00000000 and 0xC0000000
-    movl $(boot_page_table1 - 0xC0000000 + 0x003), boot_page_directory - 0xC0000000 + 0
-    movl $(boot_page_table1 - 0xC0000000 + 0x003), boot_page_directory - 0xC0000000 + 768 * 4
+    movl $(kernel_page_table - 0xC0000000 + 0x3), boot_page_directory - 0xC0000000 + 0
+    movl $(kernel_page_table - 0xC0000000 + 0x3), boot_page_directory - 0xC0000000 + (768 * 4)
     // Set CR3 to the physical address of the boot_page_directory
     movl $(boot_page_directory - 0xC0000000), %ecx
     movl %ecx, %cr3
     // Enable paging and write-protect bits
     movl %cr0, %ecx
-    orl $0x80010000, %ecx
+    orl $0x80000001, %ecx
     movl %ecx, %cr0
     // Jump to higher half kernel with absolute jump
     lea 4f, %ecx
