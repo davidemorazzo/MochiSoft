@@ -41,7 +41,24 @@ struct {
 
 } fsDriver;
 ```
+## AHCI controller
+Per interagire in modo efficiente con le periferiche di storage, usare il controller AHCI, che controlla la periferica SATA con i comandi ATAPI o SCSI e rende disponibile l'API direttamente in memoria o su particolari porte I/O. L'interazione con il controller AHCI è molto legata al bus PCI. 
+```txt
++-----------+   +--------+   +--------+   +----+
+| SATA DEV. |<=>|  AHCI  |<=>| RAM/IO |<=>| OS | 
++-----------+   +--------+   +--------+   +----+
+```
 
+Le porte I/O per interagire con il controller `PCI`: 
+- `PCI_ADDR` = 0xCF8
+- `PCI_DATA` = 0xCFC
+
+Alcuni link utili:
+- https://github.com/fysnet/FYSOS/blob/39da816ac995fe246853c062dd1e148bb0d6f083/main/usb/utils/include/pci.h#L190
+- https://forum.osdev.org/viewtopic.php?t=41833
+- https://wiki.osdev.org/PCI#Enumerating_PCI_Buses
+- https://wiki.osdev.org/AHCI
+  
 ## ATA interface
 https://wiki.osdev.org/ATA_PIO_Mode
 > Su QEMU per impostart l'HardDisk aggiungere `-hda <path/to/disk.img>`
