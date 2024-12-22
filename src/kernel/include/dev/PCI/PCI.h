@@ -4,13 +4,16 @@ Funzioni per interagire con PCI
 prese da https://wiki.osdev.org/PCI
 */
 
+#ifndef INCLUDE_DEV_PCI_PCI_H
+#define INCLUDE_DEV_PCI_PCI_H
+
 #include <stdint.h>
 
 #define PCI_ADDR 0xCF8
 #define PCI_DATA 0xCFC
 
 void PCIcheckAllBuses(void);
-
+void *PCIgetHDDBAR5(void);
 uint16_t PCIconfigReadWord(uint8_t bus, uint8_t slot, uint8_t func, uint8_t offset);
 
 /*
@@ -21,3 +24,5 @@ Register	Offset	Bits 31-24	Bits 23-16	Bits 15-8	Bits 7-0
 0x3			0xC		BIST		Header type	Latency Tmr	Cache Line Size
 ...
 */
+
+#endif

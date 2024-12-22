@@ -7,7 +7,6 @@ uint32_t PCIconfigReadDWord(uint8_t bus, uint8_t slot, uint8_t func, uint8_t off
 	uint32_t busl = (uint32_t)bus;
 	uint32_t slotl = (uint32_t)slot;
 	uint32_t funcl = (uint32_t)func;
-	uint16_t tmp = 0;
 
 	// Select configuration address
 	address = (uint32_t)((busl << 16) | (slotl << 11) |
@@ -56,4 +55,24 @@ void PCIcheckAllBuses(void){
 			}
 		}
 	}
+}
+
+// Returns first HDD with AHCI base register
+void * PCIgetHDDBAR5(void){
+	uint32_t bus;
+	uint32_t device;
+	for (bus = 0; bus < 256; bus++){
+		for (device = 0; device < 32; device++){
+			uint32_t vendorID = (uint32_t) PCIconfigReadWord(bus, device, 0, 0);
+			if (vendorID != 0xFFFF) {
+				uint32_t class = (uint32_t) PCIconfigReadWord (bus, device, 0, 10);
+				// Mass storage devices	
+				if (class == 0x106){
+					// Return BAR5 = ABAR
+					return (void *) PCIconfigReadDWord(bus, device, 0, 0x24);
+				}
+			}
+		}
+	}
+	return NULL;
 }

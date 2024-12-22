@@ -44,6 +44,7 @@ set (kernel_src
         ${PROJECT_SOURCE_DIR}/kernel/syscall/sys_read.c
         ${PROJECT_SOURCE_DIR}/kernel/modules/tty.c
         ${PROJECT_SOURCE_DIR}/kernel/dev/PCI.c
+        ${PROJECT_SOURCE_DIR}/kernel/dev/AHCI.c
 )
 
 set (bootloader_src
