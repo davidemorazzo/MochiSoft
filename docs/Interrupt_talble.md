@@ -38,22 +38,22 @@ La handler function è la funzione C, nella IDT viene inserito un wrapper scritt
 | 0x1D	| Exception | isr1D				|					|
 | 0x1E	| Exception | isr1E				|					|
 | 0x1F	| Exception | 					| Reserved			|
-| 0X20	| PIC1 IRQ	| irq0				| PIT, unmasked		|
-| 0X21	| PIC1 IRQ	| 					|					|
-| 0X22	| PIC1 IRQ	| 					| PIC2 daisy-chain  |
-| 0X23	| PIC1 IRQ	| 					|					|
-| 0X24	| PIC1 IRQ	| irq4				| UART0, unmasked	|
-| 0X25	| PIC1 IRQ	| 					|					|
-| 0X26	| PIC1 IRQ	| 					|					|
-| 0X27	| PIC1 IRQ	| 					|					|
-| 0X28	| PIC2 IRQ	| irq8				| RTC, unmasked		|
-| 0X29	| PIC2 IRQ	| 					|					|
-| 0X2A	| PIC2 IRQ	| 					|					|
-| 0X2B	| PIC2 IRQ	| 					|					|
-| 0X2C	| PIC2 IRQ	| 					|					|
-| 0X2D	| PIC2 IRQ	| 					|					|
-| 0X2E	| PIC2 IRQ	| 					|					|
-| 0X2F	| PIC2 IRQ	| 					|					|
+| 0x20	| PIC1 IRQ	| irq0				| PIT, unmasked		|
+| 0x21	| PIC1 IRQ	| 					|					|
+| 0x22	| PIC1 IRQ	| 					| PIC2 daisy-chain  |
+| 0x23	| PIC1 IRQ	| 					|					|
+| 0x24	| PIC1 IRQ	| irq4				| UART0, unmasked	|
+| 0x25	| PIC1 IRQ	| 					|					|
+| 0x26	| PIC1 IRQ	| 					|					|
+| 0x27	| PIC1 IRQ	| 					|					|
+| 0x28	| PIC2 IRQ	| irq8				| RTC, unmasked		|
+| 0x29	| PIC2 IRQ	| 					|					|
+| 0x2A	| PIC2 IRQ	| 					|					|
+| 0x2B	| PIC2 IRQ	| irq11				| AHCI, unmasked	|
+| 0x2C	| PIC2 IRQ	| 					|					|
+| 0x2D	| PIC2 IRQ	| 					|					|
+| 0x2E	| PIC2 IRQ	| 					|					|
+| 0x2F	| PIC2 IRQ	| 					|					|
 | 0x30	| User def. | 					|					|
 | ...	| 			|					|					|
 | 0x80	| User def.	| syscall_handler	| System call		|

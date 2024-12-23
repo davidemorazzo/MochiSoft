@@ -440,14 +440,21 @@ typedef struct SATA_ident
 		unsigned short	integrity; 			/* Cheksum, Signature */
 } SATA_ident_t;
 
-void stop_cmd(HBA_PORT *port);
+/* Start AHCI command engine */
 void start_cmd(HBA_PORT *port);
-void send_identify_cmd(HBA_PORT *port);
+/* Stop AHCI command engine */
+void stop_cmd(HBA_PORT *port);
+/* Send ATA 0xEC and receive identify packed from dev */
+void send_identify_cmd(HBA_PORT *port, SATA_ident_t *id);
 
 /* Finds first free command slot and returs the index. 
    Returns -1 in case of slot not found */
 int find_free_CLB_slot(HBA_PORT *port);
 
 void issue_command(HBA_PORT *port, uint8_t cmdIndex);
+
+/* When the PCI interrupt is raised, this function make
+the checks on AHCI registers to ACK the interrupts */
+void AHCI_interrupt_routine (void);
 
 #endif

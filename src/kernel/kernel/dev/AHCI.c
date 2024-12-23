@@ -42,10 +42,9 @@ void start_cmd(HBA_PORT *port)
 }
 
 
-void send_identify_cmd(HBA_PORT *port){
+void send_identify_cmd(HBA_PORT *port, SATA_ident_t *buf){
 
 	volatile HBA_CMD_LIST * PxCLB = (HBA_CMD_LIST *)port->clb; // 32 elements
-	volatile HBA_FIS * PxFB = (HBA_FIS *) port->fb;
 	volatile HBA_CMD_TBL *CmdTbl = (HBA_CMD_TBL*) PxCLB->cmdHeader[0].ctba;
 
 	// Command Header 0 setup
@@ -68,19 +67,16 @@ void send_identify_cmd(HBA_PORT *port){
 
 	// PRDT entry
 	CmdTbl->prdt_entry[0].dbc = 0x1FF; //((uint32_t)(1<<31)) | ((uint32_t)0x000001FF);
-	CmdTbl->prdt_entry[0].dba = (uint32_t) kmalloc(1024);
-	SATA_ident_t * hddIdent = (void *)CmdTbl->prdt_entry[0].dba;
-	MEMSET(hddIdent, 0, 1024);
+	CmdTbl->prdt_entry[0].dba = (uint32_t) buf;
+	CmdTbl->prdt_entry[0].i = 0;
 
 	// issue command
+	AHCI_HDD.issued_cmd_mask |= 1;
 	port->ci = 1;
 
-	// Aspettare completamento
-	while (port->ci);
-	KLOGINFO(
-		"Model: %s \n"
-		"PRDC: %d bytes",
-		hddIdent->model, &PxCLB->cmdHeader[0].prdbc);
+
+	// // Aspettare completamento
+	while (port->ci & 0x1);
 	return;
 }
 
@@ -106,4 +102,40 @@ int find_free_CLB_slot(HBA_PORT *port){
 
 void issue_command(HBA_PORT *port, uint8_t cmdIndex){
 	port->ci |= 1 << cmdIndex;
+}
+
+static uint32_t check_pending_cmd(HBA_PORT *port){
+	uint32_t issued_cmd_mask = AHCI_HDD.issued_cmd_mask;
+	AHCI_HDD.issued_cmd_mask &= port->ci;
+}
+
+void AHCI_interrupt_routine(void) {
+	KLOGINFO("AHCI_interrupt_routine()");
+	// Service interrupt for port in use
+	if (AHCI_HDD.abar->is & (0x1 << AHCI_HDD.portIndex)){
+		HBA_PORT *port = AHCI_HDD.port;
+		uint32_t P1IS = port->is;
+		for (int it=0; it<32; it++,P1IS>>=1){
+			if (P1IS & 0x1){
+				if (it==0){			/* Device to Host Register FIS Interrupt */
+					// KLOGINFO("   Device to Host Register FIS Interrupt")
+				}else if (it == 1){	/* PIO Setup FIS Interrupt */
+					// KLOGINFO("   PIO Setup FIS Interrupt")
+				}else if (it == 2){ /* DMA Setup FIS Interrupt */
+					// KLOGINFO("   DMA Setup FIS Interrupt")
+				}else if(it == 3){ 	/* Set Device Bits Interrupt */
+					// KLOGINFO("   Set Device Bits Interrupt")
+				}else if(it == 4){ 	/* Unknown FIS Interrupt */
+					// KLOGINFO("   Unknown FIS Interrupt")
+				}
+			}
+		}
+
+		// Check pending commands
+		check_pending_cmd(AHCI_HDD.port);
+		// Interrupt Acknowledge
+		port->is &= port->is;
+	}
+
+	return;
 }
