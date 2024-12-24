@@ -15,10 +15,10 @@ int _va_snprintf(char * s, size_t n, const char * format, va_list argptr){
             switch (format[i+1])
             {
             case 'X': /*Print hex*/
-                i32tohex(*va_arg(argptr, uint32_t*), placeholder);
+                i32tohex(va_arg(argptr, uint32_t), placeholder);
                 break;
             case 'd': /*Print integer*/
-                itoa(*va_arg(argptr,int*), placeholder);
+                itoa(va_arg(argptr,int), placeholder);
                 break;
             case 's': /*Print string*/
                 strcpy(va_arg(argptr, char*), placeholder);

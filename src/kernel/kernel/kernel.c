@@ -91,13 +91,13 @@ void kernel_main (void){
 
 
     if (gdt_check(GDTR)){
-        KLOGINFO("GDTR ok, base address: 0x%X", &GDTR.base);
+        KLOGINFO("GDTR ok, base address: 0x%X", GDTR.base);
     }else{
         KLOGERROR("GDTR content not consistent!");
     }
 
     if (check_idt(IDTR)){
-        KLOGINFO("IDTR ok, base address: 0x%X", &IDTR.base);
+        KLOGINFO("IDTR ok, base address: 0x%X", IDTR.base);
     }else{
         KLOGERROR("IDTR content not consistent!");
     }
@@ -106,7 +106,7 @@ void kernel_main (void){
     if (AHCI_HDD.port != NULL){
         SATA_ident_t id = {0};
         send_identify_cmd(AHCI_HDD.port, &id);
-        KLOGINFO("Device model: %s", &id.model);
+        KLOGINFO("Device model: %s", id.model);
     }
     
 

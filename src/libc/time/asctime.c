@@ -33,11 +33,11 @@ char *asctime(const struct tm *timeptr){
 	sprintf(result, "%s %s %d %d:%d:%d %d",
 		wday_name[timeptr->tm_wday],
 		mon_name[timeptr->tm_mon],
-		&timeptr->tm_mday,
-		&timeptr->tm_hour,
-		&timeptr->tm_min,
-		&timeptr->tm_sec,
-		&year);
+		timeptr->tm_mday,
+		timeptr->tm_hour,
+		timeptr->tm_min,
+		timeptr->tm_sec,
+		year);
 	
 	return result;
 }
