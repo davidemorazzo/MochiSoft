@@ -110,12 +110,12 @@ static uint32_t check_pending_cmd(HBA_PORT *port){
 }
 
 void AHCI_interrupt_routine(void) {
-	KLOGINFO("AHCI_interrupt_routine()");
+	// KLOGINFO("AHCI_interrupt_routine()");
 	// Service interrupt for port in use
 	if (AHCI_HDD.abar->is & (0x1 << AHCI_HDD.portIndex)){
 		HBA_PORT *port = AHCI_HDD.port;
 		uint32_t P1IS = port->is;
-		KLOGINFO("\tP1IS=0x%X", &P1IS);
+		// KLOGINFO("\tP1IS=0x%X", P1IS);
 		for (int it=0; it<32; it++,P1IS>>=1){
 			if (P1IS & 0x1){
 				if (it==0){			/* Device to Host Register FIS Interrupt */
@@ -129,6 +129,14 @@ void AHCI_interrupt_routine(void) {
 				}else if(it == 4){ 	/* Unknown FIS Interrupt */
 					// KLOGINFO("   Unknown FIS Interrupt")
 				}
+				else if (it == 23){KLOGERROR("AHCI.PORT%d: Incorrect Port Multiplier Status", AHCI_HDD.portIndex)}
+				else if (it == 24){KLOGERROR("AHCI.PORT%d: Overflow Status", AHCI_HDD.portIndex)}
+				else if (it == 26){KLOGERROR("AHCI.PORT%d: Interface Non-fatal Error Status", AHCI_HDD.portIndex)}
+				else if (it == 27){KLOGERROR("AHCI.PORT%d: Interface Fatal Error Status", AHCI_HDD.portIndex)}
+				else if (it == 28){KLOGERROR("AHCI.PORT%d: Host Bus Data Error Status", AHCI_HDD.portIndex)}
+				else if (it == 29){KLOGERROR("AHCI.PORT%d: Host Bus Fatal Error Status", AHCI_HDD.portIndex)}
+				else if (it == 30){KLOGERROR("AHCI.PORT%d: Task File Error Status ", AHCI_HDD.portIndex)}
+				else if (it == 31){KLOGERROR("AHCI.PORT%d: Cold Port Detect Status", AHCI_HDD.portIndex)}
 			}
 		}
 
@@ -165,6 +173,50 @@ void AHCI_read_cmd (HBA_CMD_HEADER * cmd_header, uint32_t startl, uint32_t start
 	fis->fis_type = FIS_TYPE_REG_H2D;
 	fis->c = 1;
 	fis->command = 0xC8; // ATA_CMD_READ_DMA_EX
+	fis->device = 1 << 6;
+	fis->lba0 = (uint8_t) startl;
+	fis->lba1 = (uint8_t) (startl >> 8);
+	fis->lba2 = (uint8_t) (startl >> 16);
+	fis->lba3 = (uint8_t) (startl >> 24);
+	fis->lba4 = (uint8_t) (starth);
+	fis->lba5 = (uint8_t) (starth >> 8);
+	fis->countl = (uint8_t) count & 0xFF;
+	fis->counth = (uint8_t) (count >> 8) & 0xFF;
+
+	return;
+}
+
+void AHCI_write_cmd (HBA_CMD_HEADER * cmd_header, uint32_t startl, uint32_t starth, uint32_t count, void *buf){
+	if (cmd_header==NULL) return;
+
+	HBA_CMD_TBL * cmd_tbl = (HBA_CMD_TBL *) cmd_header->ctba;
+	if (cmd_tbl == NULL) return;
+
+	MEMSET(cmd_header, 0, 8); // Not clear CTBA, CTBAU
+	MEMSET(cmd_tbl, 0, sizeof(HBA_CMD_TBL)); 
+	cmd_header->cfl = sizeof(FIS_REG_H2D) / sizeof(uint32_t);
+	cmd_header->prdtl = (uint16_t)((count-1)>>4) + 1; // ?
+	cmd_header->w = 1;
+
+	/*  PRDT  */
+	for(int i=0; i<cmd_header->prdtl-1; i++){
+		cmd_tbl->prdt_entry[i].dba = ((uint32_t) buf) + i*4*1024;
+		cmd_tbl->prdt_entry[i].dbc = 8*1024 -1;
+		cmd_tbl->prdt_entry[i].i = 1;
+		count -= 16;
+	}	
+	// Last PRDT entry
+	cmd_tbl->prdt_entry[cmd_header->prdtl-1].dba = ((uint32_t) buf) + 4*1024*(cmd_header->prdtl-1);
+	cmd_tbl->prdt_entry[cmd_header->prdtl-1].dbc = (count<<9)-1;
+	cmd_tbl->prdt_entry[cmd_header->prdtl-1].i = 1;
+
+	/* Setup Command */
+	FIS_REG_H2D * fis = (FIS_REG_H2D *)cmd_tbl->cfis;
+	if (fis == NULL) return;
+
+	fis->fis_type = FIS_TYPE_REG_H2D;
+	fis->c = 1;
+	fis->command = 0xCA; // ATA_CMD_READ_DMA_EX
 	fis->device = 1 << 6;
 	fis->lba0 = (uint8_t) startl;
 	fis->lba1 = (uint8_t) (startl >> 8);
