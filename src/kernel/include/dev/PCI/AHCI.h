@@ -7,6 +7,7 @@ link: https://wiki.osdev.org/AHCI
 #define INCLUDE_DEV_PCI_AHCI_H
 
 #include <stdint.h>
+#include "dev/PCI/PCI.h"
 
 #define HBA_PxCMD_ST    0x0001
 #define HBA_PxCMD_FRE   0x0010
@@ -440,6 +441,16 @@ typedef struct SATA_ident
 		unsigned short	integrity; 			/* Cheksum, Signature */
 } SATA_ident_t;
 
+typedef struct AHCI_HDD_s {
+	HBA_MEM *abar;			/* AHCI base register the HDD in use */
+	HBA_PORT *port;			/* AHCI port port for the HDD in use */
+	HBA_CMD_LIST cmd_list; 	/* Command list structure, linked into port->clb.*/
+	HBA_CMD_TBL __attribute__((aligned(128))) cmd_table[32]; /* Command tables, linked into port->clb->ctba */
+	HBA_FIS rcv_fis;		/* Received FIS, linked into port->fb. Allocated in heap */
+	uint32_t portIndex;		/* Port index of the HDD in use */
+	uint32_t issued_cmd_mask;/* Software set the bit corresponding to the pending commands (refer to the port in use) */
+} AHCI_HDD_t;
+
 /* Start AHCI command engine */
 void start_cmd(HBA_PORT *port);
 /* Stop AHCI command engine */
@@ -448,8 +459,9 @@ void stop_cmd(HBA_PORT *port);
 void send_identify_cmd(HBA_PORT *port, SATA_ident_t *id);
 
 /* Finds first free command slot and returs the index. 
-   Returns -1 in case of slot not found */
-int find_free_CLB_slot(HBA_PORT *port);
+   Returns -1 in case of slot not found. Also set the 
+   command pending in AHCI_HDD.issued_cmd_mask */
+int lock_free_CLB_slot(AHCI_HDD_t * dev);
 
 void issue_command(HBA_PORT *port, uint8_t cmdIndex);
 
@@ -457,26 +469,35 @@ void issue_command(HBA_PORT *port, uint8_t cmdIndex);
 the checks on AHCI registers to ACK the interrupts */
 void AHCI_interrupt_routine (void);
 
-/* Creates the command header in the `cmd_header` position. The command is a DMA read from 
-the device associated with this header. This function doesn't issue the command.
+/* The command is a DMA read from the primary AHCI device (AHCI_HDD).
+This function polls the AHCI for command completion
 Arguments:
-	- cmd_header: 	pointer to the command slot
 	- startl: 		reading start address in LBA48 (low) 
 	- starth: 		reading start address in LBA48 (high)
 	- count: 		number of sectors to read
 	- buf: 			pointer to destination buffer of the data
-*/
-void AHCI_read_cmd (HBA_CMD_HEADER * cmd_header, uint32_t startl, uint32_t starth, uint32_t count, void * buf);
 
-/* Creates the write (host->device) in the specified `cmd_header`.  The command is DMA write.
-This function does not issue the command.
+Returns:
+	The effective number of bytes read on success
+	-1 on fail
+*/
+int AHCI_read_prim_dev (uint32_t startl, uint32_t starth, uint32_t count, void * buf);
+
+/* The command is DMA write to the primary AHCI device (AHCI_HDD). 
+This function polls the AHCI for command completion
 Arguments:
-	- cmd_header: 	pointer to the command slot
 	- startl: 		writing start address in LBA48 (low) 
 	- starth: 		writing start address in LBA48 (high)
 	- count: 		number of sectors to write
 	- buf: 			pointer to source buffer of the data
+
+Returns:
+	The effective number of bytes written on success
+	-1 on fail
 */
-void AHCI_write_cmd (HBA_CMD_HEADER * cmd_header, uint32_t startl, uint32_t starth, uint32_t count, void *buf);
+int AHCI_write_prim_dev (uint32_t startl, uint32_t starth, uint32_t count, void *buf);
+
+/* Initializes the PCI and AHCI data structures and HW */
+void AHCI_init(AHCI_HDD_t * dev);
 
 #endif

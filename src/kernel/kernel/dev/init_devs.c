@@ -16,7 +16,6 @@ Links: https://web.archive.org/web/20150514082645/http://www.nondot.org/sabre/os
 
 #include "dev/8253/PIT.h"
 #include "dev/RTC.h"
-#include "dev/PCI/PCI.h"
 #include "dev/PCI/AHCI.h"
 
 #include "kernel/kglobals.h"
@@ -89,44 +88,9 @@ void init_devs(){
 	}
 
 	/* ============= PCI / AHCI ===============*/
-	// PCIcheckAllBuses(); // Stampa su KINFO i device trovati
-	HBA_MEM *abar = (HBA_MEM *) PCIgetHDDBAR5();
-	if (abar == NULL){
-		KLOGERROR("No AHCI device found on PCI");
-	}
-	
-	uint8_t pi = abar->pi;
-	AHCI_HDD.abar = abar;
-	AHCI_HDD.port = NULL;
-	for (int i=0; i<32; i++){
-		if (pi & 1){
-			uint32_t ssts = abar->ports[i].ssts; 
-			uint8_t ipm = (ssts >> 8) & 0xF;
-			uint8_t det = ssts & 0xF;
-			if (ipm == 1 && det == 3){
+	AHCI_init(&AHCI_HDD);
+	IRQ_clear_mask(11);
+	SET_IT_VEC(d, irq_0x2B_wrapper, 0x2B);
 				
-				AHCI_HDD.portIndex = i;
-				AHCI_HDD.port = &abar->ports[i];
-				AHCI_HDD.port->clb = (uint32_t) &AHCI_HDD.cmd_list;
-				AHCI_HDD.port->fb = (uint32_t) &AHCI_HDD.rcv_fis;
-				for (int cmd=0; cmd <32; cmd++){
-					AHCI_HDD.cmd_list.cmdHeader[cmd].ctba = (uint32_t) &AHCI_HDD.cmd_table[cmd];
-				}
-				IRQ_clear_mask(11);
-				SET_IT_VEC(d, irq_0x2B_wrapper, 0x2B);
-				AHCI_HDD.port->ie |= 0xFF;
-				AHCI_HDD.abar->ghc |= 0x2; // Interrupt enable
-				stop_cmd(AHCI_HDD.port);
-				start_cmd(AHCI_HDD.port);
-
-				KLOGINFO("Active HDD found on AHCI port %d", i);
-				break;
-			}
-		}
-		pi >>= 1;
-	}
-	if (AHCI_HDD.port == NULL) {
-		KLOGERROR("No active ports found on AHCI conf. space")
-	}
 	return;
 }

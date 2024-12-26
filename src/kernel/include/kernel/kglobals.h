@@ -16,17 +16,7 @@ extern time_t SYS_TIME_RTC;
 /* Buffer circolare per immagazzinare l'input da uart0*/
 extern struct circular_buf_rx TTY_CIRC_BUF_RX;
 
-struct AHCI_HDD_s {
-	HBA_MEM *abar;			/* AHCI base register the HDD in use */
-	HBA_PORT *port;			/* AHCI port port for the HDD in use */
-	HBA_CMD_LIST cmd_list; 	/* Command list structure, linked into port->clb. Allocated in heap*/
-	HBA_CMD_TBL __attribute__((aligned(128))) cmd_table[32]; /* Command tables, linked into port->clb->ctba */
-	HBA_FIS rcv_fis;		/* Received FIS, linked into port->fb. Allocated in heap */
-	uint32_t portIndex;		/* Port index of the HDD in use */
-	uint32_t issued_cmd_mask;/* Software set the bit corresponding to the pending commands (refer to the port in use) */
-};
-
 /* AHCI hard disk controller in use */
-extern struct AHCI_HDD_s AHCI_HDD;
+extern AHCI_HDD_t AHCI_HDD;
 
 #endif

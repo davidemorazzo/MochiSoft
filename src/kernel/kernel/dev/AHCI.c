@@ -48,8 +48,7 @@ void send_identify_cmd(HBA_PORT *port, SATA_ident_t *buf){
 	volatile HBA_CMD_TBL *CmdTbl = (HBA_CMD_TBL*) PxCLB->cmdHeader[0].ctba;
 
 	// Command Header 0 setup
-	uint8_t * ptr = (uint8_t *)PxCLB->cmdHeader;
-	MEMSET(ptr, 0, sizeof(PxCLB->cmdHeader));
+	MEMSET(PxCLB->cmdHeader, 0, 8);
 	PxCLB->cmdHeader[0].cfl = sizeof(FIS_REG_H2D);
 	PxCLB->cmdHeader[0].a = 0;
 	PxCLB->cmdHeader[0].prdtl = 1;
@@ -58,7 +57,7 @@ void send_identify_cmd(HBA_PORT *port, SATA_ident_t *buf){
 	PxCLB->cmdHeader[0].ctba = (uint32_t) CmdTbl;
 	
 	/* H2D FIS with Identify command*/
-	MEMSET(CmdTbl, 0, sizeof(CmdTbl));
+	MEMSET(CmdTbl, 0, sizeof(HBA_CMD_TBL));
 	FIS_REG_H2D *fis = (void *)&CmdTbl->cfis;
 	MEMSET(fis, 0, sizeof(FIS_REG_H2D));
 	fis->fis_type = FIS_TYPE_REG_H2D;
@@ -81,17 +80,30 @@ void send_identify_cmd(HBA_PORT *port, SATA_ident_t *buf){
 }
 
 
-int find_free_CLB_slot(HBA_PORT *port){
+int lock_free_CLB_slot(AHCI_HDD_t * dev){
+	HBA_PORT *port = dev->port;
 	if (port == NULL) return -1;
-	if (port->clb == NULL) return -1;
+	if ((void*)port->clb == NULL) return -1;
 	
 	uint32_t ci = port->ci;
 	uint32_t sact = port->sact;
 
 	for(int i=0; i<32; i++){
-		if ((ci & 0x1) && (sact & 0x1)){
-			return i;
-		}
+		// Check lock
+		uint32_t eflags_reg = 0;
+		__asm__(
+			"bts %1, %2;"
+			"pushf;"
+			"pop %0;"
+			: "=m" (eflags_reg)
+			: "r" (i), "m" (dev->issued_cmd_mask));
+
+		// Check CF to see if the bit was 0 before BTS
+		if (!(eflags_reg & 1)){
+			if (!(ci & 0x1) && !(sact & 0x1)){
+				return i;
+			}
+		}		
 		ci >>= 1;
 		sact >>= 1;
 	}
@@ -149,8 +161,15 @@ void AHCI_interrupt_routine(void) {
 	return;
 }
 
-void AHCI_read_cmd (HBA_CMD_HEADER * cmd_header, uint32_t startl, uint32_t starth, uint32_t count, void * buf){
+int AHCI_read_prim_dev (uint32_t startl, uint32_t starth, uint32_t count, void * buf){
+	// find slot and "lock" the command slot
+	int slot = lock_free_CLB_slot(&AHCI_HDD);
+	if (slot == -1) return -1;
+
+	HBA_CMD_HEADER * cmd_header = ((HBA_CMD_HEADER *)AHCI_HDD.port->clb) + slot;
+	if (cmd_header==NULL) return -1;
 	HBA_CMD_TBL * cmd_tbl = (HBA_CMD_TBL *) cmd_header->ctba;
+	if (cmd_tbl == NULL) return -1;
 	MEMSET(cmd_header, 0, 8); // Not clear CTBA, CTBAU
 	MEMSET(cmd_tbl, 0, sizeof(HBA_CMD_TBL)); 
 	cmd_header->cfl = sizeof(FIS_REG_H2D) / sizeof(uint32_t);
@@ -170,6 +189,8 @@ void AHCI_read_cmd (HBA_CMD_HEADER * cmd_header, uint32_t startl, uint32_t start
 
 	/* Setup Command */
 	FIS_REG_H2D * fis = (FIS_REG_H2D *)cmd_tbl->cfis;
+	if (fis == NULL) return -1;
+
 	fis->fis_type = FIS_TYPE_REG_H2D;
 	fis->c = 1;
 	fis->command = 0xC8; // ATA_CMD_READ_DMA_EX
@@ -183,14 +204,22 @@ void AHCI_read_cmd (HBA_CMD_HEADER * cmd_header, uint32_t startl, uint32_t start
 	fis->countl = (uint8_t) count & 0xFF;
 	fis->counth = (uint8_t) (count >> 8) & 0xFF;
 
-	return;
+	// Issue command and wait for completion
+	issue_command(AHCI_HDD.port, slot);
+	while((AHCI_HDD.port->ci >> slot) & 1);
+
+	return cmd_header->prdbc;
 }
 
-void AHCI_write_cmd (HBA_CMD_HEADER * cmd_header, uint32_t startl, uint32_t starth, uint32_t count, void *buf){
-	if (cmd_header==NULL) return;
+int AHCI_write_prim_dev (uint32_t startl, uint32_t starth, uint32_t count, void *buf){
+	// find slot and "lock" the command slot
+	int slot = lock_free_CLB_slot(&AHCI_HDD);
+	if (slot == -1) return -1;
+	HBA_CMD_HEADER * cmd_header = ((HBA_CMD_HEADER *)AHCI_HDD.port->clb) + slot;
+	if (cmd_header==NULL) return -1;
 
 	HBA_CMD_TBL * cmd_tbl = (HBA_CMD_TBL *) cmd_header->ctba;
-	if (cmd_tbl == NULL) return;
+	if (cmd_tbl == NULL) return -1;
 
 	MEMSET(cmd_header, 0, 8); // Not clear CTBA, CTBAU
 	MEMSET(cmd_tbl, 0, sizeof(HBA_CMD_TBL)); 
@@ -212,7 +241,7 @@ void AHCI_write_cmd (HBA_CMD_HEADER * cmd_header, uint32_t startl, uint32_t star
 
 	/* Setup Command */
 	FIS_REG_H2D * fis = (FIS_REG_H2D *)cmd_tbl->cfis;
-	if (fis == NULL) return;
+	if (fis == NULL) return -1;
 
 	fis->fis_type = FIS_TYPE_REG_H2D;
 	fis->c = 1;
@@ -227,5 +256,49 @@ void AHCI_write_cmd (HBA_CMD_HEADER * cmd_header, uint32_t startl, uint32_t star
 	fis->countl = (uint8_t) count & 0xFF;
 	fis->counth = (uint8_t) (count >> 8) & 0xFF;
 
-	return;
+	// Issue command and wait for completion
+	issue_command(AHCI_HDD.port, slot);
+	while((AHCI_HDD.port->ci >> slot) & 1);
+
+	return cmd_header->prdbc;;
+}
+
+void AHCI_init(AHCI_HDD_t * dev){
+	HBA_MEM *abar = (HBA_MEM *) PCIgetHDDBAR5();
+	if (abar == NULL){
+		KLOGERROR("No AHCI device found on PCI");
+		return;
+	}
+	
+	uint8_t pi = abar->pi;
+	dev->abar = abar;
+	dev->port = NULL;
+	for (int i=0; i<32; i++){
+		if (pi & 1){
+			uint32_t ssts = abar->ports[i].ssts; 
+			uint8_t ipm = (ssts >> 8) & 0xF;
+			uint8_t det = ssts & 0xF;
+			if (ipm == 1 && det == 3){
+				
+				dev->portIndex = i;
+				dev->port = &abar->ports[i];
+				dev->port->clb = (uint32_t) &dev->cmd_list;
+				dev->port->fb = (uint32_t) &dev->rcv_fis;
+				for (int cmd=0; cmd <32; cmd++){
+					dev->cmd_list.cmdHeader[cmd].ctba = (uint32_t) &dev->cmd_table[cmd];
+				}
+				dev->port->ie |= 0xFF;
+				dev->abar->ghc |= 0x2; // Interrupt enable
+				stop_cmd(dev->port);
+				start_cmd(dev->port);
+
+				KLOGINFO("Active HDD found on AHCI port %d", i);
+				return;
+			}
+		}
+		pi >>= 1;
+	}
+	if (dev->port == NULL) {
+		KLOGERROR("No active ports found on AHCI conf. space")
+	}
 }

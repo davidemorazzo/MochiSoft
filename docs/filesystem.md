@@ -7,7 +7,7 @@ Avviare qemu con un'immagine di un disco e poter interagire con i file su questo
 Interfaccia principale da usare nel kernel contenuta in `include/kernel/fs.h`. Questa interfaccia deve essere indipendente dal _driver_ che viene usato. Inizialmente il primo driver da implementare è _Ext2_.
 ```txt
 +-----+   +-----------+   +-------------+   +------+
-| HDD |<=>| ATA iface |<=>| Ext2 driver |<=>| fs.h |
+| HDD |<=>|    AHCI   |<=>| Ext2 driver |<=>| fs.h |
 +-----+   +-----------+   +-------------+   +------+
 ```
 
@@ -28,7 +28,11 @@ Interfaccia principale da usare nel kernel contenuta in `include/kernel/fs.h`. Q
 	- 5.3 Poter assegnare un file la modalità read only
 6. Cancellare un qualsiasi file
 
-## Driver interface
+## Interfacce
+### Interfaccia Filesystem / Kernel 
+Interfaccia esposta da fs.h. Intesa solo per uso dentro al kernel. 
+Usata dalle funzionalità di sistema sys_* che sono anche mappate
+sulle system calls (es. sys_read, sys_write). 
 ```c
 struct {
 	int    (*init)       ( ... );
@@ -41,6 +45,18 @@ struct {
 
 } fsDriver;
 ```
+
+### Interfaccia device-driver / Filesystem
+Interfaccia per interagire direttamente con l'hardware (HDD, floppy ...). Attualmente prevede solo lettura e scrittura. 
+```c
+struct {
+	const int total_sectors;		// Total n. of addressable sectors
+	const int sector size;		// Size in bytes of 1 sector
+	int (*write)(uint32_t startl, uint32_t starth, uint32_t count, void * buf);
+	int (*read)(uint32_t startl, uint32_t starth, uint32_t count, void * buf);
+}
+```
+
 ## AHCI controller
 Per interagire in modo efficiente con le periferiche di storage, usare il controller AHCI, che controlla la periferica SATA con i comandi ATAPI o SCSI e rende disponibile l'API direttamente in memoria o su particolari porte I/O. L'interazione con il controller AHCI è molto legata al bus PCI. 
 ```txt

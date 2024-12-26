@@ -15,7 +15,7 @@ struct circular_buf_rx TTY_CIRC_BUF_RX = {
 	200,
 };
 
-struct AHCI_HDD_s AHCI_HDD = {
+AHCI_HDD_t AHCI_HDD = {
 	NULL,	// TODO rimappare? 
 	NULL,
 	{0},
