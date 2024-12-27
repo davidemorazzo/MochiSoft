@@ -26,3 +26,18 @@ La configurazione del sistema emulato:
 2. Comunicazione solo attraverso UART0
 3. Debugger GDB esposto sulla porta `localhost:1234`
 4. Disco rigido con controller AHCI su SATA (immagine del disco `hdd.img` in formato qcow2 di QEMU)
+
+# Features
+| Oggetto								| Stato	|
+|---									| :---:	|
+|Basic UART driver						| ✅️	|
+|Kernel heap allocator					| 🛠️	 |
+|Real Time clock						| ✅️	|
+|PIT/APIC								| 🛠️ 	 |
+|Driver AHCI per dispositivi su SATA	| ✅️	|
+|Filesystem driver for Ext2				| ❌️ 	|
+|Paging									| ❌️	|
+|Threads								| ❌️	|
+|Multi-processing						| ❌️	|
+|tty and Shell interpreter				| ❌️	|
+|VGA driver								| ❌️	|
