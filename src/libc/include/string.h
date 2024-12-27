@@ -16,6 +16,10 @@ void i32tohex(uint32_t i, char s[9]);
 void bytetohex(uint8_t i, char s[3]);
 void i32tobin(uint32_t i, char s[33]);
 void itoa(int i, char s[19]);
+char *ltrim(char *s);
+char *rtrim(char *s);
+char *trim(char *s);
+unsigned short int isspace(char s);
 
 #ifdef __cplusplus
 }

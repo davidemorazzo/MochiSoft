@@ -22,6 +22,10 @@ set (libc_src
         ${PROJECT_SOURCE_DIR}/string/bytetohex.c
         ${PROJECT_SOURCE_DIR}/string/strcpy.c
         ${PROJECT_SOURCE_DIR}/string/itoa.c
+        ${PROJECT_SOURCE_DIR}/string/trim.c
+        ${PROJECT_SOURCE_DIR}/string/ltrim.c
+        ${PROJECT_SOURCE_DIR}/string/rtrim.c
+        ${PROJECT_SOURCE_DIR}/string/isspace.c
 
         # time.h
         ${PROJECT_SOURCE_DIR}/time/mktime.c
