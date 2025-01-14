@@ -44,6 +44,8 @@ typedef struct Ext2_superblock{
 	uint32_t version_major;			// Major portion of version (combine with Minor portion above to construct full version field)
 	uint16_t reserved_blocks_uid;	// User ID that can use reserved blocks
 	uint16_t reserved_blocks_gid;	// Group ID that can use reserved blocks
+	uint32_t fisrt_non_res_inode;	// First non-reserved inode in file system. (In versions < 1.0, this is fixed as 11)
+	uint32_t inode_size;			// Size of each inode structure in bytes. (In versions < 1.0, this is fixed as 128)
 } Ext2_superblock_t;
 
 typedef struct Ext2_blk_grp_desc{
@@ -92,6 +94,12 @@ typedef struct Ext2_inode{
 	uint8_t os_specific_value2[12];	// Operating System Specific Value #2
 }Ext2_inode_t;
 
-
+typedef struct Ext2_directory{
+	uint32_t inode;						// Inode
+	uint16_t size;						// 	Total size of this entry (Including all subfields)
+	uint8_t name_len;					// Name Length least-significant 8 bits
+	uint8_t type;						// Type indicator (only if the feature bit for "directory entries have file type byte" is set, else this is the most-significant 8 bits of the Name Length)
+	char name;							// Name characters
+}Ext2_directory_t;
 
 #endif

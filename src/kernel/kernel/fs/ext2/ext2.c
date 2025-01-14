@@ -9,11 +9,7 @@ Ext2_superblock_t ext2_get_sblk(storage_dev_t *driver){
 	if (driver != NULL){
 		driver->read(EXT2_BLK0_SECTOR+2,0,2,buf);
 	}
-	// TODO: Poor man memcpy
-	for (int i=0; i<1024; i++){
-		char * ptr = (char *) &sblk;
-		ptr[i] = buf[i];
-	}
+	memcpy(&sblk, buf, sizeof(Ext2_superblock_t));
 	return sblk;
 }
 
@@ -36,19 +32,10 @@ int ext2_present(storage_dev_t * driver){
 }
 
 Ext2_blk_grp_desc_t ext2_get_blk_desc_tbl(storage_dev_t *driver, uint64_t blk_grp_idx){
-	uint64_t blk_idx;
-	Ext2_superblock_t sblk = ext2_get_sblk(driver);
-	
-	int blk_size = 1024 << sblk.block_size_log2;
-	blk_idx = blk_grp_idx * sblk.block_groups_blocks + 2;
-	uint64_t bgdt_lba = ext2_get_block_LBA(driver, blk_idx);
-	int bgdt_len = (sblk.blocks_total / sblk.block_groups_blocks) + 1;
-	int bgdt_size = sizeof(Ext2_blk_grp_desc_t)*bgdt_len;
-	void *blk_tbl = (void *)kmalloc(bgdt_size + 512);
-	int b = driver->read(bgdt_lba & 0xFFFFFFFF, (bgdt_lba>>32) & 0xFFFFFFFF, 
-		bgdt_size/512 + 1, blk_tbl);
+	static char buffer[2048];
+	ext2_read_blocks(driver, buffer, 2, 2);	
 	Ext2_blk_grp_desc_t bgd;
-	memcpy(&bgd, &((Ext2_blk_grp_desc_t*)blk_tbl)[blk_grp_idx], sizeof(Ext2_blk_grp_desc_t));
+	memcpy(&bgd, &((Ext2_blk_grp_desc_t*)buffer)[blk_grp_idx], sizeof(Ext2_blk_grp_desc_t));
 	return bgd;
 }
 
@@ -60,36 +47,16 @@ Ext2_inode_t ext2_get_inode(storage_dev_t * driver, uint32_t idx){
 	/* Calculate block group index */
 	uint32_t blk_size = (1024 << sblk.block_size_log2);
 	uint32_t blk_grp_addr = (idx-1) / sblk.block_groups_inodes;
-	// Ext2_blk_grp_desc_t bgdt = ext2_get_blk_desc_tbl(driver, blk_grp_addr);
-
-	/* Calculate offset for inode table */
-	uint32_t inode_tbl_offset = 3; // including super-block, data block bitmap, inode bitmap
-	inode_tbl_offset += sblk.blocks_total / sblk.block_groups_blocks +1;
-
-	/* Get inode table of this block group */
-	uint32_t inode_size = 128;
-	if (sblk.version_major >= 1) {}; // TODO: implement check of inode size from SBLK
-	uint32_t tbl_size_bytes  = sblk.block_groups_inodes * inode_size;
-	uint32_t tbl_size_sectors = (tbl_size_bytes / driver->sector_size)+1;
-	char * buffer = (char *)kmalloc(tbl_size_sectors * driver->sector_size);
-	Ext2_inode_t *i;
-	if (buffer != NULL){
-		uint64_t lba = ext2_get_block_LBA(driver, blk_grp_addr+inode_tbl_offset);
-		uint32_t cnt = driver->read(lba & 0xFFFFFFFF, (lba >> 32) & 0xFFFFFFFF,
-			6, buffer);
-		i = (Ext2_inode_t *)buffer;
-	} 
+	Ext2_blk_grp_desc_t bgd = ext2_get_blk_desc_tbl(driver, blk_grp_addr);
 	
-		// if (cnt != blk_size){
-		// 	KLOGERROR("Read failure!");
-		// 	return inode;
-		// }
-	uint32_t block = (blk_grp_addr * inode_size) / blk_size;
-	// TODO: substitue with memcpy
-	for (uint32_t i=0; i<blk_size; i++){
-		char * ptr = (char *) &inode;
-		ptr[i] = buffer[i]; 
+	int local_inode_idx = (idx % sblk.block_groups_inodes) -1;
+	static char buffer[4096]; // TODO fare fetch del blocco giusto e non tutta la tabella inode
+	ext2_read_blocks(driver, buffer, bgd.start_blk_iaddr, 4);
+	int inode_size = 128;
+	if (sblk.version_major >= 1){
+		inode_size = sblk.inode_size;
 	}
+	memcpy(&inode, ((char*)buffer)+local_inode_idx*inode_size, sizeof(Ext2_inode_t));
 	return inode;
 }
 

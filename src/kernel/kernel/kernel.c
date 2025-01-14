@@ -55,16 +55,16 @@ void kernel_main (void){
     /* ===== SETUP HEAP ====== */
     _kAllocStatus* kHeapStatus = _setupHeap(&__heap_bottom, ((size_t)&__heap_size));
     char * array0, *array1;
-    array0 = kmalloc(5*sizeof(char));
-    array1 = kmalloc(5*sizeof(char));
-    array0[0] = 0xFF;
-    array1[0] = 0xFF;
-    array0[1] = 0xFF;
-    array1[1] = 0xFF;
-    array0[4] = 0xFF;
-    array1[4] = 0xFF;
-    _kfree(array0, 5*sizeof(char));
-    _kfree(array1, 5*sizeof(char));
+    // array0 = kmalloc(5*sizeof(char));
+    // array1 = kmalloc(5*sizeof(char));
+    // array0[0] = 0xFF;
+    // array1[0] = 0xFF;
+    // array0[1] = 0xFF;
+    // array1[1] = 0xFF;
+    // array0[4] = 0xFF;
+    // array1[4] = 0xFF;
+    // _kfree(array0, 5*sizeof(char));
+    // _kfree(array1, 5*sizeof(char));
     
 
     /* ===== INTERRUPT DESCRIPTOR TABLE ====== */
@@ -129,7 +129,21 @@ void kernel_main (void){
         ext2_read_blocks(&driver, buffer, bgd.start_blk_iaddr, 1);
         Ext2_inode_t i_root = ((Ext2_inode_t*)buffer)[2];
         ext2_read_blocks(&driver, buffer, i_root.ptr_blk[0], 1);
-        
+        // Ext2_inode_t i = ext2_get_inode(&driver, 12);
+        // ext2_read_blocks(&driver, buffer, i.ptr_blk[13], 1);
+        // ext2_read_blocks(&driver, buffer, *(uint32_t*)buffer[0], 1);
+
+        KLOGINFO("List \"/\":");
+        Ext2_directory_t *d_root = (void *)buffer;
+        while (d_root->inode != 0){
+            Ext2_inode_t i = ext2_get_inode(&driver, d_root->inode);
+            char name[200] = {0};
+            d_root = (void *)(((char*)d_root)+d_root->size);
+            static char contenuto[1024] = {'\0'};
+            ext2_read_blocks(&driver, contenuto, i.ptr_blk[0], 1);
+            KLOGINFO("Inode: %d, %s", d_root->inode, memcpy(name, &d_root->name, d_root->name_len));
+            KLOGINFO("%s", contenuto);
+        }
     }
 
     while(1){
