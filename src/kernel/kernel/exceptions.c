@@ -58,7 +58,7 @@ void isr04 (){
 }
 
 void isr0D(void *error_code){
-    KLOGERROR("<Exception 0x0D> %s => Error code: %X\n", &exc_lookup[0x0D], &error_code);
+    KLOGERROR("<Exception 0x0D> %s => Error code: %X\n", &exc_lookup[0x0D], error_code);
 }
 
 decl_isr(05);

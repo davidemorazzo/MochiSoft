@@ -30,7 +30,8 @@ void *kmalloc(size_t size){
 		void *memPtr = _heapStatus->freeBase;
 		_heapStatus->freeBase = (void *)((char*)_heapStatus->freeBase+size);
 		if ((_heapStatus->freeTop - _heapStatus->freeBase) < 51200){
-			KLOGWARN("La heap sta per finire, meno di 50KiB liberi!");
+			KLOGWARN("La heap sta per finire, meno di %d bytes liberi!", 
+				(_heapStatus->freeTop - _heapStatus->freeBase));
 		}
 		return memPtr;
 	}

@@ -3,9 +3,8 @@
 #include "string.h"
 
 int _va_snprintf(char * s, size_t n, const char * format, va_list argptr){
-    char out_buffer[300] = {'\0'};   // TODO: make dynamic
-    char placeholder[50] = {'\0'};
     size_t fmt_size = strlen(format);
+    unsigned int s_ptr = 0;
 
     for(size_t i=0; i<fmt_size; i++){
         
@@ -15,32 +14,34 @@ int _va_snprintf(char * s, size_t n, const char * format, va_list argptr){
             switch (format[i+1])
             {
             case 'X': /*Print hex*/
-                i32tohex(*va_arg(argptr, uint32_t*), placeholder);
+                i32tohex(va_arg(argptr, uint32_t), &s[s_ptr]);
+                s_ptr += 8;
                 break;
             case 'd': /*Print integer*/
-                itoa(*va_arg(argptr,int*), placeholder);
+                itoa(va_arg(argptr,int), &s[s_ptr]);
+                s_ptr += strlen(&s[s_ptr]);
                 break;
             case 's': /*Print string*/
-                strcpy(va_arg(argptr, char*), placeholder);
+                strcpy(va_arg(argptr, char*), &s[s_ptr]);
+                s_ptr += strlen(&s[s_ptr]);
                 break;
             default:
                 i--;
                 break;
             }
-            // get_placeholder(placeholder, format[i+1], argptr);
-            strcpy(placeholder, &out_buffer[strlen(out_buffer)]);
+
             i++;
         }else{
             // No placeholder. Append char to output buffer
-            out_buffer[strlen(out_buffer)] = format[i];
+            s[s_ptr++] = format[i];
+
+        }
+        if (n != 0){
+            return s_ptr+1;
         }
     }
     
-    if (n != 0){
-        strcpyn(out_buffer, s, n);
-    }else{
-        strcpy(out_buffer, s);
-    }
     va_end(argptr);             // Clean-up
-    return n;   // TODO: da rendere robusto
+    s[s_ptr] = '\0'; 
+    return s_ptr+1;
 }
