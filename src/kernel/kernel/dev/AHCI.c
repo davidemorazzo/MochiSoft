@@ -165,8 +165,10 @@ void AHCI_interrupt_routine(void) {
 
 int AHCI_read_prim_dev (uint32_t startl, uint32_t starth, uint32_t count, void * buf){
 	// find slot and "lock" the command slot
-	int slot = lock_free_CLB_slot(&AHCI_HDD);
-	if (slot == -1) return -1;
+	int slot;
+	do{
+		slot = lock_free_CLB_slot(&AHCI_HDD);
+	}while (slot == -1);
 
 	HBA_CMD_HEADER * cmd_header = ((HBA_CMD_HEADER *)AHCI_HDD.port->clb) + slot;
 	if (cmd_header==NULL) return -1;
@@ -215,8 +217,11 @@ int AHCI_read_prim_dev (uint32_t startl, uint32_t starth, uint32_t count, void *
 
 int AHCI_write_prim_dev (uint32_t startl, uint32_t starth, uint32_t count, void *buf){
 	// find slot and "lock" the command slot
-	int slot = lock_free_CLB_slot(&AHCI_HDD);
-	if (slot == -1) return -1;
+	int slot;
+	do{
+		slot = lock_free_CLB_slot(&AHCI_HDD);
+	}while (slot == -1);
+	
 	HBA_CMD_HEADER * cmd_header = ((HBA_CMD_HEADER *)AHCI_HDD.port->clb) + slot;
 	if (cmd_header==NULL) return -1;
 
