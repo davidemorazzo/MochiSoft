@@ -42,14 +42,14 @@ void PCIcheckAllBuses(void){
 				uint32_t deviceID = (uint32_t)PCIconfigReadWord(bus, device, 0, 2);
 				uint32_t class = (uint32_t) PCIconfigReadWord (bus, device, 0, 10);
 				KLOGINFO ("PCI device detected: bus %d, dev %d, PCI id %X:%X", 
-					&bus, &device, &vendorID, &deviceID);
+					bus, device, vendorID, deviceID);
 
 				// Mass storage devices	
 				if (class == 0x106){
 					uint32_t progIF = (uint32_t) PCIconfigReadWord (bus, device, 0, 8) >> 8;
 					if (progIF == 0x1){
 						uint32_t bar5 = PCIconfigReadDWord(bus, device, 0, 0x24);
-						KLOGINFO("\t^^^ AHCI controller, ABAR at 0x%X", &bar5);
+						KLOGINFO("\t^^^ AHCI controller, ABAR at 0x%X", bar5);
 					}
 				}
 			}

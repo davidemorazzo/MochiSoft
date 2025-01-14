@@ -13,7 +13,7 @@ void *syscall_handler(int syscall_id, void *arg1, void* arg2,
 			result = (void *)sys_time(arg1);
 			break;
 		default:
-			kprint("<WARNING> Invalid syscall_id: %d\n\t", &syscall_id);
+			kprint("<WARNING> Invalid syscall_id: %d\n\t", syscall_id);
 			result = 0x00;
 			break;
 	}

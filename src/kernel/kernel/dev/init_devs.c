@@ -119,7 +119,7 @@ void init_devs(){
 				stop_cmd(AHCI_HDD.port);
 				start_cmd(AHCI_HDD.port);
 
-				KLOGINFO("Active HDD found on AHCI port %d", &i);
+				KLOGINFO("Active HDD found on AHCI port %d", i);
 				break;
 			}
 		}

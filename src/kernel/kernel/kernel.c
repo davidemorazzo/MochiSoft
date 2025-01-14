@@ -110,7 +110,7 @@ void kernel_main (void){
     if (AHCI_HDD.port != NULL){
         SATA_ident_t id = {0};
         send_identify_cmd(AHCI_HDD.port, &id);
-        KLOGINFO("Device model: %s", &id.model);
+        KLOGINFO("Device model: %s", id.model);
     }
     
 
