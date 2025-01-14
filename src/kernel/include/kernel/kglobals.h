@@ -23,6 +23,7 @@ struct AHCI_HDD_s {
 	HBA_CMD_TBL __attribute__((aligned(128))) cmd_table[32]; /* Command tables, linked into port->clb->ctba */
 	HBA_FIS rcv_fis;		/* Received FIS, linked into port->fb. Allocated in heap */
 	uint32_t portIndex;		/* Port index of the HDD in use */
+	uint32_t issued_cmd_mask;/* Software set the bit corresponding to the pending commands (refer to the port in use) */
 };
 
 /* AHCI hard disk controller in use */

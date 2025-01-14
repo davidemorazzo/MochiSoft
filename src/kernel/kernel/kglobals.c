@@ -21,5 +21,6 @@ struct AHCI_HDD_s AHCI_HDD = {
 	{0},
 	{0},
 	{0},
-	0
+	0,
+	0,
 };
