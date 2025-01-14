@@ -3,6 +3,8 @@
 #include "kernel/kstdio.h"
 #include "kernel/kglobals.h"
 
+#include "string.h"
+
 #define MEMSET(startptr, val, size) 				\
 for (	char * __ptr = (char *)startptr; 			\
 			__ptr < ( ((char *)startptr) + size ); 	\
@@ -117,7 +119,7 @@ void issue_command(HBA_PORT *port, uint8_t cmdIndex){
 }
 
 static uint32_t check_pending_cmd(HBA_PORT *port){
-	uint32_t issued_cmd_mask = AHCI_HDD.issued_cmd_mask;
+	// uint32_t issued_cmd_mask = AHCI_HDD.issued_cmd_mask;
 	AHCI_HDD.issued_cmd_mask &= port->ci;
 }
 
@@ -263,6 +265,17 @@ int AHCI_write_prim_dev (uint32_t startl, uint32_t starth, uint32_t count, void 
 	return cmd_header->prdbc;;
 }
 
+static void ATA_decode_str(char * source, char * dest, size_t size){
+	for (unsigned int i=0; i<size-1; i+=2){
+		dest[i] = source[i+1];
+		dest[i+1] = source[i];
+	}
+	// Se size dispari
+	if ((size % 2) != 0){
+		dest[size-1] = source[size-1];
+	}
+}
+
 void AHCI_init(AHCI_HDD_t * dev){
 	HBA_MEM *abar = (HBA_MEM *) PCIgetHDDBAR5();
 	if (abar == NULL){
@@ -290,9 +303,16 @@ void AHCI_init(AHCI_HDD_t * dev){
 				dev->port->ie |= 0xFF;
 				dev->abar->ghc |= 0x2; // Interrupt enable
 				stop_cmd(dev->port);
-				start_cmd(dev->port);
-
-				KLOGINFO("Active HDD found on AHCI port %d", i);
+				start_cmd(dev->port); 
+				send_identify_cmd(dev->port, &AHCI_HDD.ident_packet);
+				int capacity = dev->ident_packet.total_usr_sectors[0] * dev->ident_packet.sector_bytes;
+				char model[41] = {'\0'};
+				char tmp[41] = {'\0'};
+				ATA_decode_str((char *)dev->ident_packet.model, tmp, 40);
+				strcpy(rtrim(tmp), model);
+				strcpy(model, dev->ident_packet.model);
+				KLOGINFO("Storage on port %d: %s, capacity %d B, %d Bytes/sector", 
+					i, model, capacity, dev->ident_packet.sector_bytes);
 				return;
 			}
 		}

@@ -449,6 +449,7 @@ typedef struct AHCI_HDD_s {
 	HBA_FIS rcv_fis;		/* Received FIS, linked into port->fb. Allocated in heap */
 	uint32_t portIndex;		/* Port index of the HDD in use */
 	uint32_t issued_cmd_mask;/* Software set the bit corresponding to the pending commands (refer to the port in use) */
+	SATA_ident_t ident_packet;/* Response after the ATA identify command */
 } AHCI_HDD_t;
 
 /* Start AHCI command engine */
