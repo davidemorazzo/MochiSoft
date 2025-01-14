@@ -21,8 +21,8 @@
           "type": "shell",
           "command": [
             "echo 'QEMU i386 started';",
-            "-m 4G",
             "qemu-system-i386 -kernel ${workspaceFolder}/build/MochiOS " , 
+            "-m 4G ",
             "-nographic -s -S ", 
             "-drive id=disk,file=${workspaceFolder}/hdd.img,if=none ",
             "-device ahci,id=ahci ",
