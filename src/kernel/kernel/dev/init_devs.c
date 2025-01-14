@@ -39,6 +39,7 @@ Links: https://web.archive.org/web/20150514082645/http://www.nondot.org/sabre/os
 extern void irq_0x20_wrapper();
 extern void irq_0x24_wrapper();
 extern void irq_0x28_wrapper();
+extern void irq_0x2B_wrapper();
 
 void init_devs(){
 	InterruptDescriptor32 d;
@@ -111,6 +112,10 @@ void init_devs(){
 				for (int cmd=0; cmd <32; cmd++){
 					AHCI_HDD.cmd_list.cmdHeader[cmd].ctba = (uint32_t) &AHCI_HDD.cmd_table[cmd];
 				}
+				IRQ_clear_mask(11);
+				SET_IT_VEC(d, irq_0x2B_wrapper, 0x2B);
+				AHCI_HDD.port->ie |= 0x1F;
+				AHCI_HDD.abar->ghc |= 0x2; // Interrupt enable
 				stop_cmd(AHCI_HDD.port);
 				start_cmd(AHCI_HDD.port);
 
@@ -123,8 +128,5 @@ void init_devs(){
 	if (AHCI_HDD.port == NULL) {
 		KLOGERROR("No active ports found on AHCI conf. space")
 	}
-
-	send_identify_cmd(AHCI_HDD.port);
-
 	return;
 }

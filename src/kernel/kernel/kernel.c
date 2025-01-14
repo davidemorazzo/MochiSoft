@@ -13,6 +13,7 @@
 #include "kernel/kheap.h"
 #include "kernel/syscall.h"
 #include "kernel/kglobals.h"
+#include "dev/PCI/AHCI.h"
 
 #include "time.h"
 #include "stdio.h"
@@ -106,6 +107,11 @@ void kernel_main (void){
     }
 
     /* PCI enumeration */
+    if (AHCI_HDD.port != NULL){
+        SATA_ident_t id = {0};
+        send_identify_cmd(AHCI_HDD.port, &id);
+        KLOGINFO("Device model: %s", &id.model);
+    }
     
 
     /*Boot Welcome text*/

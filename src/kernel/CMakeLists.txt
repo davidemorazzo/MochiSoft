@@ -34,6 +34,7 @@ set (kernel_src
         ${PROJECT_SOURCE_DIR}/kernel/ISR/IRQ_handlers/irq0.c
         ${PROJECT_SOURCE_DIR}/kernel/ISR/IRQ_handlers/irq4.c
         ${PROJECT_SOURCE_DIR}/kernel/ISR/IRQ_handlers/irq8.c
+        ${PROJECT_SOURCE_DIR}/kernel/ISR/IRQ_handlers/irq11.c
         ${PROJECT_SOURCE_DIR}/kernel/memory/waterMarkAllocator.c
         ${PROJECT_SOURCE_DIR}/kernel/dev/RTC.c
         ${PROJECT_SOURCE_DIR}/kernel/dev/init_devs.c
