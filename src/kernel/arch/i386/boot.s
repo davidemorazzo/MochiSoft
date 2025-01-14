@@ -12,19 +12,12 @@
 .long FLAGS
 .long CHECKSUM
 
-/* Stack initialization and definition */
-.section .bss
-.align 16
-stack_bottom:
-.skip 16384  #16KiB stack size
-stack_top:
-
 /* Entry point of the kernel in _start */
 .section .text
 .global _start
 .type _start, @function
 _start:
-    mov $stack_top, %esp #initialization of the stack pointer to the top of the stack (grows downward)
+    mov $__stack_top, %esp #initialization of the stack pointer to the top of the stack (grows downward)
     /* TODO Altre cose fare per cose più avanzate, GDT, paging ... */
     call kernel_main
 

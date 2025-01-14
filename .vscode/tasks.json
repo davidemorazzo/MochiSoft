@@ -19,7 +19,7 @@
         {
           "label": "Run QEMU",
           "type": "shell",
-          "command": "echo 'QEMU i386 started'; qemu-system-i386 -kernel ${workspaceFolder}/build/MochiOS -nographic -s -S",
+          "command": "echo 'QEMU i386 started'; qemu-system-i386 -m 4G -kernel ${workspaceFolder}/build/MochiOS -nographic -s -S",
           "dependsOn": ["Build QEMU"],
           "isBackground": true,
           "problemMatcher": [

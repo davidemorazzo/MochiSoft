@@ -20,12 +20,6 @@
 
 uint64_t global_IDT[255] = {0};
 uint64_t global_GDT[50] = {0};
-/*Heap stuff*/
-// #define KHEAP_SIZE 524288000
-#define KHEAP_SIZE 1024*1024*10
-
-void *kheap[KHEAP_SIZE];
-// _kAllocStatus kHeapStatus;
 
 /* Funzione di entry point del kernel, richiamata con lo stesso nome
 nel bootloader (src/bootloader/boot.s)*/
@@ -37,6 +31,16 @@ void generic_isr(){
 }
 
 void kernel_main (void){
+    extern unsigned int __stack_top;
+    extern unsigned int __stack_size;
+    extern unsigned int __heap_bottom;
+    extern unsigned int __heap_top;
+    extern unsigned int __heap_size;
+    unsigned int *sp = &__stack_top;
+    unsigned int *ss = &__stack_size;
+    unsigned int *hb = &__heap_bottom;
+    unsigned int *ht = &__heap_top;
+    unsigned int *hs = &__heap_size;
     
     disable_it();    
     /* ======= GLOBAL DESCRIPTOR TABLE ====== */
@@ -47,7 +51,7 @@ void kernel_main (void){
     gdt_load(GDTR);
 
     /* ===== SETUP HEAP ====== */
-    _kAllocStatus* kHeapStatus = _setupHeap(kheap, KHEAP_SIZE);
+    _kAllocStatus* kHeapStatus = _setupHeap(&__heap_bottom, ((size_t)&__heap_size));
     char * array0, *array1;
     array0 = kmalloc(5*sizeof(char));
     array1 = kmalloc(5*sizeof(char));
@@ -108,7 +112,7 @@ void kernel_main (void){
     }while(now == 0);
     kprint("MochiSoft Inc. (R) 2024\n\nWelcome in MochiSoft OS!\n");
     kprint("%s\n\n", asctime(gmtime(&now)));
-    KLOGINFO("Avvio MochiOS completato")
+    KLOGINFO("Avvio MochiOS completato");
 
     __asm__("int $0");
 

@@ -4,6 +4,7 @@ Implementazione di malloc e free con water mark allocator, per avere una impleme
 
 #include "kernel/kheap.h"
 #include "string.h"
+#include "kernel/kstdio.h"
 
 _kAllocStatus *_heapStatus;
 
@@ -28,12 +29,16 @@ void *kmalloc(size_t size){
 	{
 		void *memPtr = _heapStatus->freeBase;
 		_heapStatus->freeBase = (void *)((char*)_heapStatus->freeBase+size);
+		if ((_heapStatus->freeTop - _heapStatus->freeBase) < 51200){
+			KLOGWARN("La heap sta per finire, meno di 50KiB liberi!");
+		}
 		return memPtr;
 	}
 	else
 	{
 		// Heap full. return NULL
 		// TODO: Handle freed chunks
+		KLOGERROR("Heap piena, non posso allocare più memoria :(");
 		return NULL;
 	}
 }
