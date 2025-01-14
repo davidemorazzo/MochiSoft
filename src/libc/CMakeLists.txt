@@ -38,6 +38,7 @@ set (libc_src
         ${PROJECT_SOURCE_DIR}/stdio/sprintf.c
         ${PROJECT_SOURCE_DIR}/stdio/printf.c
         ${PROJECT_SOURCE_DIR}/stdio/_va_snprintf.c
+        ${PROJECT_SOURCE_DIR}/stdio/memcpy.c
 )
 
 add_library(libc SHARED OBJECT ${libc_src})
