@@ -26,7 +26,8 @@
             "-nographic -s -S ", 
             "-drive id=disk,file=${workspaceFolder}/hdd.img,if=none ",
             "-device ahci,id=ahci ",
-            "-device ide-hd,drive=disk,bus=ahci.0"],
+            "-device ide-hd,drive=disk,bus=ahci.0"
+          ],
           "dependsOn": ["Build QEMU"],
           "isBackground": true,
           "problemMatcher": [
