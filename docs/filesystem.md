@@ -53,6 +53,15 @@ Le porte I/O per interagire con il controller `PCI`:
 - `PCI_ADDR` = 0xCF8
 - `PCI_DATA` = 0xCFC
 
+```txt
+Register	Offset	Bits 31-24	Bits 23-16	Bits 15-8	Bits 7-0
+0x0			0x0	    Device ID				Vendor ID
+0x1			0x4		Status					Command
+0x2			0x8		Class code	Subclass	Prog IF		Revision ID
+0x3			0xC		BIST		Header type	Latency Tmr	Cache Line Size
+...
+```
+
 Alcuni link utili:
 - https://github.com/fysnet/FYSOS/blob/39da816ac995fe246853c062dd1e148bb0d6f083/main/usb/utils/include/pci.h#L190
 - https://forum.osdev.org/viewtopic.php?t=41833

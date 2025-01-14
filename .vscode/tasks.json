@@ -19,7 +19,14 @@
         {
           "label": "Run QEMU",
           "type": "shell",
-          "command": "echo 'QEMU i386 started'; qemu-system-i386 -m 4G -kernel ${workspaceFolder}/build/MochiOS -nographic -s -S",
+          "command": [
+            "echo 'QEMU i386 started';",
+            "-m 4G",
+            "qemu-system-i386 -kernel ${workspaceFolder}/build/MochiOS " , 
+            "-nographic -s -S ", 
+            "-drive id=disk,file=${workspaceFolder}/hdd.img,if=none ",
+            "-device ahci,id=ahci ",
+            "-device ide-hd,drive=disk,bus=ahci.0"],
           "dependsOn": ["Build QEMU"],
           "isBackground": true,
           "problemMatcher": [

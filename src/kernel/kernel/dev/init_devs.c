@@ -16,6 +16,7 @@ Links: https://web.archive.org/web/20150514082645/http://www.nondot.org/sabre/os
 
 #include "dev/8253/PIT.h"
 #include "dev/RTC.h"
+#include "dev/PCI/PCI.h"
 #include "kernel/PIC-8259.h"		// Spostare definizione in cartella dev/
 #include "kernel/uart.h"			// Spostare definizione in cartella dev/
 
@@ -80,4 +81,7 @@ void init_devs(){
 	if(it_state){
 		enable_it();
 	}
+
+	/* ================ PCI ===================*/
+	PCIcheckAllBuses(); // Stampa su KINFO i device trovati
 }

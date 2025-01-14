@@ -64,3 +64,28 @@ uint32_t read_eflags(){
     __asm__("pushf; pop %0" : "=m" (eflags) :);
     return eflags;
 }
+
+
+void outl(uint16_t port, uint32_t val){
+    __asm__ volatile ( 
+        "push %%dx;"
+        "mov %w0, %%dx;"
+        "mov %d1, %%eax;"
+        "out %%eax, %%dx;"
+        "pop %%dx;" 
+        : "=m" (port), "=m" (val) :
+    );
+}
+
+uint32_t inl(uint16_t port){
+    uint32_t result;
+    __asm__ volatile (
+        "push %%dx;"
+        "mov %w0, %%dx;"
+        "inl %%dx, %%eax;"
+        "mov %%eax, %d1;" 
+        "pop %%dx;"
+        : "=m" (port), "=m" (result) :
+    );
+    return result;
+}

@@ -105,6 +105,9 @@ void kernel_main (void){
         KLOGERROR("IDTR content not consistent!");
     }
 
+    /* PCI enumeration */
+    
+
     /*Boot Welcome text*/
     time_t now;
     do{
