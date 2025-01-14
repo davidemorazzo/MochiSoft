@@ -56,4 +56,42 @@ typedef struct Ext2_blk_grp_desc{
 	uint8_t unused[14];
 }Ext2_blk_grp_desc_t;
 
+typedef struct Ext2_inode{
+	uint16_t type_permissions;		// Type and Permissions (see below)
+	uint16_t user_id;				// User ID
+	uint32_t sizel;					// Lower 32 bits of size in bytes
+	uint32_t time_last_access;		// Last Access Time (in POSIX time)
+	uint32_t time_creation;			// Creation Time (in POSIX time)
+	uint32_t time_last_modification;// Last Modification time (in POSIX time)
+	uint32_t time_delete;			// Deletion time (in POSIX time)
+	uint16_t group_id;				// Group ID
+	uint16_t hard_links_count;		// Count of hard links (directory entries) to this inode. When this reaches 0, the data blocks are marked as unallocated.
+	uint32_t hd_sector_count;		// Count of disk sectors (not Ext2 blocks) in use by this inode, not counting the actual inode structure nor directory entries linking to the inode.
+	uint32_t flags;					// Flags (see below)
+	uint32_t os_specific_value1;	// Operating System Specific value #1
+	uint32_t ptr_blk[15];			// Block pointers
+	// uint32_t ptr_blk0;				// Direct Block Pointer 0
+	// uint32_t ptr_blk1;				// Direct Block Pointer 1
+	// uint32_t ptr_blk2;				// Direct Block Pointer 2
+	// uint32_t ptr_blk3;				// Direct Block Pointer 3
+	// uint32_t ptr_blk4;				// Direct Block Pointer 4
+	// uint32_t ptr_blk5;				// Direct Block Pointer 5
+	// uint32_t ptr_blk6;				// Direct Block Pointer 6
+	// uint32_t ptr_blk7;				// Direct Block Pointer 7
+	// uint32_t ptr_blk8;				// Direct Block Pointer 8
+	// uint32_t ptr_blk9;				// Direct Block Pointer 9
+	// uint32_t ptr_blk10;				// Direct Block Pointer 10
+	// uint32_t ptr_blk11;				// Direct Block Pointer 11
+	// uint32_t single_ptr_blk;		// Singly Indirect Block Pointer (Points to a block that is a list of block pointers to data)
+	// uint32_t double_ptr_blk;		// Doubly Indirect Block Pointer (Points to a block that is a list of block pointers to Singly Indirect Blocks)
+	// uint32_t triple_ptr_blk;		// Triply Indirect Block Pointer (Points to a block that is a list of block pointers to Doubly Indirect Blocks)
+	uint32_t gen_number;			// Generation number (Primarily used for NFS)
+	uint32_t ext_attr_flag;			// In Ext2 version 0, this field is reserved. In version >= 1, Extended attribute block (File ACL).
+	uint32_t sizeh;					// In Ext2 version 0, this field is reserved. In version >= 1, Upper 32 bits of file size (if feature bit set) if it's a file, Directory ACL if it's a directory
+	uint32_t fragment_blk_addr;		// Block address of fragment
+	uint8_t os_specific_value2[12];	// Operating System Specific Value #2
+}Ext2_inode_t;
+
+
+
 #endif

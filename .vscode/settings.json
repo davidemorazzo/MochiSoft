@@ -48,6 +48,7 @@
 		"ctime": "c",
 		"stddef.h": "c",
 		"ext2.h": "c",
-		"defs.h": "c"
+		"defs.h": "c",
+		"bus_interface.h": "c"
 	}
 }

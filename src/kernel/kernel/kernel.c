@@ -14,6 +14,7 @@
 #include "kernel/syscall.h"
 #include "kernel/kglobals.h"
 #include "dev/PCI/AHCI.h"
+#include "kernel/fs/ext2/ext2.h"
 
 #include "time.h"
 #include "stdio.h"
@@ -106,23 +107,6 @@ void kernel_main (void){
         KLOGERROR("IDTR content not consistent!");
     }
 
-    /* PCI enumeration */
-    uint8_t buf1[1024];
-    // volatile uint8_t buf2[512]; 
-    char outbuf[1024] = {"Primo settore waf >:(\0"};
-    strcpy("secondo settore miao :)",&outbuf[512]);
-    if (AHCI_HDD.port != NULL){
-        SATA_ident_t id = {0};
-        send_identify_cmd(AHCI_HDD.port, &id);
-        AHCI_write_prim_dev(0, 0, 2, outbuf);
-        AHCI_read_prim_dev(0, 0, 2, buf1);
-        KLOGINFO("Read 0:0 from HDD => '%s'", buf1);
-        KLOGINFO("Read 0:1 from HDD => '%s'", buf1+512);
-        // KLOGINFO("Device \tmodel: %s", (uint32_t)id.model);
-        // KLOGINFO("\t\tNumber of user addressable sectors: %d", (uint32_t)id.total_usr_sectors[0]);
-        // KLOGINFO("\t\tUnformatted bytes per sector: %d", (uint32_t)id.sector_bytes);
-        // KLOGINFO("Transferred byted P1PRDBC=%d", ((HBA_CMD_HEADER*)AHCI_HDD.port->clb)->prdbc);
-    }
 
     /*Boot Welcome text*/
     time_t now;
@@ -133,7 +117,20 @@ void kernel_main (void){
     kprint("%s\n\n", asctime(gmtime(&now)));
     KLOGINFO("Avvio MochiOS completato");
 
-    __asm__("int $0");
+    storage_dev_t driver;
+    AHCI_get_driver(&driver);
+    char buf[10000];
+    driver.read(EXT2_BLK0_SECTOR, 0, 10, buf);
+    if (ext2_present(&driver)){
+        KLOGINFO( "Ext2 filesystem detected");
+        Ext2_superblock_t sblk = ext2_get_sblk(&driver);
+        Ext2_blk_grp_desc_t bgd = ext2_get_blk_desc_tbl(&driver, 0);
+        char *buffer[1024];
+        ext2_read_blocks(&driver, buffer, bgd.start_blk_iaddr, 1);
+        Ext2_inode_t i_root = ((Ext2_inode_t*)buffer)[2];
+        ext2_read_blocks(&driver, buffer, i_root.ptr_blk[0], 1);
+        
+    }
 
     while(1){
 

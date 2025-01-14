@@ -46,6 +46,7 @@ set (kernel_src
         ${PROJECT_SOURCE_DIR}/kernel/modules/tty.c
         ${PROJECT_SOURCE_DIR}/kernel/dev/PCI.c
         ${PROJECT_SOURCE_DIR}/kernel/dev/AHCI.c
+        ${PROJECT_SOURCE_DIR}/kernel/fs/ext2/ext2.c
 )
 
 set (bootloader_src
