@@ -8,6 +8,7 @@ link: https://wiki.osdev.org/AHCI
 
 #include <stdint.h>
 #include "dev/PCI/PCI.h"
+#include "dev/bus_interface.h"
 
 #define HBA_PxCMD_ST    0x0001
 #define HBA_PxCMD_FRE   0x0010
@@ -500,5 +501,8 @@ int AHCI_write_prim_dev (uint32_t startl, uint32_t starth, uint32_t count, void 
 
 /* Initializes the PCI and AHCI data structures and HW */
 void AHCI_init(AHCI_HDD_t * dev);
+
+/* Fills bus interface struct with AHCI functions for the primary AHCI HDD */
+storage_dev_t * AHCI_get_driver(storage_dev_t * driver);
 
 #endif

@@ -322,3 +322,11 @@ void AHCI_init(AHCI_HDD_t * dev){
 		KLOGERROR("No active ports found on AHCI conf. space")
 	}
 }
+
+storage_dev_t * AHCI_get_driver(storage_dev_t * driver){
+	driver->read = &AHCI_read_prim_dev;
+	driver->write = &AHCI_write_prim_dev;
+	driver->sector_size = AHCI_HDD.ident_packet.sector_bytes;
+	driver->total_sectors = AHCI_HDD.ident_packet.total_usr_sectors[0];
+	return driver;
+}
