@@ -107,10 +107,17 @@ void kernel_main (void){
     }
 
     /* PCI enumeration */
+    uint8_t buf[3000]; 
     if (AHCI_HDD.port != NULL){
         SATA_ident_t id = {0};
         send_identify_cmd(AHCI_HDD.port, &id);
-        KLOGINFO("Device model: %s", id.model);
+        AHCI_read_cmd((void *)AHCI_HDD.port->clb, 0, 0, 5, &buf);
+        issue_command(AHCI_HDD.port, 0);
+        while(AHCI_HDD.port->ci&1);
+        KLOGINFO("Transferred byted P1PRDBC=%d", ((HBA_CMD_HEADER*)AHCI_HDD.port->clb)->prdbc);
+        KLOGINFO("Device \tmodel: %s", (uint32_t)id.model);
+        KLOGINFO("\t\tNumber of user addressable sectors: %d", (uint32_t)id.total_usr_sectors[0]);
+        KLOGINFO("\t\tUnformatted bytes per sector: %d", (uint32_t)id.sector_bytes);
     }
     
 

@@ -70,4 +70,9 @@ Alcuni link utili:
   
 ## ATA interface
 https://wiki.osdev.org/ATA_PIO_Mode
+
+http://users.utcluj.ro/~baruch/media/siee/labor/ATA-Interface.pdf
+https://tc.gts3.org/cs3210/2016/spring/r/hardware/ATA8-ACS.pdf
+https://hddguru.com/download/documentation/ATA-ATAPI-standard-6/ATA-ATAPI-6.pdf
+
 > Su QEMU per impostart l'HardDisk aggiungere `-hda <path/to/disk.img>`

@@ -457,4 +457,15 @@ void issue_command(HBA_PORT *port, uint8_t cmdIndex);
 the checks on AHCI registers to ACK the interrupts */
 void AHCI_interrupt_routine (void);
 
+/* Creates the command header in the `cmd_header` position. The command is a DMA read from 
+the device associated with this header. This function doesn't issue the command.
+Arguments:
+	- cmd_header: 	pointer to the command slot
+	- startl: 		reading start address (low)
+	- starth: 		reading start address (high)
+	- count: 		number of sectors to read
+	- buf: 			destination buffer of the data
+*/
+void AHCI_read_cmd (HBA_CMD_HEADER * cmd_header, uint32_t startl, uint32_t starth, uint32_t count, void * buf);
+
 #endif
