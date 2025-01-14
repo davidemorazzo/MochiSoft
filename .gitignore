@@ -33,4 +33,5 @@
 
 build
 build-kernel
+hdd.raw
 # .vscode
