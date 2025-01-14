@@ -114,7 +114,7 @@ void init_devs(){
 				}
 				IRQ_clear_mask(11);
 				SET_IT_VEC(d, irq_0x2B_wrapper, 0x2B);
-				AHCI_HDD.port->ie |= 0x1F;
+				AHCI_HDD.port->ie |= 0xFF;
 				AHCI_HDD.abar->ghc |= 0x2; // Interrupt enable
 				stop_cmd(AHCI_HDD.port);
 				start_cmd(AHCI_HDD.port);

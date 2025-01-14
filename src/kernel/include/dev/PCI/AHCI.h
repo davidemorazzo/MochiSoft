@@ -461,11 +461,22 @@ void AHCI_interrupt_routine (void);
 the device associated with this header. This function doesn't issue the command.
 Arguments:
 	- cmd_header: 	pointer to the command slot
-	- startl: 		reading start address (low)
-	- starth: 		reading start address (high)
+	- startl: 		reading start address in LBA48 (low) 
+	- starth: 		reading start address in LBA48 (high)
 	- count: 		number of sectors to read
-	- buf: 			destination buffer of the data
+	- buf: 			pointer to destination buffer of the data
 */
 void AHCI_read_cmd (HBA_CMD_HEADER * cmd_header, uint32_t startl, uint32_t starth, uint32_t count, void * buf);
+
+/* Creates the write (host->device) in the specified `cmd_header`.  The command is DMA write.
+This function does not issue the command.
+Arguments:
+	- cmd_header: 	pointer to the command slot
+	- startl: 		writing start address in LBA48 (low) 
+	- starth: 		writing start address in LBA48 (high)
+	- count: 		number of sectors to write
+	- buf: 			pointer to source buffer of the data
+*/
+void AHCI_write_cmd (HBA_CMD_HEADER * cmd_header, uint32_t startl, uint32_t starth, uint32_t count, void *buf);
 
 #endif
