@@ -49,6 +49,7 @@
 		"stddef.h": "c",
 		"ext2.h": "c",
 		"defs.h": "c",
-		"bus_interface.h": "c"
+		"bus_interface.h": "c",
+		"string.h": "c"
 	}
 }
