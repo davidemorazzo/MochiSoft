@@ -20,6 +20,7 @@ char *ltrim(char *s);
 char *rtrim(char *s);
 char *trim(char *s);
 unsigned short int isspace(char s);
+int strfind(char c, char* string, size_t size);
 
 #ifdef __cplusplus
 }
