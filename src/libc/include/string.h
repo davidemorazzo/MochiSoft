@@ -21,6 +21,7 @@ char *rtrim(char *s);
 char *trim(char *s);
 unsigned short int isspace(char s);
 int strfind(char c, char* string, size_t size);
+int strcmp(const char* s1, const char* s2);
 
 #ifdef __cplusplus
 }

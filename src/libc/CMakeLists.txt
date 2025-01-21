@@ -27,6 +27,7 @@ set (libc_src
         ${PROJECT_SOURCE_DIR}/string/rtrim.c
         ${PROJECT_SOURCE_DIR}/string/isspace.c
         ${PROJECT_SOURCE_DIR}/string/strfind.c
+        ${PROJECT_SOURCE_DIR}/string/strcmp.c
 
         # time.h
         ${PROJECT_SOURCE_DIR}/time/mktime.c
