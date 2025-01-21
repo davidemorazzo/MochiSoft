@@ -24,4 +24,8 @@ Ext2_inode_t ext2_get_inode(storage_dev_t * driver, uint32_t idx);
 /* Read blocks */
 void * ext2_read_blocks(storage_dev_t *driver, void *buffer, uint32_t block_idx, size_t count);
 
+int ext2_read_inode_blocks(storage_dev_t *driver, Ext2_inode_t *inode, void *buf);
+
+Ext2_inode_t ext2_inode_from_path(storage_dev_t *driver, Ext2_inode_t *cur_dir, char * path);
+
 #endif

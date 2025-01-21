@@ -7,6 +7,10 @@ Definizioni per il driver del filesystem Ext2 */
 
 #include <stdint.h>
 
+#define EXT2_FNAME_MAX_LEN 255
+#define EXT2_INODE_TYPE_DIR 0x4000
+#define EXT2_INODE_TYPE_FILE 0x8000
+
 typedef enum ext2_fs_state{
 	FILE_SYSTEM_CLEAN = 1,
 	FILE_SYSTEM_HAS_ERRORS = 2,

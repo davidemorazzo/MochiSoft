@@ -2,6 +2,70 @@
 #include <stddef.h>
 #include "kernel/kheap.h"
 #include "kernel/kstdio.h"
+#include "string.h"
+
+
+int ext2_read_inode_blocks(storage_dev_t *driver, Ext2_inode_t *inode, void *buf){
+	void * bufptr = buf;
+	int count = 0;
+	for (int i=0; i<12; i++){
+		if (inode->ptr_blk[i] != 0){
+			ext2_read_blocks(driver, bufptr, inode->ptr_blk[i], 1);
+			bufptr = (void*)(((char *)buf)+1024);
+			count += 1024;
+		}
+	}
+
+	return count;
+	// TODO: support indirect blocks
+}
+
+Ext2_inode_t ext2_inode_from_path(storage_dev_t *driver, Ext2_inode_t *cur_dir, char * path){
+	char last_call = 0;
+	int dirname_len = -1;
+	char dirname[EXT2_FNAME_MAX_LEN+1] = {'\0'};
+	Ext2_inode_t inode = {0};
+	Ext2_directory_t *dir_entry;
+	Ext2_superblock_t sblk = ext2_get_sblk(driver);
+	size_t dir_size = ((cur_dir->sizel / (1024 << sblk.block_size_log2)) + 1) * 1024;
+	void * dir_buf = kmalloc (dir_size);
+	if (!dir_buf){return inode;}
+
+	/* Get subdirectory name */
+	if((dirname_len=strfind('/', path, strlen(path))) == -1){
+		/* No '/' trovato quindi in `path` c'è il filename.
+		non ci sono più cartelle da trovare. */
+		strcpy(path, dirname);
+		last_call = 1;
+	}else{
+		strcpyn(path, dirname, dirname_len);
+	}
+	
+	/* Read current directory content and find matching subdirectory */
+	ext2_read_inode_blocks(driver, cur_dir, dir_buf);
+	dir_entry = (Ext2_directory_t *) dir_buf;
+
+	while(dir_entry->inode != 0){
+		char subdir_name[EXT2_FNAME_MAX_LEN+1] = {'\0'};
+		strcpyn(&dir_entry->name, subdir_name, dir_entry->name_len);
+		if (strcmp(subdir_name, dirname) == 0){
+			/* Sottocartella trovata, chiamata ricorsiva */
+			Ext2_inode_t next_inode = ext2_get_inode(driver, dir_entry->inode);
+			kfree(dir_buf);
+			if (last_call){
+				/* Fine ricorsione */
+				return next_inode;
+			}else{
+				/* Chiamata ricorsiva su sottocartella */
+				return ext2_inode_from_path(driver, &next_inode, &path[dirname_len+1]);
+			}
+		}
+		dir_entry = (Ext2_directory_t *) (((char*)dir_entry)+dir_entry->size);
+	}
+	KLOGERROR("%s: '%s' not found", __func__, dirname);
+	kfree(dir_buf);
+	return inode;
+}
 
 Ext2_superblock_t ext2_get_sblk(storage_dev_t *driver){
 	char buf[1024];

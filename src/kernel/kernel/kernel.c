@@ -18,6 +18,7 @@
 
 #include "time.h"
 #include "stdio.h"
+#include "string.h"
 
 
 uint64_t global_IDT[255] = {0};
@@ -123,7 +124,21 @@ void kernel_main (void){
     driver.read(EXT2_BLK0_SECTOR, 0, 10, buf);
     if (ext2_present(&driver)){
         KLOGINFO( "Ext2 filesystem detected");
-        Ext2_superblock_t sblk = ext2_get_sblk(&driver);
+        
+        char path[40] = "/dir1/dir2/test.file";
+        char **directories;
+        directories = (char **)kmalloc(10*sizeof(char*));
+        for (int e=0;e<10;e++){
+            directories[e] = (char *) kmalloc(255);
+        }
+        // int dircnt = ext2_parse_absolute_path(path, directories);
+        Ext2_inode_t root = ext2_get_inode(&driver, 2);
+        Ext2_inode_t inode = ext2_inode_from_path(&driver, &root, "benvenuti.txt");
+        char *file_buf = (char *) kmalloc(1024);
+        ext2_read_inode_blocks(&driver, &inode, file_buf);
+        KLOGINFO("cat %s:\n%s", "dir1/dir2/test.file", file_buf);
+        // ext2_read_inode_blocks(&driver, &inode, file_buf);        
+        /* Ext2_superblock_t sblk = ext2_get_sblk(&driver);
         Ext2_blk_grp_desc_t bgd = ext2_get_blk_desc_tbl(&driver, 0);
         char *buffer[1024];
         ext2_read_blocks(&driver, buffer, bgd.start_blk_iaddr, 1);
@@ -138,12 +153,15 @@ void kernel_main (void){
         while (d_root->inode != 0){
             Ext2_inode_t i = ext2_get_inode(&driver, d_root->inode);
             char name[200] = {0};
-            d_root = (void *)(((char*)d_root)+d_root->size);
-            static char contenuto[1024] = {'\0'};
-            ext2_read_blocks(&driver, contenuto, i.ptr_blk[0], 1);
             KLOGINFO("Inode: %d, %s", d_root->inode, memcpy(name, &d_root->name, d_root->name_len));
-            KLOGINFO("%s", contenuto);
-        }
+            if (i.type_permissions & 0x8000){
+                char contenuto[1024] = {'\0'};
+                ext2_read_blocks(&driver, contenuto, i.ptr_blk[0], 1);
+                KLOGINFO("\t%s", trim(contenuto));
+            }
+            d_root = (void *)(((char*)d_root)+d_root->size);
+        } 
+        */
     }
 
     while(1){
