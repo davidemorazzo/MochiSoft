@@ -21,25 +21,39 @@ int ext2_read_inode_blocks(storage_dev_t *driver, Ext2_inode_t *inode, void *buf
 }
 
 Ext2_inode_t ext2_inode_from_path(storage_dev_t *driver, Ext2_inode_t *cur_dir, char * path){
+	
+	Ext2_inode_t inode = {0};
+	Ext2_inode_t i_root = {0};
+	if(!path || !driver || !cur_dir){
+		KLOGERROR("%s: NULL argument", __func__);
+		return inode;}
+
 	char last_call = 0;
 	int dirname_len = -1;
 	char dirname[EXT2_FNAME_MAX_LEN+1] = {'\0'};
-	Ext2_inode_t inode = {0};
 	Ext2_directory_t *dir_entry;
 	Ext2_superblock_t sblk = ext2_get_sblk(driver);
-	size_t dir_size = ((cur_dir->sizel / (1024 << sblk.block_size_log2)) + 1) * 1024;
-	void * dir_buf = kmalloc (dir_size);
-	if (!dir_buf){return inode;}
 
 	/* Get subdirectory name */
-	if((dirname_len=strfind('/', path, strlen(path))) == -1){
+	dirname_len=strfind('/', path, strlen(path));
+	if(dirname_len == -1){
 		/* No '/' trovato quindi in `path` c'è il filename.
 		non ci sono più cartelle da trovare. */
 		strcpy(path, dirname);
 		last_call = 1;
+	}else if(dirname_len == 0){
+		/* '/' in posizione zero, quindi path assoluto. cur_dir=root*/
+		i_root = ext2_get_inode(driver, 2);
+		cur_dir = &i_root;
+		dirname_len=strfind('/', path+1, strlen(path+1)) + 1;
+		strcpyn(path+1, dirname, dirname_len - 1);
 	}else{
 		strcpyn(path, dirname, dirname_len);
 	}
+
+	size_t dir_size = ((cur_dir->sizel / (1024 << sblk.block_size_log2)) + 1) * 1024;
+	void * dir_buf = kmalloc (dir_size);
+	if (!dir_buf){return inode;}
 	
 	/* Read current directory content and find matching subdirectory */
 	ext2_read_inode_blocks(driver, cur_dir, dir_buf);
@@ -106,7 +120,14 @@ Ext2_blk_grp_desc_t ext2_get_blk_desc_tbl(storage_dev_t *driver, uint64_t blk_gr
 Ext2_inode_t ext2_get_inode(storage_dev_t * driver, uint32_t idx){
 	// uint8_t buffer[4096];
 	Ext2_inode_t inode = {0};
+	if (!driver){
+		KLOGERROR("%s: NULL argument", __func__);
+		return inode;
+	}
 	Ext2_superblock_t sblk = ext2_get_sblk(driver);
+	if (idx >= sblk.inodes_total){
+		KLOGERROR("%s: Block index out of range", __func__);
+	}
 
 	/* Calculate block group index */
 	uint32_t blk_size = (1024 << sblk.block_size_log2);
@@ -126,7 +147,15 @@ Ext2_inode_t ext2_get_inode(storage_dev_t * driver, uint32_t idx){
 
 
 void * ext2_read_blocks(storage_dev_t *driver, void *buffer, uint32_t block_idx, size_t count){
+	if (!driver || !buffer){
+		KLOGERROR("%s: NULL argument", __func__);
+		return NULL;
+	}
+
 	Ext2_superblock_t sblk = ext2_get_sblk(driver);
+	if (block_idx >= sblk.blocks_total){
+		KLOGERROR("%s: Block index out of range", __func__);
+	}
 	uint64_t lba = ext2_get_block_LBA (driver, block_idx);
 	int block_size = (1024<<sblk.block_size_log2); 
 	int sector_cnt = block_size*count / driver->sector_size;

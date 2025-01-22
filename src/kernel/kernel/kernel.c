@@ -133,7 +133,7 @@ void kernel_main (void){
         }
         // int dircnt = ext2_parse_absolute_path(path, directories);
         Ext2_inode_t root = ext2_get_inode(&driver, 2);
-        Ext2_inode_t inode = ext2_inode_from_path(&driver, &root, "benvenuti.txt");
+        Ext2_inode_t inode = ext2_inode_from_path(&driver, &root, "/dir1/dir2/test.file");
         char *file_buf = (char *) kmalloc(1024);
         ext2_read_inode_blocks(&driver, &inode, file_buf);
         KLOGINFO("cat %s:\n%s", "dir1/dir2/test.file", file_buf);
