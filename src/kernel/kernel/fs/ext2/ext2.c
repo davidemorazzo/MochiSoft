@@ -4,20 +4,82 @@
 #include "kernel/kstdio.h"
 #include "string.h"
 
+/* Return number of read bytes */
+int _read_blk_list(storage_dev_t *driver, void * buffer, uint32_t *list, uint32_t count){
+	uint32_t read_count = 0;
+	char * bufptr = buffer;
+	Ext2_superblock_t sblk = ext2_get_sblk(driver);
+	uint32_t blk_size = (1024 << sblk.block_size_log2);
 
-int ext2_read_inode_blocks(storage_dev_t *driver, Ext2_inode_t *inode, void *buf){
-	void * bufptr = buf;
-	int count = 0;
-	for (int i=0; i<12; i++){
-		if (inode->ptr_blk[i] != 0){
-			ext2_read_blocks(driver, bufptr, inode->ptr_blk[i], 1);
-			bufptr = (void*)(((char *)buf)+1024);
-			count += 1024;
+	for (uint32_t i=0; i<count; i++){
+		if (list[i] != 0){
+			ext2_read_blocks(driver, bufptr, list[i], 1);
+			read_count += blk_size;
+			bufptr += blk_size;
 		}
 	}
 
-	return count;
+	return read_count;
+}
+
+int ext2_read_inode_blocks(storage_dev_t *driver, Ext2_inode_t *inode, void *buf){
+	if (!driver || !inode || !buf){
+		KLOGERROR("%s: NULL arguments", __func__);	
+		return 0;
+	}
+
+	char * bufptr = buf;
+
+	// Blocchi diretti
+	bufptr += _read_blk_list(driver, bufptr, inode->ptr_blk, 11);
+
 	// TODO: support indirect blocks
+	if (inode->ptr_blk[12] != 0){
+		Ext2_superblock_t sblk = ext2_get_sblk(driver);
+		uint32_t blk_size = (1024 << sblk.block_size_log2);
+		uint32_t uint32_in_blk = blk_size/sizeof(uint32_t);
+		uint32_t * blk_list_lvl1 = (uint32_t *)kmalloc(blk_size);
+		uint32_t * blk_list_lvl2 = (uint32_t *)kmalloc(blk_size);
+		uint32_t * blk_list_lvl3 = (uint32_t *)kmalloc(blk_size);
+
+		/* Single indirect block */
+		if (inode->ptr_blk[12] != 0){
+			ext2_read_blocks(driver, blk_list_lvl1, inode->ptr_blk[12], 1);
+			bufptr += _read_blk_list(driver, bufptr, blk_list_lvl1, uint32_in_blk);
+		}
+		
+		/* Double indirect block */
+		if (inode->ptr_blk[13] != 0){
+			ext2_read_blocks(driver, blk_list_lvl1, inode->ptr_blk[13], 1);
+			for (uint32_t i=0; i< (uint32_in_blk); i++){
+				if (blk_list_lvl1[i] != 0){
+					ext2_read_blocks(driver, blk_list_lvl2, blk_list_lvl1[i], 1);
+					bufptr += _read_blk_list(driver, bufptr, blk_list_lvl2, uint32_in_blk);
+				}
+			}
+		}
+
+		/* Triple indirect block */
+		if (inode->ptr_blk[14] != 0){
+			ext2_read_blocks(driver, blk_list_lvl1, inode->ptr_blk[14], 1);
+			for (uint32_t i=0; i< (uint32_in_blk); i++){
+				if (blk_list_lvl1[i] != 0){
+					ext2_read_blocks(driver, blk_list_lvl2, blk_list_lvl1[i], 1);
+					for (uint32_t j=0; j<(uint32_in_blk); j++){
+						if (blk_list_lvl2[j] != 0){
+							ext2_read_blocks(driver, blk_list_lvl3, blk_list_lvl2[j], 1);
+							bufptr += _read_blk_list(driver, bufptr, blk_list_lvl3, uint32_in_blk);
+						}
+					}
+				}
+			}
+		}
+
+		kfree(blk_list_lvl1);
+		kfree(blk_list_lvl2);
+		kfree(blk_list_lvl3);
+	}
+	return bufptr - (char *) buf;
 }
 
 Ext2_inode_t ext2_inode_from_path(storage_dev_t *driver, Ext2_inode_t *cur_dir, char * path){

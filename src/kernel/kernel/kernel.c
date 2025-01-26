@@ -125,16 +125,9 @@ void kernel_main (void){
     if (ext2_present(&driver)){
         KLOGINFO( "Ext2 filesystem detected");
         
-        char path[40] = "/dir1/dir2/test.file";
-        char **directories;
-        directories = (char **)kmalloc(10*sizeof(char*));
-        for (int e=0;e<10;e++){
-            directories[e] = (char *) kmalloc(255);
-        }
-        // int dircnt = ext2_parse_absolute_path(path, directories);
         Ext2_inode_t root = ext2_get_inode(&driver, 2);
-        Ext2_inode_t inode = ext2_inode_from_path(&driver, &root, "/dir1/dir2/test.file");
-        char *file_buf = (char *) kmalloc(1024);
+        Ext2_inode_t inode = ext2_inode_from_path(&driver, &root, "/dir1/decentralized-estimation-and-control-for-multisensor-systems.pdf");
+        char *file_buf = (char *) kmalloc(inode.sizel);
         ext2_read_inode_blocks(&driver, &inode, file_buf);
         KLOGINFO("cat %s:\n%s", "dir1/dir2/test.file", file_buf);
         // ext2_read_inode_blocks(&driver, &inode, file_buf);        
