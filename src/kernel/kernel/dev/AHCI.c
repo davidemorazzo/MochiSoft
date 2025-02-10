@@ -115,6 +115,7 @@ int lock_free_CLB_slot(AHCI_HDD_t * dev){
 
 
 void issue_command(HBA_PORT *port, uint8_t cmdIndex){
+	// KLOGERROR("%s: Command issued index %d", __func__, cmdIndex);
 	port->ci |= 1 << cmdIndex;
 }
 
@@ -166,6 +167,7 @@ void AHCI_interrupt_routine(void) {
 int AHCI_read_prim_dev (uint32_t startl, uint32_t starth, uint32_t count, void * buf){
 	// find slot and "lock" the command slot
 	int slot;
+	uint32_t count_cpy  = count;
 	do{
 		slot = lock_free_CLB_slot(&AHCI_HDD);
 	}while (slot == -1);
@@ -181,14 +183,14 @@ int AHCI_read_prim_dev (uint32_t startl, uint32_t starth, uint32_t count, void *
 
 	/*  PRDT  */
 	for(int i=0; i<cmd_header->prdtl-1; i++){
-		cmd_tbl->prdt_entry[i].dba = ((uint32_t) buf) + i*4*1024;
-		cmd_tbl->prdt_entry[i].dbc = 8*1024 -1;
+		cmd_tbl->prdt_entry[i].dba = ((uint32_t) buf) + i*16*AHCI_HDD.ident_packet.sector_bytes;
+		cmd_tbl->prdt_entry[i].dbc = 16*AHCI_HDD.ident_packet.sector_bytes -1;
 		cmd_tbl->prdt_entry[i].i = 1;
-		count -= 16;
+		count_cpy -= 16;
 	}	
 	// Last PRDT entry
-	cmd_tbl->prdt_entry[cmd_header->prdtl-1].dba = ((uint32_t) buf) + 4*1024*(cmd_header->prdtl-1);
-	cmd_tbl->prdt_entry[cmd_header->prdtl-1].dbc = (count<<9)-1;
+	cmd_tbl->prdt_entry[cmd_header->prdtl-1].dba = ((uint32_t) buf) + 16*AHCI_HDD.ident_packet.sector_bytes*(cmd_header->prdtl-1);
+	cmd_tbl->prdt_entry[cmd_header->prdtl-1].dbc = (count_cpy<<9)-1;
 	cmd_tbl->prdt_entry[cmd_header->prdtl-1].i = 1;
 
 	/* Setup Command */
@@ -218,6 +220,7 @@ int AHCI_read_prim_dev (uint32_t startl, uint32_t starth, uint32_t count, void *
 int AHCI_write_prim_dev (uint32_t startl, uint32_t starth, uint32_t count, void *buf){
 	// find slot and "lock" the command slot
 	int slot;
+	uint32_t count_cpy  = count;
 	do{
 		slot = lock_free_CLB_slot(&AHCI_HDD);
 	}while (slot == -1);
@@ -231,19 +234,19 @@ int AHCI_write_prim_dev (uint32_t startl, uint32_t starth, uint32_t count, void 
 	MEMSET(cmd_header, 0, 8); // Not clear CTBA, CTBAU
 	MEMSET(cmd_tbl, 0, sizeof(HBA_CMD_TBL)); 
 	cmd_header->cfl = sizeof(FIS_REG_H2D) / sizeof(uint32_t);
-	cmd_header->prdtl = (uint16_t)((count-1)>>4) + 1; // ?
+	cmd_header->prdtl = (uint16_t)((count_cpy-1)>>4) + 1; // ?
 	cmd_header->w = 1;
 
 	/*  PRDT  */
 	for(int i=0; i<cmd_header->prdtl-1; i++){
-		cmd_tbl->prdt_entry[i].dba = ((uint32_t) buf) + i*4*1024;
-		cmd_tbl->prdt_entry[i].dbc = 8*1024 -1;
+		cmd_tbl->prdt_entry[i].dba = ((uint32_t) buf) + i*16*AHCI_HDD.ident_packet.sector_bytes;
+		cmd_tbl->prdt_entry[i].dbc = 16*AHCI_HDD.ident_packet.sector_bytes -1;
 		cmd_tbl->prdt_entry[i].i = 1;
-		count -= 16;
-	}	
+		count_cpy -= 16;
+	}		
 	// Last PRDT entry
-	cmd_tbl->prdt_entry[cmd_header->prdtl-1].dba = ((uint32_t) buf) + 4*1024*(cmd_header->prdtl-1);
-	cmd_tbl->prdt_entry[cmd_header->prdtl-1].dbc = (count<<9)-1;
+	cmd_tbl->prdt_entry[cmd_header->prdtl-1].dba = ((uint32_t) buf) + 16*AHCI_HDD.ident_packet.sector_bytes*(cmd_header->prdtl-1);
+	cmd_tbl->prdt_entry[cmd_header->prdtl-1].dbc = (count_cpy<<9)-1;
 	cmd_tbl->prdt_entry[cmd_header->prdtl-1].i = 1;
 
 	/* Setup Command */

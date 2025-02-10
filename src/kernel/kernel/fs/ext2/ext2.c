@@ -6,20 +6,29 @@
 
 /* Return number of read bytes */
 int _read_blk_list(storage_dev_t *driver, void * buffer, uint32_t *list, uint32_t count){
-	uint32_t read_count = 0;
 	char * bufptr = buffer;
 	Ext2_superblock_t sblk = ext2_get_sblk(driver);
+
 	uint32_t blk_size = (1024 << sblk.block_size_log2);
 
-	for (uint32_t i=0; i<count; i++){
+	int i = 0;
+	while(i<count){
+		// ext2_read_blocks(driver, bufptr, list[i], j);
+		// read_count += blk_size * j;
+		// bufptr += blk_size * j;
 		if (list[i] != 0){
-			ext2_read_blocks(driver, bufptr, list[i], 1);
-			read_count += blk_size;
-			bufptr += blk_size;
+			int j=1;
+			for (; (i+j)<count; j++){
+				if (list[i+j-1] != (list[i+j]-1)) break;
+			}
+			ext2_read_blocks(driver, bufptr, list[i], j);
+			bufptr += blk_size * j;
+			i += j-1;
 		}
+		i++;
 	}
 
-	return read_count;
+	return bufptr - (char *) buffer;
 }
 
 int ext2_read_inode_blocks(storage_dev_t *driver, Ext2_inode_t *inode, void *buf){
@@ -33,14 +42,13 @@ int ext2_read_inode_blocks(storage_dev_t *driver, Ext2_inode_t *inode, void *buf
 	// Blocchi diretti
 	bufptr += _read_blk_list(driver, bufptr, inode->ptr_blk, 11);
 
-	// TODO: support indirect blocks
 	if (inode->ptr_blk[12] != 0){
 		Ext2_superblock_t sblk = ext2_get_sblk(driver);
 		uint32_t blk_size = (1024 << sblk.block_size_log2);
 		uint32_t uint32_in_blk = blk_size/sizeof(uint32_t);
-		uint32_t * blk_list_lvl1 = (uint32_t *)kmalloc(blk_size);
-		uint32_t * blk_list_lvl2 = (uint32_t *)kmalloc(blk_size);
-		uint32_t * blk_list_lvl3 = (uint32_t *)kmalloc(blk_size);
+		uint32_t * blk_list_lvl1 = (uint32_t *)kmalloc(3 * blk_size);
+		uint32_t * blk_list_lvl2 = (uint32_t *)((char*) blk_list_lvl1 + blk_size);
+		uint32_t * blk_list_lvl3 = (uint32_t *)((char*) blk_list_lvl2 + blk_size);
 
 		/* Single indirect block */
 		if (inode->ptr_blk[12] != 0){
@@ -76,8 +84,6 @@ int ext2_read_inode_blocks(storage_dev_t *driver, Ext2_inode_t *inode, void *buf
 		}
 
 		kfree(blk_list_lvl1);
-		kfree(blk_list_lvl2);
-		kfree(blk_list_lvl3);
 	}
 	return bufptr - (char *) buf;
 }
@@ -192,7 +198,6 @@ Ext2_inode_t ext2_get_inode(storage_dev_t * driver, uint32_t idx){
 	}
 
 	/* Calculate block group index */
-	uint32_t blk_size = (1024 << sblk.block_size_log2);
 	uint32_t blk_grp_addr = (idx-1) / sblk.block_groups_inodes;
 	Ext2_blk_grp_desc_t bgd = ext2_get_blk_desc_tbl(driver, blk_grp_addr);
 	
@@ -221,10 +226,9 @@ void * ext2_read_blocks(storage_dev_t *driver, void *buffer, uint32_t block_idx,
 	uint64_t lba = ext2_get_block_LBA (driver, block_idx);
 	int block_size = (1024<<sblk.block_size_log2); 
 	int sector_cnt = block_size*count / driver->sector_size;
-	uint32_t cnt = driver->read(lba & 0xFFFFFFFF, (lba >> 32) & 0xFFFFFFFF,
-			sector_cnt, buffer);
+	uint32_t cnt = driver->read(lba&0xFFFFFFFF, (lba>>32)&0xFFFFFFFF, sector_cnt, buffer);
 	if (cnt != (block_size*count)){
-		KLOGERROR("ext2_read_blocks: read error");
+		KLOGERROR("%s: req %dB, read %dB", __func__, (block_size*count), cnt);
 		return NULL;
 	}
 
