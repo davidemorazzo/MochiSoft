@@ -88,13 +88,13 @@ int ext2_read_inode_blocks(storage_dev_t *driver, Ext2_inode_t *inode, void *buf
 	return bufptr - (char *) buf;
 }
 
-Ext2_inode_t ext2_inode_from_path(storage_dev_t *driver, Ext2_inode_t *cur_dir, char * path){
+uint32_t ext2_inode_from_path(storage_dev_t *driver, uint32_t cur_dir_idx, char * path){
 	
-	Ext2_inode_t inode = {0};
+	Ext2_inode_t cur_dir = ext2_get_inode(driver, cur_dir_idx);
 	Ext2_inode_t i_root = {0};
-	if(!path || !driver || !cur_dir){
+	if(!path || !driver ){
 		KLOGERROR("%s: NULL argument", __func__);
-		return inode;}
+		return 0;}
 
 	char last_call = 0;
 	int dirname_len = -1;
@@ -112,19 +112,19 @@ Ext2_inode_t ext2_inode_from_path(storage_dev_t *driver, Ext2_inode_t *cur_dir, 
 	}else if(dirname_len == 0){
 		/* '/' in posizione zero, quindi path assoluto. cur_dir=root*/
 		i_root = ext2_get_inode(driver, 2);
-		cur_dir = &i_root;
+		cur_dir = i_root;
 		dirname_len=strfind('/', path+1, strlen(path+1)) + 1;
 		strcpyn(path+1, dirname, dirname_len - 1);
 	}else{
 		strcpyn(path, dirname, dirname_len);
 	}
 
-	size_t dir_size = ((cur_dir->sizel / (1024 << sblk.block_size_log2)) + 1) * 1024;
+	size_t dir_size = ((cur_dir.sizel / (1024 << sblk.block_size_log2)) + 1) * 1024;
 	void * dir_buf = kmalloc (dir_size);
-	if (!dir_buf){return inode;}
+	if (!dir_buf){return 0;}
 	
 	/* Read current directory content and find matching subdirectory */
-	ext2_read_inode_blocks(driver, cur_dir, dir_buf);
+	ext2_read_inode_blocks(driver, &cur_dir, dir_buf);
 	dir_entry = (Ext2_directory_t *) dir_buf;
 
 	while(dir_entry->inode != 0){
@@ -132,21 +132,21 @@ Ext2_inode_t ext2_inode_from_path(storage_dev_t *driver, Ext2_inode_t *cur_dir, 
 		strcpyn(&dir_entry->name, subdir_name, dir_entry->name_len);
 		if (strcmp(subdir_name, dirname) == 0){
 			/* Sottocartella trovata, chiamata ricorsiva */
-			Ext2_inode_t next_inode = ext2_get_inode(driver, dir_entry->inode);
+			// Ext2_inode_t next_inode = ext2_get_inode(driver, dir_entry->inode);
 			kfree(dir_buf);
 			if (last_call){
 				/* Fine ricorsione */
-				return next_inode;
+				return dir_entry->inode;
 			}else{
 				/* Chiamata ricorsiva su sottocartella */
-				return ext2_inode_from_path(driver, &next_inode, &path[dirname_len+1]);
+				return ext2_inode_from_path(driver, dir_entry->inode, &path[dirname_len+1]);
 			}
 		}
 		dir_entry = (Ext2_directory_t *) (((char*)dir_entry)+dir_entry->size);
 	}
 	KLOGERROR("%s: '%s' not found", __func__, dirname);
 	kfree(dir_buf);
-	return inode;
+	return 0;
 }
 
 Ext2_superblock_t ext2_get_sblk(storage_dev_t *driver){
