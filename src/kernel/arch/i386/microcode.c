@@ -89,3 +89,17 @@ uint32_t inl(uint16_t port){
     );
     return result;
 }
+
+uint8_t bit_test_set(void * addr, uint32_t offset){
+    uint32_t eflags_reg;
+    // uint32_t addr_cpy = (uint32_t)addr;
+    __asm__(
+        "bts %1, %2;"
+        "pushf;"
+        "pop %0;"
+        : "=m" (eflags_reg)
+        : "r" (offset), "m" (*(uint32_t*)addr)
+    );
+
+    return !(eflags_reg & 1);
+}
