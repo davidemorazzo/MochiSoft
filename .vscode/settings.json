@@ -50,6 +50,8 @@
 		"ext2.h": "c",
 		"defs.h": "c",
 		"bus_interface.h": "c",
-		"string.h": "c"
+		"string.h": "c",
+		"ahci.h": "c",
+		"kheap.h": "c"
 	}
 }

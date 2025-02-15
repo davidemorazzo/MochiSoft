@@ -15,6 +15,8 @@
 #include "kernel/kglobals.h"
 #include "dev/PCI/AHCI.h"
 #include "kernel/fs/ext2/ext2.h"
+#include "kernel/fs/fs_internal.h"
+#include "kernel/fs/fs.h"
 
 #include "time.h"
 #include "stdio.h"
@@ -94,6 +96,7 @@ void kernel_main (void){
     init_devs(); 
     KLOGINFO("Devices inizializzati")
     enable_it();    /*Interrupt Enable Flag = 1. (EFLAGS register)*/
+    init_fs();
 
 
     if (gdt_check(GDTR)){
@@ -124,37 +127,7 @@ void kernel_main (void){
     driver.read(EXT2_BLK0_SECTOR, 0, 10, buf);
     if (ext2_present(&driver)){
         KLOGINFO( "Ext2 filesystem detected");
-        
-        Ext2_inode_t root = ext2_get_inode(&driver, 2);
-        Ext2_inode_t inode = ext2_inode_from_path(&driver, &root, "/dir1/decentralized-estimation-and-control-for-multisensor-systems.pdf");
-        char *file_buf = (char *) kmalloc(inode.sizel);
-        ext2_read_inode_blocks(&driver, &inode, file_buf);
-        KLOGINFO("cat %s:\n%s", "dir1/dir2/test.file", file_buf);
-        // ext2_read_inode_blocks(&driver, &inode, file_buf);        
-        /* Ext2_superblock_t sblk = ext2_get_sblk(&driver);
-        Ext2_blk_grp_desc_t bgd = ext2_get_blk_desc_tbl(&driver, 0);
-        char *buffer[1024];
-        ext2_read_blocks(&driver, buffer, bgd.start_blk_iaddr, 1);
-        Ext2_inode_t i_root = ((Ext2_inode_t*)buffer)[2];
-        ext2_read_blocks(&driver, buffer, i_root.ptr_blk[0], 1);
-        // Ext2_inode_t i = ext2_get_inode(&driver, 12);
-        // ext2_read_blocks(&driver, buffer, i.ptr_blk[13], 1);
-        // ext2_read_blocks(&driver, buffer, *(uint32_t*)buffer[0], 1);
-
-        KLOGINFO("List \"/\":");
-        Ext2_directory_t *d_root = (void *)buffer;
-        while (d_root->inode != 0){
-            Ext2_inode_t i = ext2_get_inode(&driver, d_root->inode);
-            char name[200] = {0};
-            KLOGINFO("Inode: %d, %s", d_root->inode, memcpy(name, &d_root->name, d_root->name_len));
-            if (i.type_permissions & 0x8000){
-                char contenuto[1024] = {'\0'};
-                ext2_read_blocks(&driver, contenuto, i.ptr_blk[0], 1);
-                KLOGINFO("\t%s", trim(contenuto));
-            }
-            d_root = (void *)(((char*)d_root)+d_root->size);
-        } 
-        */
+        file_desc f = fs_open_file("/dir1/decentralized-estimation-and-control-for-multisensor-systems.pdf");
     }
 
     while(1){
