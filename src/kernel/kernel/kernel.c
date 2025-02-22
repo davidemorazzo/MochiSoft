@@ -127,7 +127,8 @@ void kernel_main (void){
     driver.read(EXT2_BLK0_SECTOR, 0, 10, buf);
     if (ext2_present(&driver)){
         KLOGINFO( "Ext2 filesystem detected");
-        file_desc f = fs_open_file("/dir1/decentralized-estimation-and-control-for-multisensor-systems.pdf");
+        // file_desc f = fs_open_file("/dir1/decentralized-estimation-and-control-for-multisensor-systems.pdf");
+        file_desc f = fs_open_file("/dir1/decentralized-estimation-and-c");
     }
 
     while(1){

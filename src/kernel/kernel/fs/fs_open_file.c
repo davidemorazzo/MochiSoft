@@ -12,9 +12,13 @@ file_desc fs_open_file(char * path){
 		KLOGERROR("%s: NULL argument", __func__);
 	}
 
-	unsigned int inode_id = ext2_inode_from_path(&fs_state.driver, 2, path);
-	Ext2_inode_t inode = ext2_get_inode(&fs_state.driver, inode_id);
 	file_desc null_f_desc = {0};
+	unsigned int inode_id = ext2_inode_from_path(&fs_state.driver, 2, path);
+	if (inode_id == 0){
+		KLOGERROR("%s, file %s not found", __func__, path);
+		return null_f_desc;
+	}
+	Ext2_inode_t inode = ext2_get_inode(&fs_state.driver, inode_id);
 
 	/* Lock array */
 	int success = 0;
