@@ -48,16 +48,21 @@ void serial_ISR(const unsigned short port){
             break;
         case 2:     // RECEIVED DATA AVAILABLE
             char data = uart_read(port);
-            // Temporary implementation => "echo"
-            uart_write(port, data);
 
             // Inserire dati in buffer circolare TTY
-            if (TTY_CIRC_BUF_RX.write_ptr >= (TTY_CIRC_BUF_RX.buf + TTY_CIRC_BUF_RX.size)){
-                TTY_CIRC_BUF_RX.write_ptr = TTY_CIRC_BUF_RX.buf;
-            }else{
-                TTY_CIRC_BUF_RX.write_ptr++;
-            }
+            unsigned int offset = TTY_CIRC_BUF_RX.write_ptr - TTY_CIRC_BUF_RX.buf;
+            offset = (offset + 1) % TTY_CIRC_BUF_RX.size;
+            TTY_CIRC_BUF_RX.write_ptr = TTY_CIRC_BUF_RX.buf + offset;  
             *TTY_CIRC_BUF_RX.write_ptr = data; 
+            
+            // Temporary implementation => "echo"
+            // uart_write(port, data);
+            // char c[6] = {0};
+            // sys_read(stdin, (void *)c, 5);
+            // sys_write(stdout, (void *)c, 5);
+            // if ((TTY_CIRC_BUF_RX.write_ptr - TTY_CIRC_BUF_RX.read_ptr) >= 5){
+            // }
+            
             break;
         case 3:     // RECEIVER LINE STATUS
             break;
