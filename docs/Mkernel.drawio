@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/132.0.0.0 Safari/537.36" version="26.0.16" pages="2">
+<mxfile host="app.diagrams.net" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36 Edg/133.0.0.0" version="26.0.16" pages="3">
   <diagram name="Overview" id="CgrRq_TxIfvAALdR9T5U">
     <mxGraphModel dx="1137" dy="694" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -328,6 +328,189 @@
         </mxCell>
         <mxCell id="W4yheR4jG2C6rvIvPUD7-42" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0.75;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="ogHT3AbF_MJD_bQlprw0-5" target="ogHT3AbF_MJD_bQlprw0-3" edge="1">
           <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+  <diagram id="RPdJU4-eKQkRjVHHrU0d" name="Multithreading">
+    <mxGraphModel dx="3942" dy="2439" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="xTsBklRZL0Csudfz1uOM-8" value="PROCESS MEMORY LAUOUT" style="rounded=0;whiteSpace=wrap;html=1;verticalAlign=top;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="70" width="320" height="410" as="geometry" />
+        </mxCell>
+        <mxCell id="xTsBklRZL0Csudfz1uOM-1" value="KERNEL Space" style="rounded=0;whiteSpace=wrap;html=1;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="40" width="300" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="xTsBklRZL0Csudfz1uOM-2" value="STACK" style="rounded=0;whiteSpace=wrap;html=1;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="80" width="300" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="9p3XuAg7bfBbFJzm0OE7-10" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=light-dark(#7f7f7f, #ededed);align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=11;fontColor=default;labelBackgroundColor=default;endArrow=classic;" edge="1" parent="1" source="xTsBklRZL0Csudfz1uOM-3" target="9p3XuAg7bfBbFJzm0OE7-6">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="510" y="200" />
+              <mxPoint x="510" y="210" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xTsBklRZL0Csudfz1uOM-3" value="HEAP" style="rounded=0;whiteSpace=wrap;html=1;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="200" width="300" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="9p3XuAg7bfBbFJzm0OE7-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;strokeColor=light-dark(#7f7f7f, #ededed);align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=11;fontColor=default;labelBackgroundColor=default;endArrow=classic;" edge="1" parent="1" source="xTsBklRZL0Csudfz1uOM-25" target="9p3XuAg7bfBbFJzm0OE7-7">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="400" y="260" />
+              <mxPoint x="400" y="240" />
+              <mxPoint x="620" y="240" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xTsBklRZL0Csudfz1uOM-25" value="" style="rounded=0;whiteSpace=wrap;html=1;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="260" width="300" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="xTsBklRZL0Csudfz1uOM-4" value=".BSS" style="rounded=0;whiteSpace=wrap;html=1;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="110" y="270" width="240" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="9p3XuAg7bfBbFJzm0OE7-1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;strokeColor=light-dark(#7f7f7f, #ededed);align=center;verticalAlign=middle;fontFamily=Helvetica;fontSize=11;fontColor=default;labelBackgroundColor=default;endArrow=classic;" edge="1" parent="1" source="xTsBklRZL0Csudfz1uOM-5" target="9p3XuAg7bfBbFJzm0OE7-5">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="580" y="310.04347826086996" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="880" y="315" />
+              <mxPoint x="880" y="140" />
+              <mxPoint x="740" y="140" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xTsBklRZL0Csudfz1uOM-5" value=".DATA" style="rounded=0;whiteSpace=wrap;html=1;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="110" y="300" width="240" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="xTsBklRZL0Csudfz1uOM-6" value=".TEXT" style="rounded=0;whiteSpace=wrap;html=1;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="110" y="330" width="240" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="lw6fsPCgptyLQbkS5ZU--3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=0;exitY=0;exitDx=0;exitDy=0;entryX=0;entryY=0.25;entryDx=0;entryDy=0;strokeColor=light-dark(#7f7f7f, #ededed);" edge="1" parent="1" source="xTsBklRZL0Csudfz1uOM-7" target="lw6fsPCgptyLQbkS5ZU--2">
+          <mxGeometry relative="1" as="geometry">
+            <Array as="points">
+              <mxPoint x="-200" y="370" />
+              <mxPoint x="-200" y="415" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="lw6fsPCgptyLQbkS5ZU--5" value="void * buf" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="lw6fsPCgptyLQbkS5ZU--3">
+          <mxGeometry x="0.1268" y="2" relative="1" as="geometry">
+            <mxPoint x="-6" y="-12" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xTsBklRZL0Csudfz1uOM-7" value="MM I/O" style="rounded=0;whiteSpace=wrap;html=1;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="370" width="300" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="xTsBklRZL0Csudfz1uOM-9" value="" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;endWidth=26.102071005917157;endSize=6.486538461538461;width=33.26923076923077;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="229.71" y="130" as="sourcePoint" />
+            <mxPoint x="229.71" y="160" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xTsBklRZL0Csudfz1uOM-10" value="" style="shape=flexArrow;endArrow=classic;html=1;rounded=0;endWidth=26.102071005917157;endSize=6.486538461538461;width=33.26923076923077;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="229.71" y="200" as="sourcePoint" />
+            <mxPoint x="229.71" y="170" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xTsBklRZL0Csudfz1uOM-11" value="" style="endArrow=none;dashed=1;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="380" y="370.43" as="sourcePoint" />
+            <mxPoint x="410" y="370" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xTsBklRZL0Csudfz1uOM-22" value="proc_elf_bottom" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="xTsBklRZL0Csudfz1uOM-11">
+          <mxGeometry x="-0.04" y="-1" relative="1" as="geometry">
+            <mxPoint x="56" y="-1" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xTsBklRZL0Csudfz1uOM-12" value="" style="endArrow=none;dashed=1;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="380" y="259.35" as="sourcePoint" />
+            <mxPoint x="410" y="259.75" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xTsBklRZL0Csudfz1uOM-17" value="proc_elf_top" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="xTsBklRZL0Csudfz1uOM-12">
+          <mxGeometry x="0.3068" relative="1" as="geometry">
+            <mxPoint x="41" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xTsBklRZL0Csudfz1uOM-13" value="" style="endArrow=none;dashed=1;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="380" y="80" as="sourcePoint" />
+            <mxPoint x="410" y="80" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xTsBklRZL0Csudfz1uOM-19" value="proc_stack_top = 0x0C000000" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="xTsBklRZL0Csudfz1uOM-13">
+          <mxGeometry x="0.2413" y="-1" relative="1" as="geometry">
+            <mxPoint x="91" y="-1" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xTsBklRZL0Csudfz1uOM-20" value="" style="endArrow=none;dashed=1;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="380" y="130" as="sourcePoint" />
+            <mxPoint x="410" y="130" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xTsBklRZL0Csudfz1uOM-21" value="%esp" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="xTsBklRZL0Csudfz1uOM-20">
+          <mxGeometry x="0.2413" y="-1" relative="1" as="geometry">
+            <mxPoint x="31" y="-1" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xTsBklRZL0Csudfz1uOM-23" value="" style="endArrow=none;dashed=1;html=1;rounded=0;" edge="1" parent="1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="380" y="340" as="sourcePoint" />
+            <mxPoint x="410" y="340" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xTsBklRZL0Csudfz1uOM-24" value="%eip" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="xTsBklRZL0Csudfz1uOM-23">
+          <mxGeometry x="-0.04" y="-1" relative="1" as="geometry">
+            <mxPoint x="30" y="-1" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="xTsBklRZL0Csudfz1uOM-26" value="ELF data" style="shape=curlyBracket;whiteSpace=wrap;html=1;rounded=1;labelPosition=left;verticalLabelPosition=middle;align=right;verticalAlign=middle;" vertex="1" parent="1">
+          <mxGeometry x="50" y="270" width="20" height="90" as="geometry" />
+        </mxCell>
+        <mxCell id="lw6fsPCgptyLQbkS5ZU--8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="1" source="lw6fsPCgptyLQbkS5ZU--2">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="480" y="260" as="targetPoint" />
+            <Array as="points">
+              <mxPoint x="550" y="430" />
+              <mxPoint x="550" y="260" />
+            </Array>
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="lw6fsPCgptyLQbkS5ZU--9" value="read count" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="lw6fsPCgptyLQbkS5ZU--8">
+          <mxGeometry x="-0.1621" relative="1" as="geometry">
+            <mxPoint x="-309" y="-10" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="lw6fsPCgptyLQbkS5ZU--2" value="fs_read_file(...)" style="rounded=0;whiteSpace=wrap;html=1;shadow=1;fillColor=#ffe6cc;strokeColor=#d79b00;" vertex="1" parent="1">
+          <mxGeometry x="-180" y="400" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="lw6fsPCgptyLQbkS5ZU--7" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="lw6fsPCgptyLQbkS5ZU--6" target="lw6fsPCgptyLQbkS5ZU--2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="lw6fsPCgptyLQbkS5ZU--6" value="char * path" style="rounded=0;whiteSpace=wrap;html=1;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="-320" y="420" width="100" height="20" as="geometry" />
+        </mxCell>
+        <mxCell id="9p3XuAg7bfBbFJzm0OE7-5" value="static _kAllocStatus proc_heap" style="swimlane;fontStyle=0;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeParentMax=0;resizeLast=0;collapsible=1;marginBottom=0;whiteSpace=wrap;html=1;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="640" y="165" width="200" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="9p3XuAg7bfBbFJzm0OE7-6" value="void * freeBase" style="text;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fillColor=default;" vertex="1" parent="9p3XuAg7bfBbFJzm0OE7-5">
+          <mxGeometry y="30" width="200" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="9p3XuAg7bfBbFJzm0OE7-7" value="void * freeTop" style="text;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fillColor=default;" vertex="1" parent="9p3XuAg7bfBbFJzm0OE7-5">
+          <mxGeometry y="60" width="200" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="9p3XuAg7bfBbFJzm0OE7-8" value="_kFreeChunk * freeChunk" style="text;align=left;verticalAlign=middle;spacingLeft=4;spacingRight=4;overflow=hidden;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;rotatable=0;whiteSpace=wrap;html=1;fillColor=default;" vertex="1" parent="9p3XuAg7bfBbFJzm0OE7-5">
+          <mxGeometry y="90" width="200" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="9p3XuAg7bfBbFJzm0OE7-11" value="&lt;h1 style=&quot;margin-top: 0px;&quot;&gt;Inizializzazione di un processo&lt;/h1&gt;&lt;p&gt;0. Process ID (PID)?&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;b&gt;1.&lt;/b&gt; Creare delle page directory per la mappa di memoria standard di un processo&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;b&gt;2.&lt;/b&gt; Riempire / mappare le sezioni con il codice macchina da eseguire (.text, .bss, .data, ...)&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;white-space: normal;&quot;&gt;&lt;span style=&quot;white-space:pre&quot;&gt;&#x9;&lt;/span&gt;&lt;b&gt;2.1.&lt;/b&gt; con DMA leggere i dati dell&#39;eseguibile direttamente dal disco&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;white-space: normal;&quot;&gt;&amp;nbsp;&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;white-space: pre; white-space: normal;&quot;&gt;&#x9;&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;b&gt;3.&lt;/b&gt; Istanziare un task/thread che esegue il codice (TSS)&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;&lt;b&gt;3.1.&lt;/b&gt; Mapparlo nella GDT o LDT ? Memorizzare il descriptor&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;&lt;b&gt;3.2.&lt;/b&gt; Impostare %EIP ad original entry-point dell&#39;ELF ??&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;&lt;b&gt;3.3.&lt;/b&gt; Impostare %ESP a &#39;proc_stack_top&#39;=3GB (virt. addr) ??&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;b&gt;4.&lt;/b&gt; Fare context-switch ed eseguire il TSS appena istanziato. Per eseguire un TSS su i386 si può fare con:&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;white-space: normal;&quot;&gt;&lt;span style=&quot;white-space:pre&quot;&gt;&#x9;&lt;/span&gt;- CALL or JMP to TSS descriptor&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;white-space: normal;&quot;&gt;&lt;span style=&quot;white-space:pre&quot;&gt;&#x9;&lt;/span&gt;- CALL or JMP to task gate&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;white-space: normal;&quot;&gt;&lt;span style=&quot;white-space:pre&quot;&gt;&#x9;&lt;/span&gt;- Interrupt vector pointing to task gate in IDT&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;white-space: normal;&quot;&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;&lt;b&gt;4.1&lt;/b&gt; Gestione HEAP&lt;br&gt;&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;white-space: normal;&quot;&gt;&lt;span style=&quot;white-space:pre&quot;&gt;&#x9;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;&lt;/span&gt;&lt;b&gt;4.1.1.&lt;/b&gt; Il limite superiore della heap viene aumentato / diminuito con system calls &#39;brk&#39; e &#39;sbrk&#39;per&amp;nbsp;&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;white-space: normal;&quot;&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;&lt;/span&gt;allocare/de-allocare pagine nella directory del processo.&amp;nbsp;&amp;nbsp;&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;white-space: normal;&quot;&gt;&lt;span style=&quot;white-space:pre&quot;&gt;&#x9;&#x9;&lt;/span&gt;&lt;b&gt;4.1.2.&lt;/b&gt; La struttura di gestione della heap (interna a malloc) è allocata nella sezione .data o .bss alla&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;white-space: normal;&quot;&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;compilazione.&amp;nbsp;&lt;br&gt;&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;white-space: normal;&quot;&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;&lt;b&gt;4.1.3.&lt;/b&gt; Le funzioni malloc e free fanno riferimento alla struttura proc_heap nella sezione .data/.bss del&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;white-space: normal;&quot;&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;processo da cui vengono chiamate&lt;br&gt;&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;white-space: normal;&quot;&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;&lt;b&gt;4.2. &lt;/b&gt;Gestione Stack&lt;br&gt;&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;white-space: normal;&quot;&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;&lt;span style=&quot;white-space: pre;&quot;&gt;&#x9;&lt;/span&gt;&lt;b&gt;4.2.1.&lt;/b&gt; Ogni thread (task) deve avere un suo stack =&amp;gt; come faccio??&lt;br&gt;&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;white-space: normal;&quot;&gt;&lt;span style=&quot;white-space:pre&quot;&gt;&#x9;&lt;/span&gt;&lt;b&gt;4.3.&lt;/b&gt; Risultato systemcall come viene passato alla task? Modificare a mano %EAX nel TSS ?&amp;nbsp;&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;br&gt;&lt;/p&gt;&lt;p&gt;&lt;b&gt;5.&lt;/b&gt; Context-switch ad un altra task o ritornare alla task &#39;padre&#39; (specificata nel campo back-TSS)&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;white-space: normal;&quot;&gt;&lt;span style=&quot;white-space:pre&quot;&gt;&#x9;&lt;/span&gt;&lt;b&gt;5.1.&lt;/b&gt; Con IRET&lt;/span&gt;&lt;/p&gt;&lt;p&gt;&lt;span style=&quot;white-space: normal;&quot;&gt;&lt;span style=&quot;white-space:pre&quot;&gt;&#x9;&lt;/span&gt;&lt;b&gt;5.2.&lt;/b&gt; Con RET ???&lt;/span&gt;&lt;/p&gt;" style="text;html=1;whiteSpace=wrap;overflow=hidden;rounded=0;fillColor=default;strokeColor=default;shadow=1;fontFamily=Lucida Console;textShadow=0;spacing=2;spacingLeft=5;" vertex="1" parent="1">
+          <mxGeometry x="1430" y="-310" width="930" height="870" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>
