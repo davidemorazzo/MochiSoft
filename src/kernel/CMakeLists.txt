@@ -38,6 +38,7 @@ set (kernel_src
         ${PROJECT_SOURCE_DIR}/kernel/ISR/IRQ_handlers/irq8.c
         ${PROJECT_SOURCE_DIR}/kernel/ISR/IRQ_handlers/irq11.c
         ${PROJECT_SOURCE_DIR}/kernel/memory/waterMarkAllocator.c
+        ${PROJECT_SOURCE_DIR}/kernel/memory/paging.c
         ${PROJECT_SOURCE_DIR}/kernel/dev/RTC.c
         ${PROJECT_SOURCE_DIR}/kernel/dev/init_devs.c
         ${PROJECT_SOURCE_DIR}/kernel/ISR/syscall_0x80.c
