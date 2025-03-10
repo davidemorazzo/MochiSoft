@@ -15,11 +15,13 @@
 #include "kernel/kglobals.h"
 #include "dev/PCI/AHCI.h"
 #include "kernel/fs/ext2/ext2.h"
+#include "kernel/memory.h"
 
 #include "time.h"
 #include "stdio.h"
 #include "string.h"
 
+#define KERNEL_STACK_SIZE 0x4000 // 16kb
 
 uint64_t global_IDT[255] = {0};
 uint64_t global_GDT[50] = {0};
@@ -34,18 +36,29 @@ void generic_isr(){
 }
 
 void kernel_main (void){
-    extern unsigned int __stack_top;
-    extern unsigned int __stack_size;
-    extern unsigned int __heap_bottom;
-    extern unsigned int __heap_top;
-    extern unsigned int __heap_size;
-    unsigned int *sp = &__stack_top;
-    unsigned int *ss = &__stack_size;
-    unsigned int *hb = &__heap_bottom;
-    unsigned int *ht = &__heap_top;
-    unsigned int *hs = &__heap_size;
+    // extern unsigned int __stack_top;
+    // extern unsigned int __stack_size;
+    // extern unsigned int __heap_bottom;
+    // extern unsigned int __heap_top;
+    // extern unsigned int __heap_size;
+    // unsigned int *sp = &__stack_top;
+    // unsigned int *ss = &__stack_size;
+    // unsigned int *hb = &__heap_bottom;
+    // unsigned int *ht = &__heap_top;
+    // unsigned int *hs = &__heap_size;
     
-    disable_it();    
+    disable_it();   
+    // Map kernel stack at 0xFFFFFFFF => 2 page tables = 2048 pages
+    extern unsigned int boot_page_directory;
+    PDE *page_dir = (PDE *) &boot_page_directory;
+    
+    // memory_map(page_dir, (void*)(0x40000000-0x800000), (void*)(0xFFFFFFFF-0x800000), 0x800000);
+
+    // // PTE pt[1024*1024];
+    // for (int i=0; i<1024; i++){
+    //     pd[i].addr = (unsigned int) &pt[1024*i] >> 12;
+    // }
+
     /* ======= GLOBAL DESCRIPTOR TABLE ====== */
     gdt_init(global_GDT);
     xDTR GDTR;
@@ -54,8 +67,10 @@ void kernel_main (void){
     gdt_load(GDTR);
 
     /* ===== SETUP HEAP ====== */
-    _kAllocStatus* kHeapStatus = _setupHeap(&__heap_bottom, ((size_t)&__heap_size));
-    char * array0, *array1;
+    
+    extern unsigned int _kernel_end;
+    _kAllocStatus* kHeapStatus = _setupHeap(&_kernel_end, 0xC07FFFFF-(size_t)(&_kernel_end));
+    // // char * array0, *array1;
     // array0 = kmalloc(5*sizeof(char));
     // array1 = kmalloc(5*sizeof(char));
     // array0[0] = 0xFF;
@@ -66,7 +81,13 @@ void kernel_main (void){
     // array1[4] = 0xFF;
     // _kfree(array0, 5*sizeof(char));
     // _kfree(array1, 5*sizeof(char));
-    
+
+    /* ========== SETUP STACK ================ */
+    // PDE *page1022 = (PDE*) malloc(1024*sizeof(PDE));
+    // PDE *page1023 = (PDE*) malloc(1024*sizeof(PDE));
+    // page_dir[1022] = &page1022 + 3;
+    // page_dir[1023] = &page1023 + 3;
+    // memory_map(page_dir, 0x40000000-KERNEL_STACK_SIZE, 0xFFFFFFFF-KERNEL_STACK_SIZE, KERNEL_STACK_SIZE);
 
     /* ===== INTERRUPT DESCRIPTOR TABLE ====== */
     xDTR IDTR;

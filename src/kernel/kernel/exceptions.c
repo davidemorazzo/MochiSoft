@@ -38,6 +38,8 @@ char exc_lookup[32][40] = {
 #define decl_isr(n)                     \
 void isr##n (){                         \
     KLOGERROR("<Exception 0x" #n "> %s\n", &exc_lookup[0x##n]);   \
+    KLOGERROR("KERNEL PANIC :)"); \
+    while(1); \
 }                                       
 
 
@@ -59,6 +61,8 @@ void isr04 (){
 
 void isr0D(void *error_code){
     KLOGERROR("<Exception 0x0D> %s => Error code: %X\n", &exc_lookup[0x0D], error_code);
+    KLOGERROR("KERNEL PANIC :)"); \
+    while(1); \
 }
 
 decl_isr(05);
@@ -70,7 +74,14 @@ decl_isr(0A);
 decl_isr(0B);
 decl_isr(0C);
 // decl_isr(0D);
-decl_isr(0E);
+// decl_isr(0E);
+void isr0E(void){
+    uint32_t addr;
+    __asm__("movl %%cr2, %0" : "=r"(addr) :);
+    KLOGERROR("<Exception 0x0E> %s => Error accessing address 0x%X", &exc_lookup[0x0E], addr);
+    KLOGERROR("KERNEL PANIC :)"); \
+    while(1); \
+}
 decl_isr(0F);
 decl_isr(10);
 decl_isr(11);

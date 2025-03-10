@@ -2,6 +2,7 @@
 #include "kernel/kheap.h"
 #include "kernel/kstdio.h"
 #include "kernel/kglobals.h"
+#include "kernel/memory.h"
 
 #include "string.h"
 
@@ -287,6 +288,9 @@ void AHCI_init(AHCI_HDD_t * dev){
 		KLOGERROR("No AHCI device found on PCI");
 		return;
 	}
+
+	extern unsigned int boot_page_directory;
+	memory_map((void*)&boot_page_directory, (void*)abar, (void*)abar, 4096);
 	
 	uint8_t pi = abar->pi;
 	dev->abar = abar;

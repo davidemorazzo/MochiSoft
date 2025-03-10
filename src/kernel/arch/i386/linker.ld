@@ -58,21 +58,21 @@ SECTIONS
 	}
 	
 	/* Definire l'heap_bottom (dopo i dati) */
-    .heap : ALIGN(16) {
+    /* .heap : ALIGN(16) {
         PROVIDE(__heap_bottom = .);
 		PROVIDE(__heap_top = . + 0x20000000);
         *(.heap)
-    }
+    } */
 
 	/* Definire lo stack_top (prima dell'inizio della memoria usata) */
-    .stack : ALIGN(16)
+    /* .stack : ALIGN(16)
 	{
-        PROVIDE(__stack_top = __heap_top + 0x20000000);  /* Ad esempio, indirizzo alto della memoria */
+        PROVIDE(__stack_top = __heap_top + 0x20000000);  // Ad esempio, indirizzo alto della memoria 
 		*(.stack)
-    }
+    } */
 
-	__heap_size = __heap_top - __heap_bottom;
-	__stack_size = __stack_top - __heap_top;
+	/* __heap_size = __heap_top - __heap_bottom;
+	__stack_size = __stack_top - __heap_top; */
 
 	_kernel_end = . ; 
 
