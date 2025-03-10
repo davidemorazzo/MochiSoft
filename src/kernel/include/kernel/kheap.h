@@ -9,6 +9,7 @@ Implementazione per allocazione dinamica di memoria nel kernel
 #include <stddef.h>
 
 void *kmalloc(size_t size);
+void *kmalloc_align(size_t size, size_t align);
 #define kfree(ptr) _kfree(ptr, sizeof(ptr)); 
 void _kfree (void *ptr, size_t size);
 

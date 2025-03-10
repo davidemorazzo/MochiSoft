@@ -44,6 +44,29 @@ void *kmalloc(size_t size){
 	}
 }
 
+void *kmalloc_align(size_t size, size_t align){
+	size_t offset = align -1;
+	char * aligned_base = (char*) (((size_t)_heapStatus->freeBase + offset) & (~offset));
+	
+	if (aligned_base + size < (char *)_heapStatus->freeTop)
+	{
+		void *memPtr = aligned_base;
+		_heapStatus->freeBase = (void *)(aligned_base+size);
+		if ((_heapStatus->freeTop - _heapStatus->freeBase) < 51200){
+			KLOGWARN("La heap sta per finire, meno di %d bytes liberi!", 
+				(_heapStatus->freeTop - _heapStatus->freeBase));
+		}
+		return memPtr;
+	}
+	else
+	{
+		// Heap full. return NULL
+		// TODO: Handle freed chunks
+		KLOGERROR("Heap piena, non posso allocare più memoria :(");
+		return NULL;
+	}
+}
+
 void _kfree (void *ptr, size_t size){
 	// if(ptr > _heapStatus->freeTop ){
 	// 	return;
