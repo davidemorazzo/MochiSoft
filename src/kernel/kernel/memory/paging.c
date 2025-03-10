@@ -1,25 +1,36 @@
 #include "kernel/memory.h"
+#include "kernel/kheap.h"
 
 int memory_map(PDE *pd_base, void *phys_addr, void *virt_addr, size_t size){
-	// unsigned int pd_idx = ((unsigned int)virt_addr & 0xFFFFF000) / 0x400000;
-	// unsigned int pt_idx = ((unsigned int)virt_addr & 0xFFFFF000) % 0x400000;
+	unsigned int pd_idx = ((unsigned int)virt_addr & 0xFFFFF000) / 0x400000;
+	unsigned int pt_idx = (((unsigned int)virt_addr & 0xFFFFF000) / 4096) % 1024;
 
-	// while (size > 0){
-	// 	PDE *ptr_PDE = &pd_base[pd_idx];
-	// 	PTE *ptr_PTE = &((PTE *)ptr_PDE->addr)[pt_idx];
-	// 	ptr_PTE->addr = (uint32_t)phys_addr & 0xFFFFF000;
-	// 	ptr_PDE->p = 1;
-	// 	ptr_PDE->rw = 1;
+	while (size > 0){
+		PDE *ptr_PDE = &pd_base[pd_idx];
+		if (ptr_PDE->addr == 0){
+			*(uint32_t*)ptr_PDE = (size_t)kmalloc_align(1024*sizeof(PTE), 4096) + 3;
+			for (int i=0; i< 1024; i++){
+				((uint32_t*)(ptr_PDE->addr<<12))[i] = 0; 
+			}
+		}
+		PTE *ptr_PTE = &((PTE *)(ptr_PDE->addr<<12))[pt_idx];
+		ptr_PTE->addr = ((uint32_t)phys_addr & 0xFFFFF000)>>12;
+		ptr_PTE->p = 1;
+		ptr_PTE->rw = 1;
 
-	// 	phys_addr += 4096;
-	// 	size -= 4096;
+		phys_addr += 4096;
+		size -= 4096;
 
-	// 	if (pt_idx >= 1023){
-	// 		pt_idx = 0;
-	// 		pd_idx ++;
-	// 	}else{
-	// 		pt_idx++;
-	// 	}
-	// }
+		if (pt_idx >= 1023){
+			pt_idx = 0;
+			pd_idx ++;
+		}else{
+			pt_idx++;
+		}
+	}
+
+	__asm__(
+		"mov %%cr3, %%ecx;"
+    	"mov %%ecx, %%cr3;" : :);
 
 }
