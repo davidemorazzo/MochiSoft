@@ -55,6 +55,10 @@ typedef struct PTE_s{
 	uint32_t addr:20;		// Address of page table
 } PTE; // Page table entry
 
+typedef void* phys_addr_t;
+typedef void* virt_addr_t;
+
 int memory_map(PDE *pd_base, void *phys_addr, void* virt_addr, size_t size);
+phys_addr_t physical_addr(PDE *pd_base, virt_addr_t vaddr);
 
 #endif

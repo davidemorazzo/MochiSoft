@@ -34,3 +34,11 @@ int memory_map(PDE *pd_base, void *phys_addr, void *virt_addr, size_t size){
     	"mov %%ecx, %%cr3;" : :);
 
 }
+
+phys_addr_t physical_addr(PDE *pd_base, virt_addr_t vaddr){
+	unsigned int pt_entry = ((uint32_t)vaddr >> 12) & 0x3FF;
+	unsigned int pd_entry = (uint32_t)vaddr >> 22;
+	PTE *ptr_PTE = (PTE*)(pd_base[pd_entry].addr<<12);
+	void *page_base = (void*)(ptr_PTE[pt_entry].addr<<12);
+	return (phys_addr_t)((uint32_t)page_base | ((uint32_t)vaddr & 0xFFF));
+}
