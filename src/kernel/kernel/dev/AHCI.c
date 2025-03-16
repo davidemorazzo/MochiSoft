@@ -70,6 +70,7 @@ void send_identify_cmd(HBA_PORT *port, SATA_ident_t *buf){
 	// PRDT entry
 	CmdTbl->prdt_entry[0].dbc = 0x1FF; //((uint32_t)(1<<31)) | ((uint32_t)0x000001FF);
 	CmdTbl->prdt_entry[0].dba = (uint32_t) buf;
+	// CmdTbl->prdt_entry[0].dba = (uint32_t)physical_addr((void*)0x109000, buf);
 	CmdTbl->prdt_entry[0].i = 0;
 
 	// issue command
@@ -290,7 +291,8 @@ void AHCI_init(AHCI_HDD_t * dev){
 	}
 
 	extern unsigned int boot_page_directory;
-	memory_map((void*)&boot_page_directory, (void*)abar, (void*)abar, 4096);
+	memory_map((void*)&boot_page_directory, (void*)abar, (void*)0x100000, 4096*3);
+	abar = (HBA_MEM*) 0x100000;
 	
 	uint8_t pi = abar->pi;
 	dev->abar = abar;
@@ -304,10 +306,10 @@ void AHCI_init(AHCI_HDD_t * dev){
 				
 				dev->portIndex = i;
 				dev->port = &abar->ports[i];
-				dev->port->clb = (uint32_t) &dev->cmd_list;
-				dev->port->fb = (uint32_t) &dev->rcv_fis;
+				dev->port->clb = (uint32_t) physical_addr((void*)&boot_page_directory, &dev->cmd_list);
+				dev->port->fb = (uint32_t) physical_addr((void*)&boot_page_directory, &dev->rcv_fis);
 				for (int cmd=0; cmd <32; cmd++){
-					dev->cmd_list.cmdHeader[cmd].ctba = (uint32_t) &dev->cmd_table[cmd];
+					dev->cmd_list.cmdHeader[cmd].ctba = (uint32_t) physical_addr((void*)&boot_page_directory, &dev->cmd_table[cmd]);
 				}
 				dev->port->ie |= 0xFF;
 				dev->abar->ghc |= 0x2; // Interrupt enable
