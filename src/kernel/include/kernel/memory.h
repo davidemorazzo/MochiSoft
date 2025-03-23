@@ -58,7 +58,10 @@ typedef struct PTE_s{
 typedef void* phys_addr_t;
 typedef void* virt_addr_t;
 
+static PTE* pt_pool;
+
 int memory_map(PDE *pd_base, void *phys_addr, void* virt_addr, size_t size);
 phys_addr_t physical_addr(PDE *pd_base, virt_addr_t vaddr);
+phys_addr_t get_page_dir();
 
 #endif

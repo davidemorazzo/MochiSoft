@@ -82,12 +82,13 @@ void kernel_main (void){
     // _kfree(array0, 5*sizeof(char));
     // _kfree(array1, 5*sizeof(char));
 
+
     /* ========== SETUP STACK ================ */
-    // PDE *page1022 = (PDE*) malloc(1024*sizeof(PDE));
-    // PDE *page1023 = (PDE*) malloc(1024*sizeof(PDE));
-    // page_dir[1022] = &page1022 + 3;
-    // page_dir[1023] = &page1023 + 3;
-    // memory_map(page_dir, 0x40000000-KERNEL_STACK_SIZE, 0xFFFFFFFF-KERNEL_STACK_SIZE, KERNEL_STACK_SIZE);
+    memory_map(NULL, 
+        (phys_addr_t)(0x40000000-KERNEL_STACK_SIZE), 
+        (virt_addr_t)(0xFFFF0000-KERNEL_STACK_SIZE), 
+        KERNEL_STACK_SIZE);
+    __asm__("mov $0xFFFEFFFF, %esp");
 
     /* ===== INTERRUPT DESCRIPTOR TABLE ====== */
     xDTR IDTR;

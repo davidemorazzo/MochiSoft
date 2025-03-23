@@ -33,4 +33,6 @@ void interrupt(uint8_t irq);
 
 uint32_t read_eflags();
 
+uint32_t cr3();
+
 #endif

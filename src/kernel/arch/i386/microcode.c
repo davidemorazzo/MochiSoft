@@ -89,3 +89,11 @@ uint32_t inl(uint16_t port){
     );
     return result;
 }
+
+uint32_t cr3(){
+    uint32_t reg=0;
+    __asm__ (
+        "mov %%cr3, %d0" : "=r"(reg) :
+    );
+    return reg;
+}
