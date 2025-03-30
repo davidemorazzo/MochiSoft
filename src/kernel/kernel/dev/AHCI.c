@@ -49,6 +49,7 @@ void send_identify_cmd(HBA_PORT *port, SATA_ident_t *buf){
 
 	volatile HBA_CMD_LIST * PxCLB = (HBA_CMD_LIST *)port->clb; // 32 elements
 	volatile HBA_CMD_TBL *CmdTbl = (HBA_CMD_TBL*) PxCLB->cmdHeader[0].ctba;
+	phys_addr_t phys_buf = physical_addr(NULL, buf);
 
 	// Command Header 0 setup
 	MEMSET(PxCLB->cmdHeader, 0, 8);
@@ -69,7 +70,7 @@ void send_identify_cmd(HBA_PORT *port, SATA_ident_t *buf){
 
 	// PRDT entry
 	CmdTbl->prdt_entry[0].dbc = 0x1FF; //((uint32_t)(1<<31)) | ((uint32_t)0x000001FF);
-	CmdTbl->prdt_entry[0].dba = (uint32_t) buf;
+	CmdTbl->prdt_entry[0].dba = (uint32_t) phys_buf;
 	// CmdTbl->prdt_entry[0].dba = (uint32_t)physical_addr((void*)0x109000, buf);
 	CmdTbl->prdt_entry[0].i = 0;
 
@@ -166,6 +167,12 @@ void AHCI_interrupt_routine(void) {
 }
 
 int AHCI_read_prim_dev (uint32_t startl, uint32_t starth, uint32_t count, void * buf){
+	// Translate buf in physical addr
+	phys_addr_t buf_paddr = physical_addr(NULL, buf);
+	if(buf_paddr == NULL){
+		KLOGERROR("%s: buf_paddr=NULL", __func__);
+		return -1;
+	}
 	// find slot and "lock" the command slot
 	int slot;
 	do{
@@ -183,13 +190,13 @@ int AHCI_read_prim_dev (uint32_t startl, uint32_t starth, uint32_t count, void *
 
 	/*  PRDT  */
 	for(int i=0; i<cmd_header->prdtl-1; i++){
-		cmd_tbl->prdt_entry[i].dba = ((uint32_t) buf) + i*4*1024;
+		cmd_tbl->prdt_entry[i].dba = ((uint32_t) buf_paddr) + i*4*1024;
 		cmd_tbl->prdt_entry[i].dbc = 8*1024 -1;
 		cmd_tbl->prdt_entry[i].i = 1;
 		count -= 16;
 	}	
 	// Last PRDT entry
-	cmd_tbl->prdt_entry[cmd_header->prdtl-1].dba = ((uint32_t) buf) + 4*1024*(cmd_header->prdtl-1);
+	cmd_tbl->prdt_entry[cmd_header->prdtl-1].dba = ((uint32_t) buf_paddr) + 4*1024*(cmd_header->prdtl-1);
 	cmd_tbl->prdt_entry[cmd_header->prdtl-1].dbc = (count<<9)-1;
 	cmd_tbl->prdt_entry[cmd_header->prdtl-1].i = 1;
 
@@ -218,6 +225,13 @@ int AHCI_read_prim_dev (uint32_t startl, uint32_t starth, uint32_t count, void *
 }
 
 int AHCI_write_prim_dev (uint32_t startl, uint32_t starth, uint32_t count, void *buf){
+	// Translate buf in physical addr
+	phys_addr_t buf_paddr = physical_addr(NULL, buf);
+	if(buf_paddr == NULL){
+		KLOGERROR("%s: buf_paddr=NULL", __func__);
+		return -1;
+	}
+	
 	// find slot and "lock" the command slot
 	int slot;
 	do{
@@ -238,13 +252,13 @@ int AHCI_write_prim_dev (uint32_t startl, uint32_t starth, uint32_t count, void 
 
 	/*  PRDT  */
 	for(int i=0; i<cmd_header->prdtl-1; i++){
-		cmd_tbl->prdt_entry[i].dba = ((uint32_t) buf) + i*4*1024;
+		cmd_tbl->prdt_entry[i].dba = ((uint32_t) buf_paddr) + i*4*1024;
 		cmd_tbl->prdt_entry[i].dbc = 8*1024 -1;
 		cmd_tbl->prdt_entry[i].i = 1;
 		count -= 16;
 	}	
 	// Last PRDT entry
-	cmd_tbl->prdt_entry[cmd_header->prdtl-1].dba = ((uint32_t) buf) + 4*1024*(cmd_header->prdtl-1);
+	cmd_tbl->prdt_entry[cmd_header->prdtl-1].dba = ((uint32_t) buf_paddr) + 4*1024*(cmd_header->prdtl-1);
 	cmd_tbl->prdt_entry[cmd_header->prdtl-1].dbc = (count<<9)-1;
 	cmd_tbl->prdt_entry[cmd_header->prdtl-1].i = 1;
 
@@ -291,8 +305,10 @@ void AHCI_init(AHCI_HDD_t * dev){
 	}
 
 	extern unsigned int boot_page_directory;
-	memory_map((void*)&boot_page_directory, (void*)abar, (void*)0x100000, 4096*3);
-	abar = (HBA_MEM*) 0x100000;
+	if (memory_map((void*)&boot_page_directory, (void*)abar, (void*)0xFEBB1000, 4096*3) == -1){
+		KLOGERROR("%s: AHCI mapping failed", __func__);
+	}
+	abar = (HBA_MEM*) 0xFEBB1000;
 	
 	uint8_t pi = abar->pi;
 	dev->abar = abar;
