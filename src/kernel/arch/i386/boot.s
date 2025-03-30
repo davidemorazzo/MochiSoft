@@ -71,6 +71,7 @@ _start:
 	movl $(boot_page_table0 - 0xC0000000 + 0x003), boot_page_directory - 0xC0000000 + 0
 	movl $(boot_page_table768 - 0xC0000000 + 0x003), boot_page_directory - 0xC0000000 + 768 * 4
 	movl $(boot_page_table769 - 0xC0000000 + 0x003), boot_page_directory - 0xC0000000 + 769 * 4
+	movl $(boot_page_directory - 0xC0000000 + 0x003), boot_page_directory - 0xC0000000 + 1023*4
 
 	# Set cr3 to the address of the boot_page_directory.
 	movl $(boot_page_directory - 0xC0000000), %ecx

@@ -48,21 +48,11 @@ void kernel_main (void){
     // unsigned int *hs = &__heap_size;
     
     disable_it();   
-    // Map kernel stack at 0xFFFFFFFF => 2 page tables = 2048 pages
-    extern unsigned int boot_page_directory;
-    PDE *page_dir = (PDE *) &boot_page_directory;
-    
-    // memory_map(page_dir, (void*)(0x40000000-0x800000), (void*)(0xFFFFFFFF-0x800000), 0x800000);
-
-    // // PTE pt[1024*1024];
-    // for (int i=0; i<1024; i++){
-    //     pd[i].addr = (unsigned int) &pt[1024*i] >> 12;
-    // }
 
     /* ======= GLOBAL DESCRIPTOR TABLE ====== */
     gdt_init(global_GDT);
     xDTR GDTR;
-    GDTR.base=global_GDT;
+    GDTR.base=(uint64_t*)physical_addr(NULL, global_GDT);
     GDTR.length=3*8-1;
     gdt_load(GDTR);
 
@@ -86,13 +76,13 @@ void kernel_main (void){
     /* ========== SETUP STACK ================ */
     memory_map(NULL, 
         (phys_addr_t)(0x40000000-KERNEL_STACK_SIZE), 
-        (virt_addr_t)(0xFFFF0000-KERNEL_STACK_SIZE), 
+        (virt_addr_t)(0xFFC00000-KERNEL_STACK_SIZE), 
         KERNEL_STACK_SIZE);
-    __asm__("mov $0xFFFEFFFF, %esp");
+    __asm__("mov $0xFFBFFFFF, %esp");
 
     /* ===== INTERRUPT DESCRIPTOR TABLE ====== */
     xDTR IDTR;
-    IDTR.base = global_IDT;
+    IDTR.base = (uint64_t*)physical_addr(NULL,global_IDT);
     IDTR.length = 256*8-1;
     load_idt(IDTR); /*Load IDTR*/
 

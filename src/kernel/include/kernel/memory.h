@@ -63,5 +63,6 @@ static PTE* pt_pool;
 int memory_map(PDE *pd_base, void *phys_addr, void* virt_addr, size_t size);
 phys_addr_t physical_addr(PDE *pd_base, virt_addr_t vaddr);
 phys_addr_t get_page_dir();
+PTE *find_free_page(PDE *pd_base, PTE* pool, int pool_size);
 
 #endif

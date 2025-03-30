@@ -97,18 +97,22 @@ phys_addr_t physical_addr(PDE *pd_base, virt_addr_t vaddr){
 	if (pd_base == NULL){
 		pd_base = get_page_dir();
 	}
-	unsigned int pt_entry = ((uint32_t)vaddr >> 12) & 0x3FF;
-	unsigned int pd_entry = (uint32_t)vaddr >> 22;
-	if(pd_base[pd_entry].addr == 0){
-		KLOGERROR("%s: pd_base[pd_entry].addr == 0", __func__);
+	// unsigned int pt_entry = ((uint32_t)vaddr >> 12) & 0x3FF;
+	// unsigned int pd_entry = (uint32_t)vaddr >> 22;
+	PDE *pd = (PDE*) (0xFFFFF000+((unsigned int)vaddr>>22)*4);
+	PTE *pt = (PTE*) (0xFFC00000+((unsigned int)vaddr>>12)*4);
+	
+	if(pd == NULL || pd->p == 0){
+		KLOGERROR("%s: PDE not present. Address not mapped", __func__);
 		return NULL;
 	}
-	PTE *ptr_PTE = (PTE*)(pd_base[pd_entry].addr<<12);
-	if(ptr_PTE[pt_entry].addr == 0){
-		KLOGERROR("%s: ptr_PTE[pt_entry].addr == 0", __func__);
+	// PTE *ptr_PTE = (PTE*)(pd_base[pd_entry].addr<<12);
+	if(pt == NULL || pd->p == 0){
+		KLOGERROR("%s: PTE not present. Address not mapped", __func__);
 		return NULL;
 	}
-	void *page_base = (void*)(ptr_PTE[pt_entry].addr<<12);
+
+	void *page_base = (void*)(pt->addr<<12);
 	return (phys_addr_t)((uint32_t)page_base | ((uint32_t)vaddr & 0xFFF));
 }
 
