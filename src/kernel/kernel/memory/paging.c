@@ -3,6 +3,8 @@
 #include "kernel/microcode.h"
 #include "kernel/kstdio.h"
 
+PTE *pt_pool = NULL;
+
 PTE *find_free_page(PDE *pd_base, PTE* pool, int pool_size){
 	for (int i=0; i<pool_size; i++){
 		uint32_t paging_addr = (uint32_t) physical_addr(NULL, &pool[i*1024]) >> 12; 
@@ -74,8 +76,13 @@ int memory_map(PDE *pd_base, void *phys_addr, void *virt_addr, size_t size){
 		ptr_PTE->p = 1;
 		ptr_PTE->rw = 1;
 
+		/* Allocazione pagine fisiche */
+		unsigned int bitmap_idx = ((uint32_t)phys_addr & 0xFFFFF000) / PAGE_ALLOC_PAGE_SZ; 
+		page_alloc_bitmap[bitmap_idx / 8] |= (1 << (bitmap_idx % 8)); 
+
 		phys_addr += 4096;
 		size -= 4096;
+
 
 		if (pt_idx >= 1023){
 			pt_idx = 0;

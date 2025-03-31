@@ -57,9 +57,10 @@ void kernel_main (void){
     gdt_load(GDTR);
 
     /* ===== SETUP HEAP ====== */
-    
+
     extern unsigned int _kernel_end;
-    _kAllocStatus* kHeapStatus = _setupHeap(&_kernel_end, 0xC07FFFFF-(size_t)(&_kernel_end));
+    phys_addr_t heap_start = (phys_addr_t) ((unsigned int)&_kernel_end + PAGE_ALLOC_BITMAP_SZ); 
+    _kAllocStatus* kHeapStatus = _setupHeap(heap_start, 0xC07FFFFF-(size_t)(&_kernel_end));
     // // char * array0, *array1;
     // array0 = kmalloc(5*sizeof(char));
     // array1 = kmalloc(5*sizeof(char));
@@ -73,12 +74,18 @@ void kernel_main (void){
     // _kfree(array1, 5*sizeof(char));
 
 
+    /* ============ PAGING SETUP ============ */
+    page_alloc_init(&_kernel_end);
+
+
     /* ========== SETUP STACK ================ */
     memory_map(NULL, 
         (phys_addr_t)(0x40000000-KERNEL_STACK_SIZE), 
         (virt_addr_t)(0xFFC00000-KERNEL_STACK_SIZE), 
         KERNEL_STACK_SIZE);
     __asm__("mov $0xFFBFFFFF, %esp");
+
+    
 
     /* ===== INTERRUPT DESCRIPTOR TABLE ====== */
     xDTR IDTR;
