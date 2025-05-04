@@ -3,99 +3,56 @@
 #include "kernel/microcode.h"
 #include "kernel/kstdio.h"
 
-PTE *pt_pool = NULL;
 
-PTE *find_free_page(PDE *pd_base, PTE* pool, int pool_size){
-	for (int i=0; i<pool_size; i++){
-		uint32_t paging_addr = (uint32_t) physical_addr(NULL, &pool[i*1024]) >> 12; 
-		char used = 0;
-		for (int p=0; p<1024; p++){
-			if (pd_base[p].addr == paging_addr){
-				used = 1;
-			}
-		}
-		if (used == 0){
-			return &pool[i*1024];
-		}
-	}
-	return NULL;
-}
+/* Funzione per mappare memoria fisica alla memory space di un certo processo. La memoria
+fisica specificata in paddr deve essere già allocata al processo con phys_page_alloc
+contiguamente per il numero di pagine specificate. La funzione è da usare quando 
+la page directory da modificare è caricata in CR3 
+Argomenti:
+- *pd_base:	Page directory. Non usato al momento
+- paddr:	Indirizzo fisico da mappare. Deve già essere allocato al processo
+- vaddr:	Indirizzo nello spazio di memoria del processo
+- size: 	Numero di bytes consecutivi da mappare
 
-PTE *get_page(PDE *ptr_PDE, PTE* pool, int pool_size){
-	phys_addr_t paddr_pt = (phys_addr_t)(ptr_PDE->addr << 12);
-	PTE *res = NULL;
-	for (int i=0; i<pool_size; i++){
-		if (paddr_pt == physical_addr(NULL, &pool[i*1024])){
-			res = &pool[i*1024];
-			break;
-		}
-	}
-
-	return res;
-}
-
-int memory_map(PDE *pd_base, void *phys_addr, void *virt_addr, size_t size){
-	unsigned int pd_idx = (unsigned int) virt_addr >> 22;
-	unsigned int pt_idx = (unsigned int) virt_addr >> 12 & 0x03FF;
-
-	if (pd_base == NULL){
-		pd_base = (PDE*)((uint32_t)get_page_dir() + 0xC0000000);
-	}
-
-	/* Allocazione del pool di pagine per il kernel nella heap */
-	if (pt_pool == NULL){
-		pt_pool = kmalloc_align(sizeof(PTE)*1024*50, 4096);
-		if (pt_pool == NULL){
-			return -1;
-		}
-	}
+Ritorno:
+- int:	
+	-1: Non riuscito
+	0: Riuscito
+*/
+int memory_map(PDE *pd_base, phys_addr_t paddr, virt_addr_t vaddr, size_t size){
+	// unsigned int pd_idx = (unsigned int) vaddr >> 22;
+	// unsigned int pt_idx = (unsigned int) vaddr >> 12 & 0x03FF;
+	paddr = (phys_addr_t) ((unsigned int) paddr & 0xFFFFF000);
 
 	while (size > 0){
-		PDE *ptr_PDE = &pd_base[pd_idx];
-		PTE *pt_base = NULL;
-		PTE *ptr_PTE = NULL;
-
-		if (ptr_PDE->addr == 0){
-			pt_base = find_free_page(pd_base, pt_pool, 50);
-			for (int i=0; i<1024; i++){
-				((uint32_t*) pt_base)[i] = 0;
-			}
-			ptr_PDE->addr = (uint32_t)physical_addr(NULL, pt_base) >> 12;
-		} else {
-			pt_base = get_page(ptr_PDE, pt_pool, 50);
+		// Funziona solo in user-space :(
+		PDE *pde = (PDE*) (0xFFFFF000+((unsigned int)vaddr>>22)*4);
+		if (pde->addr == 0){
+			/* Allocare una nuova page table in memoria fisica */
+			// TODO: Questo è un memory leak. Pagina da rilasciare alla chiusura del processo
+			phys_addr_t page = phys_page_alloc(1);
+			if (page== NULL){return -1;}
+			
+			pde->addr = (unsigned int)page >> 12;
+			pde->p = 1;
+			pde->rw = 1;
 		}
+		PTE *pte = (PTE*) (0xFFC00000+((unsigned int)vaddr>>12)*4);
+		pte->p = 1;
+		pte->rw = 1;
+		pte->addr = (unsigned int)paddr >> 12;
 		
-		if (pt_base == NULL){
-			return -1;
-		}
-		ptr_PTE = &pt_base[pt_idx];
-		ptr_PDE->p = 1;
-		ptr_PDE->rw = 1;
-
-		ptr_PTE->addr = ((uint32_t)phys_addr & 0xFFFFF000)>>12;
-		ptr_PTE->p = 1;
-		ptr_PTE->rw = 1;
-
-		/* Allocazione pagine fisiche */
-		unsigned int bitmap_idx = ((uint32_t)phys_addr & 0xFFFFF000) / PAGE_ALLOC_PAGE_SZ; 
-		page_alloc_bitmap[bitmap_idx / 8] |= (1 << (bitmap_idx % 8)); 
-
-		phys_addr += 4096;
+		paddr += 4096;
+		vaddr += 4096;
 		size -= 4096;
-
-
-		if (pt_idx >= 1023){
-			pt_idx = 0;
-			pd_idx ++;
-		}else{
-			pt_idx++;
-		}
 	}
 
 	__asm__ volatile (
 		"mov %cr3, %eax;"
     	"mov %eax, %cr3;"
 	);
+
+	return 0;
 
 }
 

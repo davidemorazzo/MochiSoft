@@ -305,6 +305,9 @@ void AHCI_init(AHCI_HDD_t * dev){
 	}
 
 	extern unsigned int boot_page_directory;
+	phys_page_reserve((void*)abar);
+	phys_page_reserve((void*)abar+4096);
+	phys_page_reserve((void*)abar+8192);
 	if (memory_map((void*)&boot_page_directory, (void*)abar, (void*)0xFEBB1000, 4096*3) == -1){
 		KLOGERROR("%s: AHCI mapping failed", __func__);
 	}

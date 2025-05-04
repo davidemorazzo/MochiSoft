@@ -60,7 +60,7 @@ typedef void* virt_addr_t;
 
 extern PTE* pt_pool;
 
-int memory_map(PDE *pd_base, void *phys_addr, void* virt_addr, size_t size);
+int memory_map(PDE *pd_base, phys_addr_t paddr, virt_addr_t vaddr, size_t size);
 phys_addr_t physical_addr(PDE *pd_base, virt_addr_t vaddr);
 phys_addr_t get_page_dir();
 PTE *find_free_page(PDE *pd_base, PTE* pool, int pool_size);
@@ -77,7 +77,8 @@ is kept in the vector uint8_t page_alloc_bitmap*/
 extern uint8_t *page_alloc_bitmap;
 
 void page_alloc_init(phys_addr_t base);
-void phys_page_alloc(size_t n_pages, phys_addr_t *pages);
+int phys_page_reserve(phys_addr_t paddr);
+phys_addr_t phys_page_alloc(size_t n_pages);
 void phys_page_dealloc(size_t n_pages, phys_addr_t *pages);
 
 #endif
