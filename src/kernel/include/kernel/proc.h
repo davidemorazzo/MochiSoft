@@ -37,7 +37,7 @@ typedef struct proc_s {
 } proc_t;
 
 #define MAX_PROC 32
-static proc_t* __proc_list[MAX_PROC] = {0};	// Internal process list. Limited to 32
+extern proc_t* __proc_list[MAX_PROC];	// Internal process list. Limited to 32
 
 /* Registra un nuovo processo `p` nella lista `__proc_list`. Ritorna il PID assegnato */
 PID_t proc_register(proc_t* p);

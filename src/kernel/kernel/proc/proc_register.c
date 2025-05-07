@@ -1,5 +1,7 @@
 #include "kernel/proc.h"
 
+proc_t* __proc_list[MAX_PROC] = {0};
+
 PID_t proc_register(proc_t* p){
 	PID_t new_pid = 0;
 	for (int i=MAX_PROC; i>=0; i--){
