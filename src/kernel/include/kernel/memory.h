@@ -76,6 +76,13 @@ is kept in the vector uint8_t page_alloc_bitmap*/
 
 extern uint8_t *page_alloc_bitmap;
 
+/* Struttura che definisce un range di pagine fisiche (slab),
+che inizia da `base` e contiente `len` pagine da 4096 B. */
+typedef struct pages_range_s{
+	phys_addr_t base;
+	size_t len;
+}pages_range_t;
+
 void page_alloc_init(phys_addr_t base);
 int phys_page_reserve(phys_addr_t paddr);
 phys_addr_t phys_page_alloc(size_t n_pages);

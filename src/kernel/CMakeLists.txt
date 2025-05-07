@@ -51,6 +51,10 @@ set (kernel_src
         ${PROJECT_SOURCE_DIR}/kernel/dev/PCI.c
         ${PROJECT_SOURCE_DIR}/kernel/dev/AHCI.c
         ${PROJECT_SOURCE_DIR}/kernel/fs/ext2/ext2.c
+        ${PROJECT_SOURCE_DIR}/kernel/proc/sys_create_process.c
+        ${PROJECT_SOURCE_DIR}/kernel/proc/proc_register.c
+        ${PROJECT_SOURCE_DIR}/kernel/proc/proc_get.c
+        ${PROJECT_SOURCE_DIR}/kernel/proc/proc_exit.c
 )
 
 set (bootloader_src
