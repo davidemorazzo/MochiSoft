@@ -55,6 +55,8 @@ set (kernel_src
         ${PROJECT_SOURCE_DIR}/kernel/proc/proc_register.c
         ${PROJECT_SOURCE_DIR}/kernel/proc/proc_get.c
         ${PROJECT_SOURCE_DIR}/kernel/proc/proc_exit.c
+        ${PROJECT_SOURCE_DIR}/kernel/proc/sched_isr.s
+        ${PROJECT_SOURCE_DIR}/kernel/proc/sched_callback.c
 )
 
 set (bootloader_src
