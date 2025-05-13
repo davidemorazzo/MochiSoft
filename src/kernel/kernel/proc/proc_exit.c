@@ -24,6 +24,7 @@ void proc_exit(proc_t *p){
 			kfree(p->thread_info);
 			kfree(p);
 			__proc_list[i] = NULL;
+			KLOGINFO("Process exit: PID %d, %s, %s", p->pid, p->name, p->current_dir);
 		}
 	}
 }
