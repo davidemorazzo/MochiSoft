@@ -4,7 +4,6 @@
 /* la IDT con l'interrupt dedicato all- */
 /* o scheduler (direttamente da timer?) */
 
-.globl sched_isr
 
 /* Composizione dello stack creato dalla CPU i386
 
@@ -22,33 +21,30 @@
 ╠═══════════════╣◄────┘
 
 */
+
+.globl sched_isr
+
 .data
 old_esp: .long 0
-old_eflags: .long 0
-old_cs: .short 0
-old_eip: .long 0
+new_esp: .long 0
 
 .text
 sched_isr:
-	push %eax
-	movl +4(%esp), %eax
-	movl %eax, old_eip
-	movl +8(%esp), %eax
-	mov %ax, old_cs
-	movl +12(%esp), %eax
-	movl %eax, old_eflags
-	movl %esp, old_esp
-	addl $4, old_esp
+	movl %esp, old_esp 		// Salva OLD ESP
 	addl $12, old_esp
-	pop %eax
-	pushal
-	cld
+
+	pushal					// arg0: Salva registri+NEW ESP
 	movl old_esp, %eax
-	movl %eax, +12(%esp);
-	push old_eip
-	push old_eflags
+	push -12(%eax)			// arg1: OLD EIP
+	push -4(%eax)			// arg2: OLD EFLAGS
+
 	call sched_callback
-	popfl
-	pop old_eip
-	popal
+
+	movl old_esp, %eax
+	pop -4(%eax)			// Remove arg2: OLD EFLAGS
+	pop -12(%eax)			// Remove arg1: OLD EIP
+	movl +12(%esp), %eax	// Salva ESP modificato da sched_callback
+	movl %eax, new_esp
+	popal					// Remove arg0: Carica registri modificati da sched_callback
+	movl new_esp, %esp		// Carica SP modificato da sched_callback
 	iret
