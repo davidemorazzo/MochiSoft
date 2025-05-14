@@ -16,6 +16,8 @@
 #include "dev/PCI/AHCI.h"
 #include "kernel/fs/ext2/ext2.h"
 #include "kernel/memory.h"
+#include "kernel/fs/fs_internal.h"
+#include "kernel/fs/fs.h"
 
 #include "time.h"
 #include "stdio.h"
@@ -113,6 +115,7 @@ void kernel_main (void){
     init_devs(); 
     KLOGINFO("Devices inizializzati")
     enable_it();    /*Interrupt Enable Flag = 1. (EFLAGS register)*/
+    init_fs();
 
 
     if (gdt_check(GDTR)){

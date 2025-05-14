@@ -51,12 +51,7 @@
 		"defs.h": "c",
 		"bus_interface.h": "c",
 		"string.h": "c",
-		"memory.h": "c",
-		"chrono": "c",
-		"random": "c",
-		"rope": "c",
-		"ranges": "c",
-		"functional": "c",
-		"regex": "c"
+		"ahci.h": "c",
+		"kheap.h": "c"
 	}
 }

@@ -34,5 +34,13 @@ void interrupt(uint8_t irq);
 uint32_t read_eflags();
 
 uint32_t cr3();
+/* ARGS:
+	- addr: address where the bit is stored
+	- offset: offset of the bit in the address 1...31 
+
+RETURNS:
+	- 0: lock unsuccessful
+	- 1: lock successful*/
+uint8_t bit_test_set(void * addr, uint32_t offset);
 
 #endif

@@ -63,6 +63,8 @@ set (kernel_src
         ${PROJECT_SOURCE_DIR}/linked_list/list.c
         ${PROJECT_SOURCE_DIR}/linked_list/list_node.c
         ${PROJECT_SOURCE_DIR}/linked_list/list_iterator.c
+        ${PROJECT_SOURCE_DIR}/kernel/fs/fs_internal.c
+        ${PROJECT_SOURCE_DIR}/kernel/fs/fs_open_file.c
 )
 
 set (bootloader_src

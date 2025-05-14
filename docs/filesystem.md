@@ -92,3 +92,24 @@ https://tc.gts3.org/cs3210/2016/spring/r/hardware/ATA8-ACS.pdf
 https://hddguru.com/download/documentation/ATA-ATAPI-standard-6/ATA-ATAPI-6.pdf
 
 > Su QEMU per impostart l'HardDisk aggiungere `-hda <path/to/disk.img>`
+
+
+# Funzioni FS
+
+## `void init_fs()`
+
+## ` file_desc fs_open_file(char * path)`
+mette un lock sul file e lo mette in memoria heap del kernel, ritornando un
+file descriptor usabile per leggere il file. Operazioni da fare:
+
+1. Trovare file nel filesystem
+	1. Trovare inode con `ext2_inode_from_path`
+2. Mettere lock su struttura `fs_state.file_handler_array`
+	1. Bloccare struttura `file_handler_array` con flag `fs_state.array_lock` usando test&set. 
+	2. Scansionare `file_handler_array` cercando se stesso file esiste già aperto. In questo 
+	caso ritornare un file descriptor invalido => 0.
+	3. Impostare `file_handler_array.open=1`
+	4. Sbloccare `file_handler_array` con flag `fs_state.array_lock=0`
+3. Leggere file e immagazzinarlo su `fs_state.file_handler_array`
+	1. Leggere il contenuto del file con `ext2_read_inode_blocks`
+4. Ritornare descrittore file
