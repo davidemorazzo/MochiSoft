@@ -34,6 +34,7 @@ typedef struct thread_info_s{
 /*      SCHEDULER       */
 /* -------------------- */
 
+void sched_init();
 /* Only one thread per process. The pool is __proc_list */
 void sched_callback(eflags_t f, void* eip, registers_t r);
 

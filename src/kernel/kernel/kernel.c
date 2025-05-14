@@ -175,11 +175,12 @@ void kernel_main (void){
     //     } 
     //     */
     // }
-
+    sched_init();
     PID_t p = sys_create_process("proc0", "/home/proc0");
+    PID_t p1 = sys_create_process("proc1", "/home/proc1");
+    proc_t *proc = proc_get(p1);
+    proc->thread_info->state = THREAD_RUNNABLE;
     
-    extern void sched_isr();
-    SET_IT_VEC(genericIsrDesc, sched_isr, 100);
     asm("mov $1, %eax;"
         "mov $2, %ecx;"
         "mov $3, %edx;"

@@ -9,6 +9,7 @@
 
 #include "kernel/memory.h"
 #include "kernel/threads.h"
+#include "linked_list/list.h"
 
 typedef unsigned int PID_t;
 enum process_state {
@@ -37,7 +38,8 @@ typedef struct proc_s {
 } proc_t;
 
 #define MAX_PROC 32
-extern proc_t* __proc_list[MAX_PROC];	// Internal process list. Limited to 32
+extern list_t *__proc_list;				// Internal process list. Limited to 32
+extern list_node_t *__proc_active;		// Processo in esecuzione
 
 /* Registra un nuovo processo `p` nella lista `__proc_list`. Ritorna il PID assegnato */
 PID_t proc_register(proc_t* p);
