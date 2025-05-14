@@ -13,6 +13,7 @@ MESSAGE(STATUS "Building Kernel")
 # include_directories(include/kernel)
 include_directories(include)
 include_directories(${libc_SOURCE_DIR}/include )
+include_directories(${PROJECT_SOURCE_DIR}/src/kernel/include)
 enable_language(ASM-ATT)
 
 set (arch_i386_src 
@@ -57,6 +58,10 @@ set (kernel_src
         ${PROJECT_SOURCE_DIR}/kernel/proc/proc_exit.c
         ${PROJECT_SOURCE_DIR}/kernel/proc/sched_isr.s
         ${PROJECT_SOURCE_DIR}/kernel/proc/sched_callback.c
+
+        ${PROJECT_SOURCE_DIR}/linked_list/list.c
+        ${PROJECT_SOURCE_DIR}/linked_list/list_node.c
+        ${PROJECT_SOURCE_DIR}/linked_list/list_iterator.c
 )
 
 set (bootloader_src
