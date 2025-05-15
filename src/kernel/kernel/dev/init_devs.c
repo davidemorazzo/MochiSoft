@@ -80,8 +80,8 @@ void init_devs(){
 
 	/*====== Programmable Interrupt Timer =====*/
 	pit_init(PIT_INIT_MODE, PIT_INIT_FREQ_CH0);
-	IRQ_clear_mask(0);
-	SET_IT_VEC(d, irq_0x20_wrapper, 32);
+	// IRQ_clear_mask(0);
+	// SET_IT_VEC(d, irq_0x20_wrapper, 32);
 
 	if(it_state){
 		enable_it();

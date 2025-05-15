@@ -18,6 +18,7 @@
 #include "kernel/memory.h"
 #include "kernel/fs/fs_internal.h"
 #include "kernel/fs/fs.h"
+#include "kernel/PIC-8259.h"
 
 #include "time.h"
 #include "stdio.h"
@@ -38,16 +39,22 @@ void generic_isr(){
 }
 
 int fun(){
-    KLOGINFO("Ciao da proc0");
-    asm("int $100");
+    KLOGINFO("Ciaooooo da proc0");
+    for (int i=0; i<20000000; i++);
     return 1;
 }
 
 int fun1(){
+    for (int i=0; i<8000000; i++);
     KLOGINFO("Ciao da proc1");
-    asm("int $100");
     return -1;
 }
+
+int idle_task(){
+    while (1) asm volatile ("hlt");
+    return 0;
+}
+
 
 void kernel_main (void){
     // extern unsigned int __stack_top;
@@ -191,13 +198,15 @@ void kernel_main (void){
     //     */
     // }
     sched_init();
-    PID_t proc_kernel = sys_create_process("kernel", "/");
     PID_t p = sys_create_process("proc0", "/home/proc0");
     PID_t p1 = sys_create_process("proc1", "/home/proc1");
+    PID_t p2 = sys_create_process("idle_proc", "/");
+    proc_start(p2, idle_task);
     proc_start(p, fun);
     proc_start(p1, fun1);
-    
-    asm("int $100"); // Chiamata allo scheduler
+
+    // IRQ_clear_mask(0); // Start scheduler
+    // asm("int $32"); // Chiamata allo scheduler
 
     while(1){
 

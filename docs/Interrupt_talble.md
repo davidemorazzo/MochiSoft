@@ -38,7 +38,7 @@ La handler function è la funzione C, nella IDT viene inserito un wrapper scritt
 | 0x1D	| Exception | isr1D				|					|
 | 0x1E	| Exception | isr1E				|					|
 | 0x1F	| Exception | 					| Reserved			|
-| 0x20	| PIC1 IRQ	| irq0				| PIT, unmasked		|
+| 0x20	| PIC1 IRQ	| sched_isr			| PIT, unmasked		|
 | 0x21	| PIC1 IRQ	| 					|					|
 | 0x22	| PIC1 IRQ	| 					| PIC2 daisy-chain  |
 | 0x23	| PIC1 IRQ	| 					|					|

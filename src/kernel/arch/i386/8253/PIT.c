@@ -33,7 +33,7 @@ void pit_init(uint8_t mode, uint16_t freq){
     // CH0, lobyte/hibyte access, mode rate gen
     init_cmd |= 0x30 | (PIT_MODE_RATE_GEN << 1);
     pit_send_command(init_cmd);
-    uint16_t reload_value = PIT_BASE_FREQ / 100; // 100Hz for IRQ0
+    uint16_t reload_value = PIT_BASE_FREQ / 50; // 100Hz for IRQ0
     pit_set_count(PIT_CH0_DATA, reload_value);
 
     return;

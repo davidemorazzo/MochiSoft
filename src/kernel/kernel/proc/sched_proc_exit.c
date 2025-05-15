@@ -9,5 +9,5 @@ void __sched_proc_exit(){
 	p->exit_code = ret_code;
 	p->state = PROC_TERMINATED;
 	p->thread_info->state = THREAD_TERMINATED;
-	asm("int $100"); // call scheduler
+	asm("int $32"); // call scheduler
 }

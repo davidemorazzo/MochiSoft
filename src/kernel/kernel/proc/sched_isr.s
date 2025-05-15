@@ -38,6 +38,9 @@ sched_isr:
 
 	movl +12(%esp), %eax	// Salva ESP modificato da sched_callback
 	movl %eax, new_esp
+	push $0
+	call PIC_sendEOI
+	pop %eax
 	popal					// Remove arg0: Carica registri modificati da sched_callback
 	movl new_esp, %esp		// Carica SP modificato da sched_callback
 	iret
