@@ -48,6 +48,10 @@ dall'esecuzione */
 void proc_exit(proc_t* p);
 /* Ottiene la struttura `proc_t` desiderata se registrata in `__proc_list` */
 proc_t* proc_get(PID_t pid);
+/* Inizializza l'esecuzione del thread del processo e lo imposta come runnable */
+void proc_start(PID_t pid, void* func);
 
+
+#define PROC_STACK_SIZE 12288
 
 #endif

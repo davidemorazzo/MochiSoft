@@ -32,17 +32,10 @@ new_esp: .long 0
 sched_isr:
 	movl %esp, old_esp 		// Salva OLD ESP
 	addl $12, old_esp
-
 	pushal					// arg0: Salva registri+NEW ESP
-	movl old_esp, %eax
-	push -12(%eax)			// arg1: OLD EIP
-	push -4(%eax)			// arg2: OLD EFLAGS
 
 	call sched_callback
 
-	movl old_esp, %eax
-	pop -4(%eax)			// Remove arg2: OLD EFLAGS
-	pop -12(%eax)			// Remove arg1: OLD EIP
 	movl +12(%esp), %eax	// Salva ESP modificato da sched_callback
 	movl %eax, new_esp
 	popal					// Remove arg0: Carica registri modificati da sched_callback

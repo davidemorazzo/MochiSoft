@@ -36,6 +36,8 @@ typedef struct thread_info_s{
 
 void sched_init();
 /* Only one thread per process. The pool is __proc_list */
-void sched_callback(eflags_t f, void* eip, registers_t r);
+void sched_callback(registers_t r);
+/* Funzione chiamata al ritorno del thread */
+void __sched_proc_exit();
 
 #endif

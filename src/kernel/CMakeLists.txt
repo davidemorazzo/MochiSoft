@@ -56,9 +56,11 @@ set (kernel_src
         ${PROJECT_SOURCE_DIR}/kernel/proc/proc_register.c
         ${PROJECT_SOURCE_DIR}/kernel/proc/proc_get.c
         ${PROJECT_SOURCE_DIR}/kernel/proc/proc_exit.c
+        ${PROJECT_SOURCE_DIR}/kernel/proc/proc_start.c
         ${PROJECT_SOURCE_DIR}/kernel/proc/sched_isr.s
         ${PROJECT_SOURCE_DIR}/kernel/proc/sched_callback.c
         ${PROJECT_SOURCE_DIR}/kernel/proc/sched_init.c
+        ${PROJECT_SOURCE_DIR}/kernel/proc/sched_proc_exit.c
 
         ${PROJECT_SOURCE_DIR}/linked_list/list.c
         ${PROJECT_SOURCE_DIR}/linked_list/list_node.c

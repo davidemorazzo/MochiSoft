@@ -37,6 +37,18 @@ void generic_isr(){
     __asm__("popal; leave; iret"); /* BLACK MAGIC! */
 }
 
+int fun(){
+    KLOGINFO("Ciao da proc0");
+    asm("int $100");
+    return 1;
+}
+
+int fun1(){
+    KLOGINFO("Ciao da proc1");
+    asm("int $100");
+    return -1;
+}
+
 void kernel_main (void){
     // extern unsigned int __stack_top;
     // extern unsigned int __stack_size;
@@ -179,22 +191,17 @@ void kernel_main (void){
     //     */
     // }
     sched_init();
+    PID_t proc_kernel = sys_create_process("kernel", "/");
     PID_t p = sys_create_process("proc0", "/home/proc0");
     PID_t p1 = sys_create_process("proc1", "/home/proc1");
-    proc_t *proc = proc_get(p1);
-    proc->thread_info->state = THREAD_RUNNABLE;
+    proc_start(p, fun);
+    proc_start(p1, fun1);
     
-    asm("mov $1, %eax;"
-        "mov $2, %ecx;"
-        "mov $3, %edx;"
-        "mov $4, %ebx;"
-        "mov $5, %ebp;"
-        "mov $6, %esi;"
-        "mov $7, %edi;");
-    asm("int $100");
+    asm("int $100"); // Chiamata allo scheduler
 
     while(1){
 
     }
     // Kernel function is exiting here
 }
+

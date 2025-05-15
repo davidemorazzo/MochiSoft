@@ -79,7 +79,7 @@ void isr0E(void){
     uint32_t addr;
     __asm__("movl %%cr2, %0" : "=r"(addr) :);
     KLOGERROR("<Exception 0x0E> %s => Error accessing address 0x%X", &exc_lookup[0x0E], addr);
-    KLOGERROR("KERNEL PANIC :)"); \
+    KLOGERROR("KERNEL PANIC :) IAPA IAPA IAPA :D"); \
     while(1); \
 }
 decl_isr(0F);

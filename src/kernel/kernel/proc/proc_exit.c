@@ -26,6 +26,7 @@ void proc_exit(proc_t *p){
 	kfree(p->thread_info);
 	kfree(p);
 	list_remove(__proc_list, proc_node);
-	KLOGINFO("Process exit: PID %d, %s, %s", p->pid, p->name, p->current_dir);
+	KLOGINFO("Process exit: PID %d, %s, %s, exit code %d", p->pid, p->name, 
+		p->current_dir, p->exit_code);
 
 }
